@@ -3,6 +3,9 @@
 @plugin '@tailwindcss/typography';
 
 body {
-	background-color: oklch(20.5% 0 0); /* neutral-900 */
-	color: white;
+  background-image: url('/background.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
