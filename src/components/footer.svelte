@@ -79,7 +79,6 @@
       github: '⚡',
       linkedin: '💼',
       mail: '✉️',
-      twitter: '🐦'
     };
     return icons[iconName as keyof typeof icons] || '🔗';
   };
@@ -121,8 +120,7 @@
           </div>
           
           <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-4 font-medium drop-shadow-sm">
-            Full-Stack Developer passionate about creating innovative solutions 
-            and bridging cultures through technology and thoughtful design.
+            An international student who is passionate about technology and aviation.
           </p>
           
           <div class="inline-flex items-center text-xs text-slate-600 dark:text-slate-500 bg-white/30 dark:bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/40 dark:border-white/20 shadow-sm font-medium">
