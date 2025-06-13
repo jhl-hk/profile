@@ -89,7 +89,7 @@
 
 <footer
   bind:this={footerRef}
-  class="mt-6"
+  class="my-6"
   aria-label="Site footer"
 >
   <GlassCard>
@@ -107,7 +107,7 @@
             <div class="w-12 h-0.5 bg-gradient-to-r from-stone-600 via-stone-500 to-stone-400 rounded-full shadow-sm"></div>
           </div>
           
-          <p class="text-sm text-stone-600 leading-relaxed mb-4 font-medium drop-shadow-sm">
+          <p class="text-sm text-stone-800 leading-relaxed mb-4 font-medium drop-shadow-sm">
             An international student who is passionate about technology and aviation.
           </p>
           
@@ -131,11 +131,11 @@
               <li>
                 <a 
                   href={link.href}
-                  class="text-sm text-stone-600 hover:text-stone-800 transition-all duration-200 flex items-center group font-medium drop-shadow-sm focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 rounded-sm py-1 hover:translate-x-1"
+                  class="text-sm text-stone-800 hover:text-stone-600 transition-all duration-200 flex items-center group font-medium drop-shadow-sm focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 rounded-sm py-1 hover:translate-x-1"
                   on:click|preventDefault={() => scrollToSection(link.href)}
                   aria-label={link.description}
                 >
-                  <span class="w-1 h-1 bg-stone-400 dark:bg-stone-400 rounded-full mr-3 group-hover:bg-stone-600 group-hover:shadow-sm group-hover:scale-125 transition-all duration-200" aria-hidden="true"></span>
+                  <span class="w-1 h-1 bg-stone-800 rounded-full mr-3 group-hover:bg-stone-600 group-hover:shadow-sm group-hover:scale-125 transition-all duration-200" aria-hidden="true"></span>
                   <span>{link.name}</span>
                 </a>
               </li>
@@ -158,7 +158,7 @@
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex items-center text-sm text-stone-600 {social.hoverColor} {social.bgColor} transition-all duration-300 bg-white/15 hover:bg-white/25 rounded-lg px-3 py-2 group border border-white/25 hover:border-white/35 backdrop-blur-sm shadow-sm hover:shadow-md drop-shadow-sm focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 hover:-translate-y-0.5"
+                class="flex items-center text-sm text-stone-800 {social.hoverColor} {social.bgColor} transition-all duration-300 bg-white/15 hover:bg-white/25 rounded-lg px-3 py-2 group border border-white/25 hover:border-white/35 backdrop-blur-sm shadow-sm hover:shadow-md drop-shadow-sm focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 hover:-translate-y-0.5"
                 aria-label={social.ariaLabel}
               >
                 <span class="mr-2 group-hover:scale-110 transition-transform duration-200" aria-hidden="true">
@@ -206,14 +206,14 @@
       <div class={`flex flex-col md:flex-row justify-between items-center text-sm text-stone-400 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
            style="animation-delay: 0.6s">
         <div class="flex items-center mb-2 md:mb-0 font-medium drop-shadow-sm">
-          <span class="mr-1 text-stone-500" aria-hidden="true">©</span>
-          <span class="text-stone-500">{currentYear} JHL-HK. All rights reserved.</span>
+          <span class="mr-1 text-stone-600" aria-hidden="true">©</span>
+          <span class="text-stone-600">{currentYear} JHL-HK. All rights reserved.</span>
         </div>
         
         <div class="flex items-center font-medium drop-shadow-sm">
-          <span class="text-stone-500">Built with</span>
+          <span class="text-stone-600">Built with</span>
           <span class="text-rose-500 mx-1 animate-pulse" aria-hidden="true">❤️</span>
-          <span class="text-stone-500">using SvelteKit</span>
+          <span class="text-stone-600">using SvelteKit</span>
         </div>
       </div>
     </div>

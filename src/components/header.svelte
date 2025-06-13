@@ -84,10 +84,10 @@
   class="fixed top-0 left-0 right-0 z-50 p-4 pointer-events-none"
 >
   <div class={`max-w-4xl mx-auto backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl transition-all duration-300 pointer-events-auto relative overflow-hidden ${scrollY > 50 ? 'shadow-xl backdrop-blur-lg' : ''}`} 
-       style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.38) 50%, rgba(245, 243, 241, 0.42) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);">
+       style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(245, 243, 241, 0.23) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);">
     
     <!-- Gradient overlays -->
-    <div class="absolute inset-0 bg-gradient-to-br from-stone-50/40 via-transparent to-stone-100/30 pointer-events-none" aria-hidden="true"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-stone-50/25 via-transparent to-stone-100/20 pointer-events-none" aria-hidden="true"></div>
     
     <div class="px-6 flex items-center justify-between relative z-10 py-3">
       <!-- Logo/Brand -->
