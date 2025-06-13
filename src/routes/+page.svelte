@@ -37,20 +37,20 @@
     
     <!-- Name and title -->
     <div class="text-center">
-      <h1 class="text-3xl font-bold text-stone-800 mb-2">Jianyue Hugo Liang</h1>
-      <p class="text-lg text-stone-600">Student at NUCB Internationall College</p>
-      <p class="text-md text-stone-500 mt-2">Full Stack Developer | Translator | Student</p>
+      <h1 class="text-3xl font-bold text-stone-900 mb-2">Jianyue Hugo Liang</h1>
+      <p class="text-lg text-stone-700">Student at NUCB Internationall College</p>
+      <p class="text-md text-stone-600 mt-2">Full Stack Developer | Translator | Student</p>
     </div>
     
     <!-- Social links -->
     <div class="flex space-x-4">
-      <a href="https://github.com/jhl-hk" class="text-stone-600 hover:text-gray-900 transition-colors" aria-label="GitHub">
+      <a href="https://github.com/jhl-hk" class="text-stone-700 hover:text-gray-900 transition-colors" aria-label="GitHub">
         <GitHubIcon />
       </a>
-      <a href="https://www.linkedin.com/in/jianyuehugoliang" class="text-stone-600 hover:text-blue-600 transition-colors" aria-label="LinkedIn">
+      <a href="https://www.linkedin.com/in/jianyuehugoliang" class="text-stone-700 hover:text-blue-600 transition-colors" aria-label="LinkedIn">
         <LinkedInIcon />
       </a>
-      <a href="mailto:jhl@jhl.hk" class="text-stone-600 hover:text-red-600 transition-colors" aria-label="Email">
+      <a href="mailto:jhl@jhl.hk" class="text-stone-700 hover:text-red-600 transition-colors" aria-label="Email">
         <MailIcon />
       </a>
     </div>
@@ -60,8 +60,8 @@
 <GlassCard className="mt-6">
   <!-- About section -->
   <div class="space-y-6">
-    <h2 class="text-2xl font-bold text-stone-800">About Me</h2>
-    <p class="text-stone-600 leading-relaxed">
+    <h2 class="text-2xl font-bold text-stone-900">About Me</h2>
+    <p class="text-stone-700 leading-relaxed">
       I am a international student studying in Japan. Passionate about technology and aviation. 
       I am still learning and trying to become a more professional full-stack developer.
       At same time, I am also a translator who contributing to the open-source community.
@@ -69,7 +69,7 @@
     
     <!-- Skills section -->
     <div class="mt-8">
-      <h3 class="text-xl font-semibold text-stone-800 mb-4">Skills</h3>
+      <h3 class="text-xl font-semibold text-stone-900 mb-4">Skills</h3>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
         <SkillCard title="Frontend" description="React, Vue, Svelte, TypeScript" />
         <SkillCard title="Backend" description="Node.js, Python, Go" />
@@ -82,11 +82,11 @@
 <GlassCard className="mt-6">
   <!-- Education and Experience section -->
   <div class="space-y-6">
-    <h2 class="text-2xl font-bold text-stone-800">Education & Experience</h2>
+    <h2 class="text-2xl font-bold text-stone-900">Education & Experience</h2>
     
     <!-- Education -->
     <div class="space-y-4">
-      <h3 class="text-xl font-semibold text-stone-800">Education</h3>
+      <h3 class="text-xl font-semibold text-stone-900">Education</h3>
       {#each education as edu}
         <ExperienceCard 
           title={edu.title}
@@ -98,7 +98,7 @@
 
     <!-- Experience -->
     <div class="space-y-4">
-      <h3 class="text-xl font-semibold text-stone-800">Experience</h3>
+      <h3 class="text-xl font-semibold text-stone-900">Experience</h3>
       {#each experiences as experience}
         <ExperienceCard 
           title={experience.title}

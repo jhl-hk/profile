@@ -206,14 +206,14 @@
       <div class={`flex flex-col md:flex-row justify-between items-center text-sm text-stone-400 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
            style="animation-delay: 0.6s">
         <div class="flex items-center mb-2 md:mb-0 font-medium drop-shadow-sm">
-          <span class="mr-1 text-stone-400" aria-hidden="true">©</span>
-          <span class="text-stone-400">{currentYear} JHL-HK. All rights reserved.</span>
+          <span class="mr-1 text-stone-500" aria-hidden="true">©</span>
+          <span class="text-stone-500">{currentYear} JHL-HK. All rights reserved.</span>
         </div>
         
         <div class="flex items-center font-medium drop-shadow-sm">
-          <span class="text-stone-400">Built with</span>
+          <span class="text-stone-500">Built with</span>
           <span class="text-rose-500 mx-1 animate-pulse" aria-hidden="true">❤️</span>
-          <span class="text-stone-400">using SvelteKit</span>
+          <span class="text-stone-500">using SvelteKit</span>
         </div>
       </div>
     </div>
