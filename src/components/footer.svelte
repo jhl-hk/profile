@@ -38,7 +38,7 @@
   ];
   
   const quickLinks = [
-    { name: 'Blog', href: '#blog', description: 'Read my latest articles' },
+    { name: 'Blog', href: 'https://article.jhl.idv.hk', description: 'Read my latest articles' },
     { name: 'Projects', href: '#projects', description: 'View my work' },
     { name: 'Contact', href: '#contact', description: 'Get in touch' }
   ];
