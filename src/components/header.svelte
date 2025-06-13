@@ -71,7 +71,7 @@
   });
 
   const menuItems = [
-    { label: 'Blog', href: '#blog' },
+    { label: 'Blog', href: 'https://article.jhl.idv.hk' },
     { label: 'Projects', href: '#projects' },
     { label: 'Contact', href: '#contact' },
   ];
