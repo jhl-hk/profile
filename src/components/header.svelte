@@ -71,7 +71,6 @@
   });
 
   const menuItems = [
-    { label: 'About', href: '#about' },
     { label: 'Blog', href: '#blog' },
     { label: 'Projects', href: '#projects' },
     { label: 'Contact', href: '#contact' },
@@ -85,20 +84,20 @@
   class="fixed top-0 left-0 right-0 z-50 p-4 pointer-events-none"
 >
   <div class={`max-w-4xl mx-auto backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl transition-all duration-300 pointer-events-auto relative overflow-hidden ${scrollY > 50 ? 'shadow-xl backdrop-blur-lg' : ''}`} 
-       style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.18) 50%, rgba(240, 242, 247, 0.22) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);">
+       style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.18) 50%, rgba(245, 243, 241, 0.22) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);">
     
     <!-- Gradient overlays -->
-    <div class="absolute inset-0 bg-gradient-to-br from-white/12 via-transparent to-slate-50/8 pointer-events-none dark:from-white/5 dark:to-slate-900/3" aria-hidden="true"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-stone-50/20 via-transparent to-stone-100/10 pointer-events-none" aria-hidden="true"></div>
     
-    <div class="px-6 flex items-center justify-between relative z-10 h-15">
+    <div class="px-6 flex items-center justify-between relative z-10 py-3">
       <!-- Logo/Brand -->
       <div class="flex items-center">
-        <a href="/" class="flex flex-col items-start group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-lg p-1 -m-1 transition-all duration-300 hover:-translate-y-0.5" aria-label="Jianyue Hugo Liang - Home">
+        <a href="/" class="flex flex-col items-start group focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 rounded-lg p-1 -m-1 transition-all duration-300 hover:-translate-y-0.5" aria-label="Jianyue Hugo Liang - Home">
           <div class="flex items-center mb-1">
-            <span class="text-xl font-bold text-slate-900 dark:text-slate-100 drop-shadow-sm group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors duration-300">Jianyue Hugo Liang</span>
-            <div class="w-2 h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full ml-2 shadow-sm group-hover:scale-110 group-hover:animate-pulse transition-transform duration-300" aria-hidden="true"></div>
+            <span class="text-2xl font-bold text-stone-800 drop-shadow-sm group-hover:text-stone-700 transition-colors duration-300 tracking-tight">Jianyue Hugo Liang</span>
+            <div class="w-2.5 h-2.5 bg-gradient-to-r from-stone-600 via-stone-500 to-stone-400 rounded-full ml-3 shadow-sm group-hover:scale-110 group-hover:animate-pulse transition-transform duration-300" aria-hidden="true"></div>
           </div>
-          <span class="text-xs text-slate-700 dark:text-slate-300 font-medium drop-shadow-sm">Full-Stack Developer | Translator | Student</span>
+          <span class="text-sm text-stone-600 font-semibold drop-shadow-sm opacity-90 group-hover:opacity-100 transition-opacity duration-300">Full-Stack Developer | Translator | Student</span>
         </a>
       </div>
       
@@ -109,7 +108,7 @@
             <li>
               <a 
                 href={item.href} 
-                class="text-slate-700 dark:text-slate-300 font-medium text-sm px-4 py-2 rounded-lg hover:text-slate-900 dark:hover:text-slate-100 hover:bg-white/10 dark:hover:bg-white/5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                class="text-stone-600 font-semibold text-sm px-5 py-2.5 rounded-lg hover:text-stone-800 hover:bg-white/10 hover:bg-white/5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 hover:-translate-y-0.5 hover:shadow-md"
                 tabindex="0"
                 role="menuitem"
               >
@@ -122,7 +121,7 @@
       
       <!-- Mobile Menu Toggle -->
       <button 
-        class="md:hidden flex items-center justify-center w-9 h-9 rounded-lg transition-colors duration-200 menu-toggle hover:bg-white/10 dark:hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 menu-toggle hover:bg-white/10 dark:hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 hover:scale-105"
         on:click={toggleMenu}
         aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
         aria-expanded={isMenuOpen}
@@ -130,9 +129,9 @@
         aria-haspopup="true"
       >
         <span class="hamburger-container" aria-hidden="true">
-          <span class={`block w-4 h-0.5 bg-slate-600 dark:bg-slate-300 rounded transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-          <span class={`block w-4 h-0.5 bg-slate-600 dark:bg-slate-300 rounded transition-all duration-300 mt-1 ${isMenuOpen ? 'opacity-0 scale-x-0' : ''}`}></span>
-          <span class={`block w-4 h-0.5 bg-slate-600 dark:bg-slate-300 rounded transition-all duration-300 mt-1 ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+          <span class={`block w-4.5 h-0.5 bg-stone-500 rounded transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+          <span class={`block w-4.5 h-0.5 bg-stone-500 rounded transition-all duration-300 mt-1 ${isMenuOpen ? 'opacity-0 scale-x-0' : ''}`}></span>
+          <span class={`block w-4.5 h-0.5 bg-stone-500 rounded transition-all duration-300 mt-1 ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
         </span>
       </button>
     </div>
@@ -140,8 +139,8 @@
     <!-- Mobile Navigation -->
     <nav 
       id="mobile-navigation"
-      class={`mobile-menu absolute left-0 right-0 mt-2 backdrop-blur-md rounded-xl border border-white/20 dark:border-white/10 shadow-2xl transition-all duration-300 overflow-hidden ${isMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}
-      style="top: 100%; background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.18) 50%, rgba(240, 242, 247, 0.22) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);"
+      class={`mobile-menu absolute left-0 right-0 mt-2 backdrop-blur-md rounded-xl border border-white/20 shadow-2xl transition-all duration-300 overflow-hidden ${isMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}
+      style="top: 100%; background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.18) 50%, rgba(245, 243, 241, 0.22) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);"
       aria-label="Mobile navigation"
       aria-hidden={!isMenuOpen}
     >
@@ -150,7 +149,7 @@
           <li role="none">
             <a 
               href={item.href} 
-              class="block text-slate-800 dark:text-slate-200 font-medium px-4 py-3 rounded-lg hover:text-slate-900 dark:hover:text-slate-100 hover:bg-white/10 dark:hover:bg-white/5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              class="block text-stone-700 font-semibold px-5 py-3.5 rounded-lg hover:text-stone-800 hover:bg-white/10 hover:bg-white/5 transition-all duration-300 group relative overflow-hidden drop-shadow-sm focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 hover:-translate-y-0.5"
               role="menuitem"
               tabindex={isMenuOpen ? 0 : -1}
               on:click={closeMenu}
