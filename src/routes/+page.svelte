@@ -15,11 +15,6 @@
   ];
 
   const experiences = [
-    {
-      title: 'ANA Virtual Group (anavirtualgroup.com)',
-      description: 'Volunteer as Cheif Technology Officer',
-      period: '2025 - present',
-    },
   ];
 </script>
 
