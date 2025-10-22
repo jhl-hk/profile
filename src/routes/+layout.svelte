@@ -10,8 +10,10 @@
 	<title>JHL-HK</title>
 </svelte:head>
 
-<div class="mx-auto max-w-3/4">
+<div class="min-h-screen">
 	<Header />
-	{@render children()}
+	<main class="px-2 pt-28">
+		{@render children()}
+	</main>
 	<Footer />
 </div>
