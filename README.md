@@ -1,3 +1,11 @@
-# Jianyue Hugo Liang's Profile
+# JHL-HK | Profile
 
-> This project contained Jianyue Hugo Liang's basic information.
+## Quick Start
+
+```bash
+# Install dependencies
+bun Install
+
+# Start Development Server
+bun run dev
+```
