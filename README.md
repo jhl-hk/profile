@@ -1,11 +1,19 @@
 # JHL-HK | Profile
 
+## Tech Stacks
+
+- Svelte
+- bun
+- Typescript
+- TailwindCSS
+- Luicide Icons
+
 ## Quick Start
 
 ```bash
 # Install dependencies
-bun Install
+bun install
 
-# Start Development Server
+# Run Development Server
 bun run dev
 ```
