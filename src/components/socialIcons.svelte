@@ -8,7 +8,7 @@
 </script>
 
 <!-- Header Absolute Positon on Left> -->
-<header class="absolute top-1/2 right-0 h-auto -translate-y-1/2 pr-2">
+<footer class="absolute top-1/2 right-0 h-auto -translate-y-1/2 pr-2">
 	<nav class="rounded-lg p-2">
 		<ul>
 			{#each Socials as item (item.path)}
@@ -18,4 +18,4 @@
 			{/each}
 		</ul>
 	</nav>
-</header>
+</footer>
