@@ -26,6 +26,7 @@
 	<h2 class="py-2 text-2xl font-bold">Developer | Translator | Student</h2>
 	<p class="py-2 text-lg">Based in 🇯🇵 Japan</p>
 
+	<!-- Personal Information -->
 	<div class="mt-6 grid grid-cols-2 gap-4">
 		<div>
 			<h3 class="text-xl font-bold">About Me</h3>
@@ -52,4 +53,7 @@
 			</ul>
 		</div>
 	</div>
+
+	<!-- Blog -->
+	<div></div>
 </div>
