@@ -1,7 +1,10 @@
 <script lang="ts">
-	import { Home } from 'lucide-svelte';
+	import { Home, Newspaper } from 'lucide-svelte';
 
-	const Navigation = [{ label: 'Home', icon: Home, path: '/' }];
+	const Navigation = [
+		{ label: 'Home', icon: Home, path: '/' },
+		{ label: 'Blog', icon: Newspaper, path: 'https://article.jhl.idv.hk' }
+	];
 </script>
 
 <!-- Header Absolute Positon on Left> -->

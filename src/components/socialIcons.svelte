@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { Github, Linkedin } from 'lucide-svelte';
+	import { Github, Linkedin, Instagram, Mail } from 'lucide-svelte';
 
 	const Socials = [
-		{ label: 'GitHub', icon: Github, path: '#github' },
-		{ label: 'LinkedIn', icon: Linkedin, path: '#linkedin' }
+		{ label: 'Mail', icon: Mail, path: 'mailto:ja@jhl.hk' },
+		{ label: 'GitHub', icon: Github, path: 'https://github.com/jhl-hk' },
+		{ label: 'LinkedIn', icon: Linkedin, path: 'https://linkedin.com/in/jhl-hk' },
+		{ label: 'Instagram', icon: Instagram, path: 'https://instagram.com/jianyuehugo' }
 	];
 </script>
 

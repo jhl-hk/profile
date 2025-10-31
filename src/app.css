@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 body {
-  width: 100vw;
-  height: 100vh;
-  background-color: oklch(26.9% 0 0);
-  color: oklch(87% 0 0);
+	width: 100vw;
+	height: 100vh;
+	background-color: oklch(26.9% 0 0);
+	color: oklch(87% 0 0);
 }

@@ -10,7 +10,8 @@ const config = {
 		adapter: adapter(),
 		// Alias for quick import
 		alias: {
-			$components: './src/components'
+			$components: './src/components',
+			$images: './src/images'
 		}
 	}
 };
