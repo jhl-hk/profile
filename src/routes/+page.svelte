@@ -1,5 +1,8 @@
 <script>
 	import Protrait from '$images/portrait.jpg';
+	import Ana from '$images/ana.jpeg';
+	import Back from '$images/back.jpg';
+	import Chiyoda from '$images/chiyoda.jpg';
 	const Hour = new Date().getHours();
 	const Year = new Date().getFullYear();
 
@@ -12,6 +15,13 @@
 	} else {
 		greeting = 'Good evening!';
 	}
+
+	const Images = [
+		{ src: Protrait, alt: 'Portrait of Jianyue Hugo Liang' },
+		{ src: Ana, alt: 'United States of America' },
+		{ src: Back, alt: 'Back of Jianyue Hugo Liang' },
+		{ src: Chiyoda, alt: 'Chiyoda City' }
+	];
 
 	const Education = [
 		{
@@ -59,10 +69,25 @@
 	<p class="py-2 text-lg">Based in 🇯🇵 Japan</p>
 
 	<!-- Photo Section -->
-	<div></div>
-
+	<div class="my-16">
+		<div class="-my-4 flex justify-center gap-5 overflow-hidden py-4 sm:gap-8">
+			{#each Images as image, imageIndex (image.alt)}
+				{@const rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']}
+				{@const rotation = rotations[imageIndex % rotations.length]}
+				<div
+					class="relative aspect-9/10 w-44 flex-none overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-800 {rotation}"
+				>
+					<img
+						src={image.src}
+						alt={image.alt}
+						class="absolute inset-0 h-full w-full object-cover"
+					/>
+				</div>
+			{/each}
+		</div>
+	</div>
 	<!-- Personal Information -->
-	<div class="mt-6 grid grid-cols-2 gap-4">
+	<div class="grid grid-cols-2 gap-4">
 		<div>
 			<h3 class="text-xl font-bold">About Me</h3>
 			<p>
