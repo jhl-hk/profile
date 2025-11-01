@@ -8,6 +8,11 @@
 - TailwindCSS
 - Luicide Icons
 
+## To Do List
+
+- [ ] Picture
+- [ ] Link with Articles
+
 ## Quick Start
 
 ```bash
