@@ -11,7 +11,6 @@
 		greeting = 'Good morning!';
 	} else if (Hour < 18) {
 		greeting = 'Good afternoon!';
-		console.log(greeting);
 	} else {
 		greeting = 'Good evening!';
 	}
