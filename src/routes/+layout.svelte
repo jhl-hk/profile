@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import Header from '$components/header.svelte';
 	import SocialIcons from '$components/socialIcons.svelte';
 
@@ -8,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<title>Jianyue Hugo Liang</title>
 </svelte:head>
 
 <Header />
