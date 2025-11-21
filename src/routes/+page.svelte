@@ -148,4 +148,5 @@
 			class="underline transition-all duration-300 hover:text-neutral-300">JianyueLab</a
 		>.
 	</p>
+	<a href="https://icp.gov.moe/?keyword=20250378" target="_blank">萌ICP备20250378号</a>
 </div>
