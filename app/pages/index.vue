@@ -115,7 +115,7 @@ const featuredProjects = [
 
     <!-- Skills Overview -->
     <section class="mb-16">
-      <h2 class="text-2xl font-bold text-default mb-8">できること</h2>
+      <h2 class="text-2xl font-bold text-default mb-8">概要</h2>
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div class="p-6 rounded-xl bg-elevated/50 border border-default">
           <div
