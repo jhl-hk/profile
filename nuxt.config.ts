@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: "Jianyue Hugo Liang",
+      title: "Janyue Aosugi, a.k.a. Jianyue Hugo Liang",
       meta: [
         {
           name: "description",
