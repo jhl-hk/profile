@@ -9,4 +9,16 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  app: {
+    head: {
+      title: "Jianyue Hugo Liang",
+      meta: [
+        {
+          name: "description",
+          content:
+            "Founder & CEO @ JianyueLab Ltd. | IBDP Student @ NUCB International College",
+        },
+      ],
+    },
+  },
 });
