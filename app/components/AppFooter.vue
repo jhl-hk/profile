@@ -8,5 +8,6 @@ const profile = appConfig.profile;
     <p class="text-xs text-muted">
       &copy; {{ new Date().getFullYear() }} {{ profile.name }}
     </p>
+   <a href="https://icp.gov.moe/?keyword=20260331" target="_blank">萌ICP备20260331号</a>
   </footer>
 </template>
