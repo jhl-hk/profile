@@ -2,7 +2,7 @@
 import { Font } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import FallbackImage from '../assets/blog-placeholder-1.jpg';
-import { SITE_TITLE } from '../consts';
+import { SITE_ORIGIN, SITE_TITLE } from '../consts';
 import { defaultLocale, type Locale } from '../lib/i18n';
 import { buildSeoLinks, type LanguageTargets } from '../lib/seo';
 import '../styles/global.css';
@@ -24,7 +24,7 @@ const {
 	type = 'website',
 	languageTargets = { [defaultLocale]: Astro.url.pathname },
 } = Astro.props;
-const origin = Astro.site ?? Astro.url.origin;
+const origin = SITE_ORIGIN;
 const { canonical, alternates } = buildSeoLinks(origin.toString(), locale, languageTargets);
 const imagePath = typeof image === 'string' ? image : image.src;
 const imageUrl = new URL(imagePath, origin).href;

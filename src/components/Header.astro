@@ -25,7 +25,7 @@ const route = (segment = '') => {
 	const suffix = segment ? `${segment}/` : '';
 	return usesLocalePrefix ? `/${locale}/${suffix}` : `/${suffix}`;
 };
-const fallbackPath = pathname.includes('/blog/') || pathname === '/blog' ? '/blog/' : pathname;
+const fallbackPath = '/blog/';
 ---
 
 <header class="site-header">
