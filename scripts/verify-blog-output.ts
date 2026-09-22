@@ -1,6 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { basename, extname, join } from 'node:path';
 import { parseFrontmatter } from 'astro/markdown';
+import { normalizeFilterValue } from '../src/lib/blog-filter';
 import { locales, type Locale } from '../src/lib/i18n';
 
 export type BlogOutput = Record<string, string>;
@@ -10,6 +11,7 @@ export interface DeclaredArticle {
 	lang: Locale;
 	slug: string;
 	translationKey?: string;
+	topics: string[];
 }
 
 function requireOutput(output: BlogOutput, path: string): string {
@@ -62,6 +64,36 @@ function validateDeclarations(declared: DeclaredArticle[]): void {
 				throw new Error(`Duplicate ${article.lang} translation for ${article.translationKey}`);
 			}
 			translations.add(translation);
+		}
+	}
+}
+
+function validateTopicButtons(html: string, locale: Locale, declared: DeclaredArticle[]): void {
+	const topics = [...new Set(
+		declared
+			.filter((article) => article.lang === locale)
+			.flatMap((article) => article.topics)
+			.map((topic) => normalizeFilterValue(topic, locale)),
+	)];
+	if (topics.length === 0) return;
+
+	const buttons = openingTags(html, 'button').filter((button) => hasAttribute(button, 'data-topic-filter'));
+	for (const button of buttons) {
+		const pressed = attribute(button, 'aria-pressed');
+		if (pressed !== 'true' && pressed !== 'false') {
+			throw new Error(`Topic button has missing or invalid aria-pressed state in ${locale} Blog index`);
+		}
+	}
+
+	const selected = buttons.filter((button) => attribute(button, 'aria-pressed') === 'true');
+	if (selected.length !== 1 || attribute(selected[0], 'data-topic-filter') !== '') {
+		throw new Error(`Initial all-topics aria-pressed state is invalid in ${locale} Blog index`);
+	}
+
+	for (const topic of topics) {
+		const button = buttons.find((candidate) => attribute(candidate, 'data-topic-filter') === topic);
+		if (!button || attribute(button, 'aria-pressed') !== 'false') {
+			throw new Error(`Topic ${topic} has invalid aria-pressed state in ${locale} Blog index`);
 		}
 	}
 }
@@ -151,6 +183,7 @@ export function assertBlogOutput(output: BlogOutput, declared: DeclaredArticle[]
 		for (const marker of ['data-post-row', 'data-title=', 'data-description=', 'data-topics=', 'aria-live="polite"']) {
 			requireText(index, marker, `${locale} Blog index`);
 		}
+		validateTopicButtons(index, locale, declared);
 	}
 
 	const expectedArticlePaths = new Set(declared.map(articleOutputPath));
@@ -226,6 +259,9 @@ export async function readDeclaredArticles(contentDirectory: string): Promise<De
 				lang: frontmatter.lang,
 				slug: basename(entry.name, extname(entry.name)),
 				translationKey: typeof frontmatter.translationKey === 'string' ? frontmatter.translationKey : undefined,
+				topics: Array.isArray(frontmatter.topics)
+					? frontmatter.topics.filter((topic): topic is string => typeof topic === 'string')
+					: [],
 			});
 		}
 	}

@@ -63,11 +63,11 @@ describe('article route generation', () => {
 
 describe('generated blog output verification', () => {
 	const declared: DeclaredArticle[] = [
-		{ id: 'en/shared', lang: 'en', slug: 'shared', translationKey: 'shared' },
-		{ id: 'ja/shared-ja', lang: 'ja', slug: 'shared-ja', translationKey: 'shared' },
-		{ id: 'zh/standalone', lang: 'zh', slug: 'standalone' },
+		{ id: 'en/shared', lang: 'en', slug: 'shared', translationKey: 'shared', topics: ['Astro'] },
+		{ id: 'ja/shared-ja', lang: 'ja', slug: 'shared-ja', translationKey: 'shared', topics: ['Astro'] },
+		{ id: 'zh/standalone', lang: 'zh', slug: 'standalone', topics: ['设计'] },
 	];
-	const index = '<article data-post-row data-title="post" data-description="notes" data-topics="astro"></article><p aria-live="polite"></p>';
+	const index = (topic: string) => `<article data-post-row data-title="post" data-description="notes" data-topics="${topic}"></article><p aria-live="polite"></p><button data-topic-filter="" aria-pressed="true">All</button><button data-topic-filter="${topic}" aria-pressed="false">${topic}</button>`;
 	const switcherLink = (locale: string, href: string, fallback = false) => fallback
 		? `<a href="${href}" hreflang="${locale}" aria-label="Translation unavailable: ${locale}" title="Translation unavailable: ${locale}" data-fallback>${locale}</a>`
 		: `<a href="${href}" hreflang="${locale}">${locale}</a>`;
@@ -97,9 +97,9 @@ describe('generated blog output verification', () => {
 	const validOutput = {
 		'blog/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/">',
 		'blog/shared/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/shared/">',
-		'en/blog/index.html': index,
-		'ja/blog/index.html': index,
-		'zh/blog/index.html': index,
+		'en/blog/index.html': index('astro'),
+		'ja/blog/index.html': index('astro'),
+		'zh/blog/index.html': index('设计'),
 		'en/blog/shared/index.html': article({
 			locale: 'en',
 			slug: 'shared',
@@ -166,5 +166,17 @@ describe('generated blog output verification', () => {
 			...validOutput,
 			'en/blog/shared/index.html': validOutput['en/blog/shared/index.html'].replace('href="#finish"', 'href="#missing"'),
 		}, declared)).toThrow(/table of contents/i);
+	});
+
+	test('rejects missing or invalid topic-button pressed state', () => {
+		expect(() => assertBlogOutput({
+			...validOutput,
+			'en/blog/index.html': validOutput['en/blog/index.html'].replace(' aria-pressed="true"', ''),
+		}, declared)).toThrow(/aria-pressed/i);
+
+		expect(() => assertBlogOutput({
+			...validOutput,
+			'en/blog/index.html': validOutput['en/blog/index.html'].replace('aria-pressed="false"', 'aria-pressed="mixed"'),
+		}, declared)).toThrow(/aria-pressed/i);
 	});
 });
