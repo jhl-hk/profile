@@ -19,6 +19,9 @@ export interface UiCopy {
     eyebrow: string;
     introduction: string;
     featuredProjects: string;
+    currentRole: string;
+    basedIn: string;
+    recentWriting: string;
   };
   blog: {
     title: string;
@@ -42,6 +45,8 @@ export interface UiCopy {
     title: string;
     introduction: string;
     tags: string;
+    active: string;
+    externalProject: string;
   };
   about: {
     title: string;
@@ -49,6 +54,11 @@ export interface UiCopy {
     education: string;
     skills: string;
     certifications: string;
+    biography: string;
+    business: string;
+    technical: string;
+    languages: string;
+    present: string;
   };
   notFound: {
     title: string;
@@ -85,6 +95,9 @@ const uiCopy: Record<Locale, UiCopy> = {
       eyebrow: 'Hello, I am',
       introduction: 'A founder and web developer based in Tokyo.',
       featuredProjects: 'Featured projects',
+      currentRole: 'Current role',
+      basedIn: 'Based in',
+      recentWriting: 'Recent writing',
     },
     blog: {
       title: 'Notes on building useful things.',
@@ -108,6 +121,8 @@ const uiCopy: Record<Locale, UiCopy> = {
       title: 'Selected work and long-running ideas.',
       introduction: 'Projects and organisations I work on.',
       tags: 'Tags',
+      active: 'Active',
+      externalProject: 'Visit external project',
     },
     about: {
       title: 'Founder, developer, and student in Tokyo.',
@@ -115,6 +130,11 @@ const uiCopy: Record<Locale, UiCopy> = {
       education: 'Education',
       skills: 'Skills',
       certifications: 'Certifications',
+      biography: 'Biography',
+      business: 'Business',
+      technical: 'Technical',
+      languages: 'Languages',
+      present: 'Present',
     },
     notFound: { title: 'Page not found', description: 'The page you requested does not exist.' },
     accessibility: {
@@ -143,6 +163,9 @@ const uiCopy: Record<Locale, UiCopy> = {
       eyebrow: 'こんにちは、私は',
       introduction: '東京を拠点に活動する起業家・Web 開発者です。',
       featuredProjects: '注目のプロジェクト',
+      currentRole: '現在の役割',
+      basedIn: '拠点',
+      recentWriting: '最近の執筆',
     },
     blog: {
       title: '役に立つものをつくるための記録。',
@@ -166,6 +189,8 @@ const uiCopy: Record<Locale, UiCopy> = {
       title: '取り組んできた仕事と、育て続けている構想。',
       introduction: '取り組んでいるプロジェクトと組織です。',
       tags: 'タグ',
+      active: '活動中',
+      externalProject: '外部のプロジェクトを見る',
     },
     about: {
       title: '東京で学び、つくり、事業を育てています。',
@@ -173,6 +198,11 @@ const uiCopy: Record<Locale, UiCopy> = {
       education: '学歴',
       skills: 'スキル',
       certifications: '資格',
+      biography: 'プロフィール',
+      business: 'ビジネス',
+      technical: '技術',
+      languages: '言語',
+      present: '現在',
     },
     notFound: { title: 'ページが見つかりません', description: 'お探しのページは存在しません。' },
     accessibility: {
@@ -201,6 +231,9 @@ const uiCopy: Record<Locale, UiCopy> = {
       eyebrow: '你好，我是',
       introduction: '一名常驻东京的创业者和 Web 开发者。',
       featuredProjects: '重点项目',
+      currentRole: '当前职务',
+      basedIn: '所在地',
+      recentWriting: '近期文章',
     },
     blog: {
       title: '关于创造有用事物的笔记。',
@@ -224,6 +257,8 @@ const uiCopy: Record<Locale, UiCopy> = {
       title: '持续投入的项目与长期构想。',
       introduction: '我正在参与的项目和组织。',
       tags: '标签',
+      active: '进行中',
+      externalProject: '访问外部项目',
     },
     about: {
       title: '在东京学习、创造并经营事业。',
@@ -231,6 +266,11 @@ const uiCopy: Record<Locale, UiCopy> = {
       education: '教育',
       skills: '技能',
       certifications: '认证',
+      biography: '个人简介',
+      business: '商业',
+      technical: '技术',
+      languages: '语言',
+      present: '至今',
     },
     notFound: { title: '页面未找到', description: '你访问的页面不存在。' },
     accessibility: {

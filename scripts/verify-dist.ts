@@ -12,6 +12,10 @@ interface PublishedArticle {
 	sample: boolean;
 }
 
+function includesHtmlText(html: string, text: string): boolean {
+	return html.includes(text) || html.includes(text.replaceAll('&', '&amp;'));
+}
+
 export const expectedFiles = [
 	'dist/en/index.html',
 	'dist/ja/index.html',
@@ -57,6 +61,7 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 
 	for (const locale of locales) {
 		const html = await Bun.file(join(distDirectory, locale, 'index.html')).text();
+		const profileCopy = profile.copy[locale];
 		assert(html.includes(`<html lang="${locale}"`), `Home language for ${locale}`);
 		assert(
 			html.includes(`<link rel="canonical" href="${SITE_ORIGIN}/${locale}/">`),
@@ -72,6 +77,15 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 		assert(
 			html.includes(`rel="alternate" hreflang="x-default" href="${SITE_ORIGIN}/en/"`),
 			`Home x-default hreflang for ${locale}`,
+		);
+		assert(
+			includesHtmlText(html, profileCopy.role) && includesHtmlText(html, profileCopy.location),
+			`Profile copy for ${locale} Home`,
+		);
+		const aboutHtml = await Bun.file(join(distDirectory, locale, 'about', 'index.html')).text();
+		assert(
+			includesHtmlText(aboutHtml, profileCopy.role) && includesHtmlText(aboutHtml, profileCopy.location),
+			`Profile copy for ${locale} About`,
 		);
 	}
 
@@ -125,6 +139,32 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 	const sitemap = (await Promise.all(sitemapFiles.map((path) => Bun.file(join(distDirectory, path)).text()))).join('\n');
 	for (const locale of locales) {
 		assert(sitemap.includes(`<loc>${SITE_ORIGIN}/${locale}/</loc>`), `Sitemap locale root for ${locale}`);
+	}
+	const sitemapEntries = sitemap.match(/<url>[\s\S]*?<\/url>/g) ?? [];
+	for (const entry of sitemapEntries) {
+		const location = entry.match(/<loc>([^<]+)<\/loc>/)?.[1];
+		assert(location, 'Sitemap entry is missing a location');
+		const locationUrl = new URL(location);
+		assert(
+			locationUrl.origin === SITE_ORIGIN && locales.some((locale) => locationUrl.pathname.startsWith(`/${locale}/`)),
+			`Non-canonical sitemap location: ${location}`,
+		);
+
+		const alternateTags = entry.match(/<xhtml:link\b[^>]*>/g) ?? [];
+		const alternateLocales = alternateTags.map((tag) => tag.match(/hreflang="([^"]+)"/)?.[1]);
+		assert(
+			new Set(alternateLocales).size === alternateLocales.length,
+			`Duplicate sitemap alternate for ${location}`,
+		);
+		for (const tag of alternateTags) {
+			const href = tag.match(/href="([^"]+)"/)?.[1];
+			assert(href, `Sitemap alternate is missing an href for ${location}`);
+			const alternateUrl = new URL(href);
+			assert(
+				alternateUrl.origin === SITE_ORIGIN && locales.some((locale) => alternateUrl.pathname.startsWith(`/${locale}/`)),
+				`Non-canonical sitemap alternate: ${href}`,
+			);
+		}
 	}
 	assert(
 		![...feedDocuments, sitemap].some((document) => document.includes('example.com')),

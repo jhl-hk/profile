@@ -1,6 +1,7 @@
 import { afterAll, beforeEach, expect, test } from 'bun:test';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { profile } from '../src/data/profile';
 
 const fixtureRoot = join(process.cwd(), '.temp', 'verify-dist-test');
 const distRoot = join(fixtureRoot, 'dist');
@@ -15,12 +16,13 @@ async function write(relativePath: string, content: string): Promise<void> {
 }
 
 function homeHtml(locale: (typeof locales)[number]): string {
+	const profileCopy = profile.copy[locale];
 	return `<!doctype html><html lang="${locale}"><head>
 		<title>Janyue Aosugi</title>
 		<link rel="canonical" href="${siteOrigin}/${locale}/">
 		${locales.map((target) => `<link rel="alternate" hreflang="${target}" href="${siteOrigin}/${target}/">`).join('')}
 		<link rel="alternate" hreflang="x-default" href="${siteOrigin}/en/">
-	</head><body></body></html>`;
+	</head><body><p>${profileCopy.role} · ${profileCopy.location}</p></body></html>`;
 }
 
 function rss(locale: (typeof locales)[number], slug: string): string {
@@ -45,6 +47,10 @@ async function createValidFixture(): Promise<void> {
 	for (const path of expectedHtml) await write(`dist/${path}`, '<!doctype html>');
 	for (const locale of locales) {
 		await write(`dist/${locale}/index.html`, homeHtml(locale));
+		await write(
+			`dist/${locale}/about/index.html`,
+			`<!doctype html><p>${profile.copy[locale].role} · ${profile.copy[locale].location}</p>`,
+		);
 		await write(`dist/${locale}/rss.xml`, rss(locale, `${locale}-post`));
 		await write(
 			`content/${locale}-post.md`,
@@ -141,6 +147,39 @@ test('rejects a sitemap without every locale root', async () => {
 	const result = await runVerifier();
 	expect(result.exitCode).not.toBe(0);
 	expect(result.stderr).toContain('Sitemap locale root for zh');
+});
+
+test('rejects redirect-only legacy URLs in the sitemap', async () => {
+	await write(
+		'dist/sitemap-0.xml',
+		`<?xml version="1.0"?><urlset>${locales.map((locale) => `<url><loc>${siteOrigin}/${locale}/</loc></url>`).join('')}<url><loc>${siteOrigin}/blog/</loc></url></urlset>`,
+	);
+	const result = await runVerifier();
+	expect(result.exitCode).not.toBe(0);
+	expect(result.stderr).toContain('Non-canonical sitemap location');
+});
+
+test('rejects duplicate locale alternates in a sitemap entry', async () => {
+	await write(
+		'dist/sitemap-0.xml',
+		`<?xml version="1.0"?><urlset>${locales.map((locale) => `<url><loc>${siteOrigin}/${locale}/</loc>${locale === 'en' ? `<xhtml:link hreflang="en-GB" href="${siteOrigin}/en/"/><xhtml:link hreflang="en-GB" href="${siteOrigin}/"/>` : ''}</url>`).join('')}</urlset>`,
+	);
+	const result = await runVerifier();
+	expect(result.exitCode).not.toBe(0);
+	expect(result.stderr).toContain('Duplicate sitemap alternate');
+});
+
+test('rejects English-only profile role and location on localized pages', async () => {
+	await write(
+		'dist/ja/index.html',
+		homeHtml('ja')
+			.replace(profile.copy.ja.role, profile.copy.en.role)
+			.replace(profile.copy.ja.location, profile.copy.en.location),
+	);
+	await write('dist/zh/about/index.html', `<p>${profile.copy.en.role} · ${profile.copy.en.location}</p>`);
+	const result = await runVerifier();
+	expect(result.exitCode).not.toBe(0);
+	expect(result.stderr).toMatch(/Profile copy for (ja Home|zh About)/);
 });
 
 test('rejects the placeholder origin anywhere in feeds or sitemaps', async () => {

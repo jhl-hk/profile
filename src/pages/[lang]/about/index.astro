@@ -21,11 +21,6 @@ const copy = getUiCopy(locale);
 const businessSkills = profile.skills.filter((skill) => skill.category === 'business');
 const technicalSkills = profile.skills.filter((skill) => skill.category === 'technical');
 const languages = profile.skills.filter((skill) => skill.category === 'language');
-const labels = {
-	en: { biography: 'Biography', business: 'Business', technical: 'Technical', languages: 'Languages' },
-	ja: { biography: 'プロフィール', business: 'ビジネス', technical: '技術', languages: '言語' },
-	zh: { biography: '个人简介', business: '商业', technical: '技术', languages: '语言' },
-} as const;
 const pathname = `/${locale}/about/`;
 ---
 
@@ -42,9 +37,9 @@ const pathname = `/${locale}/about/`;
 		<section class="profile-overview" aria-labelledby="profile-name">
 			<div class="monogram surface" role="img" aria-label={profile.name}>JA</div>
 			<div>
-				<p class="eyebrow">{labels[locale].biography}</p>
+				<p class="eyebrow">{copy.about.biography}</p>
 				<h2 id="profile-name">{profile.legalName}</h2>
-				<p class="profile-role">{profile.role} · {profile.location}</p>
+				<p class="profile-role">{profile.copy[locale].role} · {profile.copy[locale].location}</p>
 				<p class="profile-bio">{profile.copy[locale].bio}</p>
 				<SocialLinks locale={locale} />
 			</div>
@@ -57,15 +52,15 @@ const pathname = `/${locale}/about/`;
 			<h2 id="skills-title">{copy.about.skills}</h2>
 			<div class="detail-grid">
 				<div>
-					<h3>{labels[locale].business}</h3>
+					<h3>{copy.about.business}</h3>
 					<ul>{businessSkills.map((skill) => <li>{skill.copy[locale].label}</li>)}</ul>
 				</div>
 				<div>
-					<h3>{labels[locale].technical}</h3>
+					<h3>{copy.about.technical}</h3>
 					<ul>{technicalSkills.map((skill) => <li>{skill.copy[locale].label}</li>)}</ul>
 				</div>
 				<div>
-					<h3>{labels[locale].languages}</h3>
+					<h3>{copy.about.languages}</h3>
 					<ul>
 						{languages.map((skill) => <li>{skill.copy[locale].label}<span>{skill.copy[locale].proficiency}</span></li>)}
 					</ul>

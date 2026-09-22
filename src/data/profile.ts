@@ -31,8 +31,6 @@ interface Certification {
 export const profile = {
   name: 'Janyue Aosugi',
   legalName: 'Janyue Aosugi, a.k.a. Jianyue Hugo Liang',
-  role: 'Founder & CEO @ JianyueLab Ltd.',
-  location: 'Tokyo, Japan',
   email: 'mailto:ja@jhl.hk',
   socials: {
     github: 'https://github.com/jhl-hk',
@@ -40,14 +38,20 @@ export const profile = {
   },
   copy: {
     en: {
+      role: 'Founder & CEO @ JianyueLab Ltd.',
+      location: 'Tokyo, Japan',
       bio: 'Founder and web developer based in Tokyo, building JianyueLab while studying the International Baccalaureate.',
       contact: 'Open to thoughtful conversations about software, infrastructure, and new projects.',
     },
     ja: {
+      role: 'JianyueLab Ltd. 創業者・CEO',
+      location: '日本・東京',
       bio: '東京を拠点に、国際バカロレアを学びながら JianyueLab を運営する起業家・Web 開発者です。',
       contact: 'ソフトウェア、インフラ、新しいプロジェクトについてのご相談を歓迎します。',
     },
     zh: {
+      role: 'JianyueLab Ltd. 创始人兼 CEO',
+      location: '日本东京',
       bio: '常驻东京，在学习国际文凭课程的同时经营 JianyueLab，并从事 Web 开发。',
       contact: '欢迎交流软件、基础设施以及新的项目合作。',
     },

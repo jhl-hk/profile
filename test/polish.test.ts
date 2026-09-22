@@ -11,7 +11,7 @@ describe('final accessibility polish', () => {
 		expect(source).not.toContain('color: var(--text-faint);');
 	});
 
-	test('keeps the theme button state current when persistence fails', async () => {
+	test('keeps the theme button state current when the storage accessor fails', async () => {
 		const root = { dataset: { theme: 'light' as string } };
 		const attributes = new Map<string, string>();
 		const button = {
@@ -20,19 +20,20 @@ describe('final accessibility polish', () => {
 				attributes.set(name, value);
 			},
 		};
-		const storage = {
-			setItem() {
-				throw new Error('Storage unavailable');
-			},
+		let storageAccesses = 0;
+		const getStorage = () => {
+			storageAccesses += 1;
+			throw new Error('Storage unavailable');
 		};
 
-		expect(() => applyThemeSelection(root, button, 'dark', storage)).not.toThrow();
+		expect(() => applyThemeSelection(root, button, 'dark', getStorage)).not.toThrow();
+		expect(storageAccesses).toBe(1);
 		expect(root.dataset.theme).toBe('dark');
 		expect(attributes.get('aria-pressed')).toBe('true');
 		expect(attributes.get('aria-label')).toBe('Use light theme');
 
 		const source = await readFile('src/components/ThemeSwitcher.astro', 'utf8');
-		expect(source).toContain('applyThemeSelection(document.documentElement, button, theme, localStorage);');
+		expect(source).toContain('applyThemeSelection(document.documentElement, button, theme, () => localStorage);');
 	});
 
 	test('provides and consumes localized project tag labels', async () => {
@@ -43,6 +44,18 @@ describe('final accessibility polish', () => {
 		const source = await readFile('src/components/ProjectRow.astro', 'utf8');
 		expect(source).toContain('aria-label={copy.tags}');
 		expect(source).not.toContain('aria-label="Tags"');
+	});
+
+	test('consumes localized labels only from the typed UI dictionary', async () => {
+		const sources = await Promise.all([
+			readFile('src/components/ProjectRow.astro', 'utf8'),
+			readFile('src/components/ProfileTimeline.astro', 'utf8'),
+			readFile('src/pages/[lang]/index.astro', 'utf8'),
+			readFile('src/pages/[lang]/about/index.astro', 'utf8'),
+		]);
+		for (const source of sources) {
+			expect(source).not.toMatch(/const (?:labels|present) = \{/);
+		}
 	});
 });
 

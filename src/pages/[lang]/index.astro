@@ -22,11 +22,6 @@ interface Props {
 const { locale } = Astro.props;
 const copy = getUiCopy(locale);
 const posts = publishedPosts(await getCollection('blog'), locale).slice(0, 3);
-const labels = {
-	en: { role: 'Current role', location: 'Based in', writing: 'Recent writing' },
-	ja: { role: '現在の役割', location: '拠点', writing: '最近の執筆' },
-	zh: { role: '当前职务', location: '所在地', writing: '近期文章' },
-} as const;
 const languageTargets = staticLanguageTargets('/');
 ---
 
@@ -44,8 +39,8 @@ const languageTargets = staticLanguageTargets('/');
 			<h1 id="home-title">{profile.name}</h1>
 			<p class="home-introduction">{profile.copy[locale].bio}</p>
 			<div class="home-facts">
-				<p><span>{labels[locale].role}</span>{profile.role}</p>
-				<p><span>{labels[locale].location}</span>{profile.location}</p>
+				<p><span>{copy.home.currentRole}</span>{profile.copy[locale].role}</p>
+				<p><span>{copy.home.basedIn}</span>{profile.copy[locale].location}</p>
 			</div>
 		</section>
 
@@ -59,7 +54,7 @@ const languageTargets = staticLanguageTargets('/');
 
 		<section class="home-section" aria-labelledby="recent-writing">
 			<div class="section-heading">
-				<h2 id="recent-writing">{labels[locale].writing}</h2>
+				<h2 id="recent-writing">{copy.home.recentWriting}</h2>
 				<a href={`/${locale}/blog/`}>{copy.actions.viewAll}</a>
 			</div>
 			{

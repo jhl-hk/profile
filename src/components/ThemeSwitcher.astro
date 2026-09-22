@@ -39,7 +39,7 @@ const copy = getUiCopy(locale).accessibility;
 			syncThemeButton(button, document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
 			button.addEventListener('click', () => {
 				const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-				applyThemeSelection(document.documentElement, button, theme, localStorage);
+				applyThemeSelection(document.documentElement, button, theme, () => localStorage);
 			});
 		}
 	};

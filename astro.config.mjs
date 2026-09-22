@@ -10,6 +10,7 @@ export default defineConfig({
 	integrations: [
 		mdx(),
 		sitemap({
+			filter: (page) => ['/en/', '/ja/', '/zh/'].some((prefix) => new URL(page).pathname.startsWith(prefix)),
 			i18n: {
 				defaultLocale: 'en',
 				locales: { en: 'en-GB', ja: 'ja-JP', zh: 'zh-CN' },

@@ -1,5 +1,6 @@
 ---
 import type { profile } from '../data/profile';
+import { getUiCopy } from '../i18n/ui';
 import type { Locale } from '../lib/i18n';
 
 type TimelineRecord = (typeof profile.experience)[number] | (typeof profile.education)[number];
@@ -11,7 +12,7 @@ interface Props {
 }
 
 const { locale, title, records } = Astro.props;
-const present = { en: 'Present', ja: '現在', zh: '至今' } as const;
+const copy = getUiCopy(locale).about;
 const formatPeriod = (value: string) => {
 	const [year, month] = value.split('-');
 	return new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : locale === 'ja' ? 'ja-JP' : 'zh-CN', {
@@ -26,18 +27,18 @@ const formatPeriod = (value: string) => {
 	<ol class="timeline">
 		{
 			records.map((record) => {
-				const copy = record.copy[locale];
+				const recordCopy = record.copy[locale];
 				return (
 					<li>
 						<div class="timeline-period meta">
 							<time datetime={record.start}>{formatPeriod(record.start)}</time>
 							<span aria-hidden="true">—</span>
-							{record.end ? <time datetime={record.end}>{formatPeriod(record.end)}</time> : <span>{present[locale]}</span>}
+							{record.end ? <time datetime={record.end}>{formatPeriod(record.end)}</time> : <span>{copy.present}</span>}
 						</div>
 						<div>
-							<h3>{copy.title}</h3>
-							<p class="timeline-organisation">{record.organisation} · {copy.location}</p>
-							<p class="timeline-description">{copy.description}</p>
+							<h3>{recordCopy.title}</h3>
+							<p class="timeline-organisation">{record.organisation} · {recordCopy.location}</p>
+							<p class="timeline-description">{recordCopy.description}</p>
 						</div>
 					</li>
 				);

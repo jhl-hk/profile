@@ -9,18 +9,13 @@ interface Props {
 }
 
 const { project, locale } = Astro.props;
-const labels = {
-	en: { active: 'Active', external: 'Visit external project' },
-	ja: { active: '活動中', external: '外部のプロジェクトを見る' },
-	zh: { active: '进行中', external: '访问外部项目' },
-} as const;
 const projectCopy = project.copy[locale];
 const copy = getUiCopy(locale).projects;
 ---
 
 <article class="project-row">
 	<div class="project-heading">
-		<p class="project-status"><span aria-hidden="true"></span>{labels[locale][project.status]}</p>
+		<p class="project-status"><span aria-hidden="true"></span>{copy[project.status]}</p>
 		<h2>{project.name}</h2>
 	</div>
 	<div class="project-copy">
@@ -34,7 +29,7 @@ const copy = getUiCopy(locale).projects;
 		href={project.url}
 		target="_blank"
 		rel="noreferrer"
-		aria-label={`${labels[locale].external}: ${project.name}`}
+		aria-label={`${copy.externalProject}: ${project.name}`}
 	>
 		<span aria-hidden="true">↗</span>
 	</a>
