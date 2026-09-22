@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { basename, extname, join } from 'node:path';
-import { parseFrontmatter } from 'astro/markdown';
+import { join } from 'node:path';
+import { readBlogManifest } from './blog-manifest';
 import { SITE_ORIGIN } from '../src/consts';
 import { profile } from '../src/data/profile';
 import { getUiCopy } from '../src/i18n/ui';
@@ -36,21 +36,7 @@ export const expectedFiles = [
 ] as const;
 
 async function readPublishedArticles(contentDirectory: string): Promise<PublishedArticle[]> {
-	const articles: PublishedArticle[] = [];
-	const glob = new Bun.Glob('**/*.{md,mdx}');
-
-	for await (const relativePath of glob.scan({ cwd: contentDirectory, onlyFiles: true })) {
-		const { frontmatter } = parseFrontmatter(await Bun.file(join(contentDirectory, relativePath)).text());
-		if (frontmatter.draft === true) continue;
-		assert(locales.includes(frontmatter.lang), `Invalid Blog locale in ${relativePath}`);
-		articles.push({
-			lang: frontmatter.lang,
-			slug: basename(relativePath, extname(relativePath)),
-			sample: frontmatter.sample === true,
-		});
-	}
-
-	return articles;
+	return readBlogManifest(contentDirectory);
 }
 
 export async function assertDistOutput(distDirectory: string, contentDirectory: string): Promise<void> {

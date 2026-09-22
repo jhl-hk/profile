@@ -13,7 +13,7 @@ export interface PostLike {
 }
 
 export function postSlug(post: PostLike): string {
-	return post.id.split('/').filter(Boolean).at(-1) ?? post.id;
+	return post.id;
 }
 
 export function articlePaths<T extends PostLike>(posts: T[]) {

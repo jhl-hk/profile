@@ -32,10 +32,10 @@ describe('blog filtering', () => {
 
 describe('article route generation', () => {
 	const posts: PostLike[] = [
-		{ id: 'en/shared', data: { lang: 'en', pubDate: new Date('2026-09-20'), translationKey: 'shared' } },
-		{ id: 'ja/shared-ja', data: { lang: 'ja', pubDate: new Date('2026-09-19'), translationKey: 'shared' } },
-		{ id: 'zh/standalone', data: { lang: 'zh', pubDate: new Date('2026-09-18') } },
-		{ id: 'en/draft', data: { lang: 'en', pubDate: new Date('2026-09-21'), draft: true } },
+		{ id: 'shared', data: { lang: 'en', pubDate: new Date('2026-09-20'), translationKey: 'shared' } },
+		{ id: 'shared-ja', data: { lang: 'ja', pubDate: new Date('2026-09-19'), translationKey: 'shared' } },
+		{ id: 'standalone', data: { lang: 'zh', pubDate: new Date('2026-09-18') } },
+		{ id: 'draft', data: { lang: 'en', pubDate: new Date('2026-09-21'), draft: true } },
 	];
 
 	test('emits each published post exactly once under its declared locale', () => {
@@ -46,9 +46,9 @@ describe('article route generation', () => {
 			{ lang: 'zh', slug: 'standalone' },
 		]);
 		expect(paths.map(({ props }) => props.post.id)).toEqual([
-			'en/shared',
-			'ja/shared-ja',
-			'zh/standalone',
+			'shared',
+			'shared-ja',
+			'standalone',
 		]);
 		expect(new Set(paths.map(({ params }) => `${params.lang}/${params.slug}`)).size).toBe(paths.length);
 	});
@@ -56,8 +56,16 @@ describe('article route generation', () => {
 	test('rejects two declarations that resolve to the same localized route', () => {
 		expect(() => articlePaths([
 			posts[0],
-			{ id: 'archive/shared', data: { lang: 'en', pubDate: new Date('2026-09-17') } },
+			{ id: 'shared', data: { lang: 'en', pubDate: new Date('2026-09-17') } },
 		])).toThrow(/duplicate article route/i);
+	});
+
+	test('uses complete normalized content IDs for nested article routes', () => {
+		const paths = articlePaths([
+			{ id: 'guides/deep-dive', data: { lang: 'en', pubDate: new Date('2026-09-20') } },
+		]);
+
+		expect(paths[0]?.params).toEqual({ lang: 'en', slug: 'guides/deep-dive' });
 	});
 });
 

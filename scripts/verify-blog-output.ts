@@ -1,18 +1,13 @@
 import { readdir, readFile } from 'node:fs/promises';
-import { basename, extname, join } from 'node:path';
-import { parseFrontmatter } from 'astro/markdown';
+import { join } from 'node:path';
+import { readBlogManifest, type BlogManifestEntry } from './blog-manifest';
 import { normalizeFilterValue } from '../src/lib/blog-filter';
 import { locales, type Locale } from '../src/lib/i18n';
 
 export type BlogOutput = Record<string, string>;
 
-export interface DeclaredArticle {
-	id: string;
-	lang: Locale;
-	slug: string;
-	translationKey?: string;
-	topics: string[];
-}
+export type DeclaredArticle = Omit<BlogManifestEntry, 'sample' | 'sourcePath'> &
+	Partial<Pick<BlogManifestEntry, 'sample' | 'sourcePath'>>;
 
 function requireOutput(output: BlogOutput, path: string): string {
 	const html = output[path];
@@ -192,7 +187,7 @@ export function assertBlogOutput(output: BlogOutput, declared: DeclaredArticle[]
 	}
 
 	const expectedArticlePaths = new Set(declared.map(articleOutputPath));
-	const generatedArticlePaths = Object.keys(output).filter((path) => /^(en|ja|zh)\/blog\/[^/]+\/index\.html$/.test(path));
+	const generatedArticlePaths = Object.keys(output).filter((path) => /^(en|ja|zh)\/blog\/.+\/index\.html$/.test(path));
 	for (const path of expectedArticlePaths) requireOutput(output, path);
 	for (const path of generatedArticlePaths) {
 		if (!expectedArticlePaths.has(path)) throw new Error(`Unexpected or cross-locale Blog article output: ${path}`);
@@ -204,7 +199,7 @@ export function assertBlogOutput(output: BlogOutput, declared: DeclaredArticle[]
 	const expectedLegacyPaths = new Set(
 		declared.filter((article) => article.lang === 'en').map((article) => `blog/${article.slug}/index.html`),
 	);
-	const generatedLegacyPaths = Object.keys(output).filter((path) => /^blog\/[^/]+\/index\.html$/.test(path));
+	const generatedLegacyPaths = Object.keys(output).filter((path) => /^blog\/.+\/index\.html$/.test(path));
 	for (const path of generatedLegacyPaths) {
 		if (!expectedLegacyPaths.has(path)) throw new Error(`Unexpected legacy Blog redirect: ${path}`);
 	}
@@ -244,35 +239,7 @@ export async function readGeneratedBlogOutput(distDirectory: string): Promise<Bl
 }
 
 export async function readDeclaredArticles(contentDirectory: string): Promise<DeclaredArticle[]> {
-	const articles: DeclaredArticle[] = [];
-
-	async function visit(directory: string, relative = ''): Promise<void> {
-		for (const entry of await readdir(directory, { withFileTypes: true })) {
-			const entryRelative = relative ? `${relative}/${entry.name}` : entry.name;
-			const entryPath = join(directory, entry.name);
-			if (entry.isDirectory()) {
-				await visit(entryPath, entryRelative);
-				continue;
-			}
-			if (!entry.isFile() || !/\.mdx?$/.test(entry.name)) continue;
-
-			const { frontmatter } = parseFrontmatter(await readFile(entryPath, 'utf8'));
-			if (frontmatter.draft === true) continue;
-			if (!locales.includes(frontmatter.lang)) throw new Error(`Invalid Blog locale in ${entryRelative}`);
-			articles.push({
-				id: entryRelative.slice(0, -extname(entry.name).length),
-				lang: frontmatter.lang,
-				slug: basename(entry.name, extname(entry.name)),
-				translationKey: typeof frontmatter.translationKey === 'string' ? frontmatter.translationKey : undefined,
-				topics: Array.isArray(frontmatter.topics)
-					? frontmatter.topics.filter((topic): topic is string => typeof topic === 'string')
-					: [],
-			});
-		}
-	}
-
-	await visit(contentDirectory);
-	return articles;
+	return readBlogManifest(contentDirectory);
 }
 
 if (import.meta.main) {

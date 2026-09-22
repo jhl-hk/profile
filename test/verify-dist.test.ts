@@ -195,3 +195,19 @@ test('rejects an RSS channel that does not link to its locale root', async () =>
 	expect(result.exitCode).not.toBe(0);
 	expect(result.stderr).toContain('RSS channel link for ja');
 });
+
+test('uses frontmatter slug overrides for sample output and RSS routes', async () => {
+	await write(
+		'content/en-post.md',
+		"---\ntitle: 'en post'\ndescription: 'en description'\npubDate: '2026-09-22'\nlang: en\nslug: guides/custom-sample\nsample: true\ndraft: false\n---\n",
+	);
+	await rm(join(distRoot, 'en', 'blog', 'en-post'), { recursive: true, force: true });
+	await write(
+		'dist/en/blog/guides/custom-sample/index.html',
+		'<!doctype html><html lang="en"><head><meta property="og:type" content="article"></head><body><span>Sample</span></body></html>',
+	);
+	await write('dist/en/rss.xml', rss('en', 'guides/custom-sample'));
+
+	const result = await runVerifier();
+	expect(result.exitCode, result.stderr).toBe(0);
+});
