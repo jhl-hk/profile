@@ -6,8 +6,16 @@ import { defineConfig, fontProviders } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://example.com',
-	integrations: [mdx(), sitemap()],
+	site: 'https://jhl.idv.hk',
+	integrations: [
+		mdx(),
+		sitemap({
+			i18n: {
+				defaultLocale: 'en',
+				locales: { en: 'en-GB', ja: 'ja-JP', zh: 'zh-CN' },
+			},
+		}),
+	],
 	fonts: [
 		{
 			provider: fontProviders.local(),
