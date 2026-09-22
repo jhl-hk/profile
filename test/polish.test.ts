@@ -101,7 +101,7 @@ test('production feeds and sitemap reject the placeholder origin', async () => {
 		readFile('astro.config.mjs', 'utf8'),
 		readFile('scripts/verify-dist.ts', 'utf8'),
 	]);
-	expect(config).toContain("site: 'https://jhl.idv.hk'");
+	expect(config).toContain("const site = 'https://jhl.idv.hk'");
 	expect(config).not.toContain('example.com');
 	expect(verifier).toContain("document.includes('example.com')");
 });

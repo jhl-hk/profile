@@ -9,15 +9,15 @@ import {
 } from '../src/lib/content';
 
 const posts: PostLike[] = [
-	{ id: 'en/shared', data: { lang: 'en', pubDate: new Date('2026-09-20'), translationKey: 'shared' } },
-	{ id: 'ja/shared-ja', data: { lang: 'ja', pubDate: new Date('2026-09-19'), translationKey: 'shared' } },
-	{ id: 'zh/standalone', data: { lang: 'zh', pubDate: new Date('2026-09-18') } },
-	{ id: 'en/draft', data: { lang: 'en', pubDate: new Date('2026-09-22'), draft: true } },
+	{ id: 'shared', data: { lang: 'en', pubDate: new Date('2026-09-20'), translationKey: 'shared' } },
+	{ id: 'shared-ja', data: { lang: 'ja', pubDate: new Date('2026-09-19'), translationKey: 'shared' } },
+	{ id: 'standalone', data: { lang: 'zh', pubDate: new Date('2026-09-18') } },
+	{ id: 'draft', data: { lang: 'en', pubDate: new Date('2026-09-22'), draft: true } },
 ];
 
 describe('blog content helpers', () => {
 	test('filters drafts and languages', () => {
-		expect(publishedPosts(posts, 'en').map((post) => post.id)).toEqual(['en/shared']);
+		expect(publishedPosts(posts, 'en').map((post) => post.id)).toEqual(['shared']);
 	});
 
 	test('links translations but keeps standalone posts independent', () => {
