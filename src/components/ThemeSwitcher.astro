@@ -1,0 +1,99 @@
+---
+import { getUiCopy } from '../i18n/ui';
+import { defaultLocale, type Locale } from '../lib/i18n';
+
+interface Props {
+	locale?: Locale;
+}
+
+const { locale = defaultLocale } = Astro.props;
+const copy = getUiCopy(locale).accessibility;
+---
+
+<button
+	type="button"
+	class="theme-switcher"
+	data-theme-toggle
+	data-light-label={copy.lightTheme}
+	data-dark-label={copy.darkTheme}
+	aria-label={copy.themeSwitcher}
+	aria-pressed="false"
+>
+	<svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+		<circle cx="12" cy="12" r="3.5"></circle>
+		<path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
+	</svg>
+	<svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+		<path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z"></path>
+	</svg>
+</button>
+
+<script>
+	const bindThemeSwitchers = () => {
+		for (const button of document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')) {
+			if (button.dataset.bound === 'true') continue;
+			button.dataset.bound = 'true';
+
+			const updateButton = (theme: 'light' | 'dark') => {
+				const isDark = theme === 'dark';
+				button.setAttribute('aria-pressed', String(isDark));
+				button.setAttribute(
+					'aria-label',
+					isDark ? button.dataset.lightLabel ?? '' : button.dataset.darkLabel ?? '',
+				);
+			};
+
+			updateButton(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+			button.addEventListener('click', () => {
+				const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+				document.documentElement.dataset.theme = theme;
+				localStorage.setItem('theme', theme);
+				updateButton(theme);
+			});
+		}
+	};
+
+	bindThemeSwitchers();
+	document.addEventListener('astro:page-load', bindThemeSwitchers);
+</script>
+
+<style>
+	.theme-switcher {
+		position: relative;
+		display: inline-grid;
+		width: 2.75rem;
+		height: 2.75rem;
+		padding: 0;
+		place-items: center;
+		border: 1px solid var(--border);
+		border-radius: 50%;
+		background: var(--surface-raised);
+	}
+
+	.theme-switcher:active {
+		transform: scale(0.94);
+	}
+
+	svg {
+		position: absolute;
+		width: 1.05rem;
+		height: 1.05rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-width: 1.7;
+		transition: opacity 160ms ease, transform 160ms ease;
+	}
+
+	.moon,
+	:global(:root[data-theme='dark']) .sun {
+		opacity: 0;
+		transform: scale(0.6) rotate(-20deg);
+	}
+
+	:global(:root[data-theme='dark']) .moon {
+		opacity: 1;
+		transform: scale(1) rotate(0);
+	}
+</style>

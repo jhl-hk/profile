@@ -1,0 +1,52 @@
+---
+import { profile } from '../data/profile';
+import { getUiCopy } from '../i18n/ui';
+import { defaultLocale, type Locale } from '../lib/i18n';
+
+interface Props {
+	locale?: Locale;
+}
+
+const { locale = defaultLocale } = Astro.props;
+const copy = getUiCopy(locale);
+const links = [
+	{ label: 'GitHub', href: profile.socials.github, external: true },
+	{ label: 'LinkedIn', href: profile.socials.linkedin, external: true },
+	{ label: copy.actions.sendEmail, href: profile.email, external: false },
+	{ label: 'RSS', href: `/${locale}/rss.xml`, external: false },
+];
+---
+
+<ul class="social-links" aria-label={copy.accessibility.socialLinks}>
+	{
+		links.map(({ label, href, external }) => (
+			<li>
+				<a href={href} target={external ? '_blank' : undefined} rel={external ? 'me noreferrer' : undefined}>
+					{label}
+				</a>
+			</li>
+		))
+	}
+</ul>
+
+<style>
+	.social-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem 1.15rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	a {
+		color: var(--text-muted);
+		font-size: 0.88rem;
+		font-weight: 700;
+		text-decoration: none;
+	}
+
+	a:hover {
+		color: var(--text);
+	}
+</style>

@@ -8,6 +8,11 @@ describe('localized site data', () => {
   test('provides UI, profile, and project copy for every locale', () => {
     for (const locale of locales) {
       expect(getUiCopy(locale).nav.blog.length).toBeGreaterThan(0);
+      expect(getUiCopy(locale).accessibility.skipToContent.length).toBeGreaterThan(0);
+      expect(getUiCopy(locale).accessibility.primaryNavigation.length).toBeGreaterThan(0);
+      expect(getUiCopy(locale).accessibility.languageSwitcher.length).toBeGreaterThan(0);
+      expect(getUiCopy(locale).accessibility.socialLinks.length).toBeGreaterThan(0);
+      expect(getUiCopy(locale).accessibility.translationUnavailable.length).toBeGreaterThan(0);
       expect(profile.copy[locale].bio.length).toBeGreaterThan(20);
       for (const project of projects) {
         expect(project.copy[locale].description.length).toBeGreaterThan(10);

@@ -39,6 +39,16 @@ export interface UiCopy {
     title: string;
     description: string;
   };
+  accessibility: {
+    skipToContent: string;
+    primaryNavigation: string;
+    languageSwitcher: string;
+    socialLinks: string;
+    themeSwitcher: string;
+    lightTheme: string;
+    darkTheme: string;
+    translationUnavailable: string;
+  };
   footer: {
     copyright: string;
     builtWith: string;
@@ -74,6 +84,16 @@ const uiCopy: Record<Locale, UiCopy> = {
       certifications: 'Certifications',
     },
     notFound: { title: 'Page not found', description: 'The page you requested does not exist.' },
+    accessibility: {
+      skipToContent: 'Skip to content',
+      primaryNavigation: 'Primary navigation',
+      languageSwitcher: 'Choose language',
+      socialLinks: 'Social links',
+      themeSwitcher: 'Switch colour theme',
+      lightTheme: 'Use light theme',
+      darkTheme: 'Use dark theme',
+      translationUnavailable: 'Translation unavailable; view the blog in',
+    },
     footer: { copyright: 'All rights reserved.', builtWith: 'Built with Astro.' },
   },
   ja: {
@@ -104,6 +124,16 @@ const uiCopy: Record<Locale, UiCopy> = {
       certifications: '資格',
     },
     notFound: { title: 'ページが見つかりません', description: 'お探しのページは存在しません。' },
+    accessibility: {
+      skipToContent: '本文へ移動',
+      primaryNavigation: 'メインナビゲーション',
+      languageSwitcher: '言語を選択',
+      socialLinks: 'ソーシャルリンク',
+      themeSwitcher: 'カラーテーマを切り替え',
+      lightTheme: 'ライトテーマを使用',
+      darkTheme: 'ダークテーマを使用',
+      translationUnavailable: '翻訳はありません。次の言語のブログを表示:',
+    },
     footer: { copyright: 'All rights reserved.', builtWith: 'Astro で構築。' },
   },
   zh: {
@@ -134,6 +164,16 @@ const uiCopy: Record<Locale, UiCopy> = {
       certifications: '认证',
     },
     notFound: { title: '页面未找到', description: '你访问的页面不存在。' },
+    accessibility: {
+      skipToContent: '跳到正文',
+      primaryNavigation: '主导航',
+      languageSwitcher: '选择语言',
+      socialLinks: '社交链接',
+      themeSwitcher: '切换颜色主题',
+      lightTheme: '使用浅色主题',
+      darkTheme: '使用深色主题',
+      translationUnavailable: '暂无翻译；查看此语言的博客：',
+    },
     footer: { copyright: '版权所有。', builtWith: '使用 Astro 构建。' },
   },
 };
