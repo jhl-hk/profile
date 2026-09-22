@@ -179,4 +179,33 @@ describe('generated blog output verification', () => {
 			'en/blog/index.html': validOutput['en/blog/index.html'].replace('aria-pressed="false"', 'aria-pressed="mixed"'),
 		}, declared)).toThrow(/aria-pressed/i);
 	});
+
+	test('accepts HTML-escaped ampersands and quotes in topic filter attributes', () => {
+		const escapedDeclared: DeclaredArticle[] = [
+			{ id: 'en/escaped', lang: 'en', slug: 'escaped', topics: ['R&D', 'Say "Hi"'] },
+		];
+		const escapedIndex = index('r&amp;d').replace(
+			'</article>',
+			'</article><button data-topic-filter="say &quot;hi&quot;" aria-pressed="false">Say &quot;Hi&quot;</button>',
+		);
+		const escapedOutput = {
+			'blog/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/">',
+			'blog/escaped/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/escaped/">',
+			'en/blog/index.html': escapedIndex,
+			'ja/blog/index.html': index('astro'),
+			'zh/blog/index.html': index('设计'),
+			'en/blog/escaped/index.html': article({
+				locale: 'en',
+				slug: 'escaped',
+				switcher: [
+					switcherLink('en', '/en/blog/escaped/'),
+					switcherLink('ja', '/ja/blog/', true),
+					switcherLink('zh', '/zh/blog/', true),
+				].join(''),
+				translations: '<a href="/en/blog/escaped/" hreflang="en">English</a>',
+			}),
+		};
+
+		expect(() => assertBlogOutput(escapedOutput, escapedDeclared)).not.toThrow();
+	});
 });

@@ -34,7 +34,12 @@ function openingTags(html: string, element: string): string[] {
 }
 
 function attribute(tag: string, name: string): string | undefined {
-	return tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
+	const value = tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
+	return value?.replace(/&(?:#(\d+)|#x([\da-f]+)|(amp|apos|gt|lt|quot));/gi, (entity, decimal, hexadecimal, named) => {
+		if (decimal) return String.fromCodePoint(Number(decimal));
+		if (hexadecimal) return String.fromCodePoint(Number.parseInt(hexadecimal, 16));
+		return { amp: '&', apos: "'", gt: '>', lt: '<', quot: '"' }[named.toLowerCase() as 'amp'];
+	});
 }
 
 function hasAttribute(tag: string, name: string): boolean {
