@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "bun test",
+    "verify": "bun test && bun run build && bun scripts/verify-dist.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.1",
