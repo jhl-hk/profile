@@ -33,7 +33,7 @@ const fallbackPath = '/blog/';
 		<a class="site-name" href={route()}>{SITE_NAME}</a>
 
 		<nav class="primary-nav pill-nav" aria-label={copy.accessibility.primaryNavigation}>
-			<HeaderLink href={route()}>{copy.nav.home}</HeaderLink>
+			<HeaderLink href={route()} exact>{copy.nav.home}</HeaderLink>
 			<HeaderLink href={route('blog')}>{copy.nav.blog}</HeaderLink>
 			<HeaderLink href={route('projects')}>{copy.nav.projects}</HeaderLink>
 			<HeaderLink href={route('about')}>{copy.nav.about}</HeaderLink>

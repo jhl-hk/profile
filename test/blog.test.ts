@@ -15,18 +15,18 @@ describe('blog filtering', () => {
 	});
 
 	test('matches title, description, and topic text', () => {
-		expect(matchesPostFilter(post, 'useful', '')).toBe(true);
-		expect(matchesPostFilter(post, '東京', '')).toBe(true);
-		expect(matchesPostFilter(post, 'astro', '')).toBe(true);
-		expect(matchesPostFilter(post, 'missing', '')).toBe(false);
+		expect(matchesPostFilter(post, 'useful', '', 'en')).toBe(true);
+		expect(matchesPostFilter(post, '東京', '', 'en')).toBe(true);
+		expect(matchesPostFilter(post, 'astro', '', 'en')).toBe(true);
+		expect(matchesPostFilter(post, 'missing', '', 'en')).toBe(false);
 	});
 
 	test('combines search and exact topic selection', () => {
-		expect(matchesPostFilter(post, 'accessible', 'design systems')).toBe(true);
-		expect(matchesPostFilter(post, 'accessible', 'astro')).toBe(true);
-		expect(matchesPostFilter(post, 'useful', 'writing')).toBe(false);
-		expect(matchesPostFilter(post, 'missing', 'astro')).toBe(false);
-		expect(matchesPostFilter(post, '', '')).toBe(true);
+		expect(matchesPostFilter(post, 'accessible', 'design systems', 'en')).toBe(true);
+		expect(matchesPostFilter(post, 'accessible', 'astro', 'en')).toBe(true);
+		expect(matchesPostFilter(post, 'useful', 'writing', 'en')).toBe(false);
+		expect(matchesPostFilter(post, 'missing', 'astro', 'en')).toBe(false);
+		expect(matchesPostFilter(post, '', '', 'en')).toBe(true);
 	});
 });
 

@@ -44,7 +44,7 @@ const pathname = `/${locale}/blog/`;
 			posts.length > 0 ? (
 				<>
 					{featured && (
-						<div class="featured-wrap">
+						<div class="featured-wrap" data-featured-wrap>
 							<FeaturedPost post={featured} locale={locale} readingMinutes={estimateReadingMinutes(featured.body)} />
 						</div>
 					)}

@@ -15,6 +15,7 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 <div
 	class="post-search"
 	data-post-search
+	data-locale={locale}
 	data-result-count={copy.resultCount}
 	data-no-results={copy.noResults}
 >
@@ -30,7 +31,7 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 </div>
 
 <script>
-	import { matchesPostFilter } from '../lib/blog-filter';
+	import { matchesPostFilter, setPostFilterVisibility } from '../lib/blog-filter';
 
 	document.querySelectorAll<HTMLElement>('[data-post-search]').forEach((search) => {
 		const root = search.closest<HTMLElement>('[data-blog-index]');
@@ -40,6 +41,7 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 
 		const rows = root.querySelectorAll<HTMLElement>('[data-post-row]');
 		const topicButtons = root.querySelectorAll<HTMLButtonElement>('[data-topic-filter]');
+		const locale = search.dataset.locale ?? 'en';
 		let selectedTopic = '';
 
 		const update = () => {
@@ -50,7 +52,8 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 				const title = row.dataset.title ?? '';
 				const description = row.dataset.description ?? '';
 				const topics = (row.dataset.topics ?? '').split('|').filter(Boolean);
-				row.hidden = !matchesPostFilter({ title, description, topics }, query, selectedTopic);
+				const matchesPost = matchesPostFilter({ title, description, topics }, query, selectedTopic, locale);
+				setPostFilterVisibility(row, matchesPost);
 				if (!row.hidden) matches += 1;
 			});
 

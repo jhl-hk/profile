@@ -41,6 +41,7 @@ export interface UiCopy {
   projects: {
     title: string;
     introduction: string;
+    tags: string;
   };
   about: {
     title: string;
@@ -106,6 +107,7 @@ const uiCopy: Record<Locale, UiCopy> = {
     projects: {
       title: 'Selected work and long-running ideas.',
       introduction: 'Projects and organisations I work on.',
+      tags: 'Tags',
     },
     about: {
       title: 'Founder, developer, and student in Tokyo.',
@@ -163,6 +165,7 @@ const uiCopy: Record<Locale, UiCopy> = {
     projects: {
       title: '取り組んできた仕事と、育て続けている構想。',
       introduction: '取り組んでいるプロジェクトと組織です。',
+      tags: 'タグ',
     },
     about: {
       title: '東京で学び、つくり、事業を育てています。',
@@ -220,6 +223,7 @@ const uiCopy: Record<Locale, UiCopy> = {
     projects: {
       title: '持续投入的项目与长期构想。',
       introduction: '我正在参与的项目和组织。',
+      tags: '标签',
     },
     about: {
       title: '在东京学习、创造并经营事业。',

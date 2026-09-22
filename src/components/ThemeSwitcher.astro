@@ -29,26 +29,17 @@ const copy = getUiCopy(locale).accessibility;
 </button>
 
 <script>
+	import { applyThemeSelection, syncThemeButton } from '../lib/theme';
+
 	const bindThemeSwitchers = () => {
 		for (const button of document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')) {
 			if (button.dataset.bound === 'true') continue;
 			button.dataset.bound = 'true';
 
-			const updateButton = (theme: 'light' | 'dark') => {
-				const isDark = theme === 'dark';
-				button.setAttribute('aria-pressed', String(isDark));
-				button.setAttribute(
-					'aria-label',
-					isDark ? button.dataset.lightLabel ?? '' : button.dataset.darkLabel ?? '',
-				);
-			};
-
-			updateButton(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+			syncThemeButton(button, document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
 			button.addEventListener('click', () => {
 				const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-				document.documentElement.dataset.theme = theme;
-				localStorage.setItem('theme', theme);
-				updateButton(theme);
+				applyThemeSelection(document.documentElement, button, theme, localStorage);
 			});
 		}
 	};

@@ -1,15 +1,12 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
+import { isNavigationPathActive } from '../lib/navigation';
 
-type Props = HTMLAttributes<'a'>;
+type Props = HTMLAttributes<'a'> & { exact?: boolean };
 
-const { href = '/', class: className, ...props } = Astro.props;
-const normalizePath = (path: string) => path === '/' ? '/' : `/${path.split('/').filter(Boolean).join('/')}`;
-const pathname = normalizePath(Astro.url.pathname.replace(import.meta.env.BASE_URL, '/'));
-const targetPath = normalizePath(href);
-const isActive = targetPath === '/'
-	? pathname === targetPath
-	: pathname === targetPath || pathname.startsWith(`${targetPath}/`);
+const { href = '/', class: className, exact = false, ...props } = Astro.props;
+const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '/');
+const isActive = isNavigationPathActive(pathname, href, exact);
 ---
 
 <a

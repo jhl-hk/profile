@@ -1,5 +1,6 @@
 ---
 import type { projects } from '../data/projects';
+import { getUiCopy } from '../i18n/ui';
 import type { Locale } from '../lib/i18n';
 
 interface Props {
@@ -13,7 +14,8 @@ const labels = {
 	ja: { active: '活動中', external: '外部のプロジェクトを見る' },
 	zh: { active: '进行中', external: '访问外部项目' },
 } as const;
-const copy = project.copy[locale];
+const projectCopy = project.copy[locale];
+const copy = getUiCopy(locale).projects;
 ---
 
 <article class="project-row">
@@ -22,8 +24,8 @@ const copy = project.copy[locale];
 		<h2>{project.name}</h2>
 	</div>
 	<div class="project-copy">
-		<p>{copy.description}</p>
-		<ul class="project-tags" aria-label="Tags">
+		<p>{projectCopy.description}</p>
+		<ul class="project-tags" aria-label={copy.tags}>
 			{project.tags.map((tag) => <li>{tag}</li>)}
 		</ul>
 	</div>
