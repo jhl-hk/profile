@@ -14,6 +14,12 @@ const blog = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.optional(image()),
+			lang: z.enum(['en', 'ja', 'zh']),
+			translationKey: z.string().min(1).optional(),
+			topics: z.array(z.string().min(1)).default([]),
+			featured: z.boolean().default(false),
+			draft: z.boolean().default(false),
+			sample: z.boolean().default(false),
 		}),
 });
 
