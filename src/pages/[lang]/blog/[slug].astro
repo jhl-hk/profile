@@ -3,17 +3,14 @@ import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '../../../layouts/BlogPost.astro';
 import {
 	adjacentPosts,
+	articlePaths,
 	estimateReadingMinutes,
-	postSlug,
 	translationTargets,
 } from '../../../lib/content';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog', ({ data }) => !data.draft);
-	return posts.map((post) => ({
-		params: { lang: post.data.lang, slug: postSlug(post) },
-		props: { post },
-	}));
+	return articlePaths(posts);
 }
 
 interface Props {

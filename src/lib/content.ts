@@ -16,6 +16,19 @@ export function postSlug(post: PostLike): string {
 	return post.id.split('/').filter(Boolean).at(-1) ?? post.id;
 }
 
+export function articlePaths<T extends PostLike>(posts: T[]) {
+	const routes = new Set<string>();
+	return posts
+		.filter((post) => !post.data.draft)
+		.map((post) => {
+			const params = { lang: post.data.lang, slug: postSlug(post) };
+			const route = `${params.lang}/${params.slug}`;
+			if (routes.has(route)) throw new Error(`Duplicate article route: /${route}/`);
+			routes.add(route);
+			return { params, props: { post } };
+		});
+}
+
 export function publishedPosts<T extends PostLike>(posts: T[], locale: Locale): T[] {
 	return posts
 		.filter((post) => post.data.lang === locale && !post.data.draft)
