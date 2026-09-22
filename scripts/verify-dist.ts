@@ -77,6 +77,7 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 
 	const articles = await readPublishedArticles(contentDirectory);
 	const sampleArticles = articles.filter((article) => article.lang === 'en' && article.sample);
+	assert(sampleArticles.length > 0, 'No declared published English sample article');
 	const otherLocaleIndexes = await Promise.all(
 		locales.filter((locale) => locale !== 'en').map(async (locale) => ({
 			locale,

@@ -106,6 +106,16 @@ test('rejects an English sample article leaked into another locale index', async
 	expect(result.stderr).toContain('English sample article leaked into ja Blog index');
 });
 
+test('rejects generated output with no declared published English sample article', async () => {
+	await write(
+		'content/en-post.md',
+		"---\ntitle: 'en post'\ndescription: 'en description'\npubDate: '2026-09-22'\nlang: en\nsample: false\ndraft: false\n---\n",
+	);
+	const result = await runVerifier();
+	expect(result.exitCode).not.toBe(0);
+	expect(result.stderr).toContain('No declared published English sample article');
+});
+
 test('rejects an RSS feed containing another locale entry', async () => {
 	await write(
 		'dist/en/rss.xml',
