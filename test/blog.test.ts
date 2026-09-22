@@ -1,87 +1,72 @@
 import { describe, expect, test } from 'bun:test';
-import { readFile } from 'node:fs/promises';
+import { matchesPostFilter, normalizeFilterValue } from '../src/lib/blog-filter';
+import { assertBlogOutput, type BlogOutputExpectations } from '../scripts/verify-blog-output';
 
-const source = (path: string) => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
+describe('blog filtering', () => {
+	const post = {
+		title: 'Building Useful Things',
+		description: 'Notes from 東京 about accessible interfaces.',
+		topics: ['Design Systems', 'Astro'],
+	};
 
-describe('blog presentation contracts', () => {
-	test('post presentations expose localized metadata and filter attributes', async () => {
-		const [row, featured] = await Promise.all([
-			source('src/components/PostRow.astro'),
-			source('src/components/FeaturedPost.astro'),
-		]);
-
-		for (const component of [row, featured]) {
-			expect(component).toContain("post: CollectionEntry<'blog'>");
-			expect(component).toContain('locale: Locale');
-			expect(component).toContain('readingMinutes: number');
-			expect(component).toContain('data-post-row');
-			expect(component).toContain('data-title=');
-			expect(component).toContain('data-description=');
-			expect(component).toContain('data-topics=');
-			expect(component).toContain('sample-badge');
-		}
-
-		expect(row).not.toContain('aria-label="Topics"');
+	test('normalizes case, width, and surrounding whitespace', () => {
+		expect(normalizeFilterValue('  ＡＳＴＲＯ  ')).toBe('astro');
 	});
 
-	test('search and topic controls expose combined filtering state', async () => {
-		const [search, topics] = await Promise.all([
-			source('src/components/PostSearch.astro'),
-			source('src/components/TopicList.astro'),
-		]);
+	test('matches title, description, and topic text', () => {
+		expect(matchesPostFilter(post, 'useful', '')).toBe(true);
+		expect(matchesPostFilter(post, '東京', '')).toBe(true);
+		expect(matchesPostFilter(post, 'astro', '')).toBe(true);
+		expect(matchesPostFilter(post, 'missing', '')).toBe(false);
+	});
 
-		expect(search).toContain("querySelectorAll<HTMLElement>('[data-post-row]')");
-		expect(search).toContain('dataset.title');
-		expect(search).toContain('dataset.description');
-		expect(search).toContain('dataset.topics');
-		expect(search).toContain("aria-live=\"polite\"");
-		expect(topics).toContain('data-topic-filter');
-		expect(topics).toContain('aria-pressed');
+	test('combines search and exact topic selection', () => {
+		expect(matchesPostFilter(post, 'accessible', 'design systems')).toBe(true);
+		expect(matchesPostFilter(post, 'accessible', 'astro')).toBe(true);
+		expect(matchesPostFilter(post, 'useful', 'writing')).toBe(false);
+		expect(matchesPostFilter(post, 'missing', 'astro')).toBe(false);
+		expect(matchesPostFilter(post, '', '')).toBe(true);
 	});
 });
 
-describe('blog route contracts', () => {
-	test('localized index selects published and featured posts', async () => {
-		const index = await source('src/pages/[lang]/blog/index.astro');
+describe('generated blog output verification', () => {
+	const expectations: BlogOutputExpectations = {
+		tocPaths: ['en/blog/with-toc/index.html'],
+		withoutTocPaths: ['en/blog/plain/index.html'],
+	};
 
-		expect(index).toContain('publishedPosts(');
-		expect(index).toContain('post.data.featured');
-		expect(index).toContain('<FeaturedPost');
-		expect(index).toContain('<PostSearch');
-		expect(index).toContain('<TopicList');
-		expect(index).toContain('@media (max-width: 900px)');
+	const article = (slug: string, toc = false) => `
+		<html lang="en">
+		<link rel="canonical" href="https://jhl.idv.hk/en/blog/${slug}/">
+		<a href="/ja/blog/" aria-label="Translation unavailable; view the blog in 日本語" data-fallback>JA</a>
+		<a href="/zh/blog/" aria-label="Translation unavailable; view the blog in 简体中文" data-fallback>ZH</a>
+		${toc ? '<aside class="table-of-contents"><h2 id="toc-title">On this page</h2></aside>' : ''}
+	`;
+
+	const validOutput = {
+		'blog/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/">',
+		'blog/plain/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/plain/">',
+		'blog/with-toc/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/with-toc/">',
+		'en/blog/index.html': '<article data-post-row data-title="plain" data-description="notes" data-topics="astro"></article><p aria-live="polite"></p><button aria-pressed="true"></button>',
+		'ja/blog/index.html': '<p>まだ投稿はありません。</p>',
+		'zh/blog/index.html': '<p>暂时没有文章。</p>',
+		'en/blog/plain/index.html': article('plain'),
+		'en/blog/with-toc/index.html': article('with-toc', true),
+	};
+
+	test('accepts localized routes, redirects, fallbacks, filters, and TOC output', () => {
+		expect(() => assertBlogOutput(validOutput, expectations)).not.toThrow();
 	});
 
-	test('localized articles use rendered headings, translations, and adjacency', async () => {
-		const [route, layout] = await Promise.all([
-			source('src/pages/[lang]/blog/[slug].astro'),
-			source('src/layouts/BlogPost.astro'),
-		]);
+	test('rejects duplicate legacy article HTML and missing TOC output', () => {
+		expect(() => assertBlogOutput({
+			...validOutput,
+			'blog/plain/index.html': '<article>duplicate article</article>',
+		}, expectations)).toThrow(/legacy redirect/i);
 
-		expect(route).toContain("getCollection('blog', ({ data }) => !data.draft)");
-		expect(route).toContain('params: { lang: post.data.lang, slug: postSlug(post) }');
-		expect(route).toContain('const { Content, headings } = await render(post)');
-		expect(route).toContain('translationTargets(');
-		expect(route).toContain('adjacentPosts(');
-
-		expect(layout).toContain("headings: MarkdownHeading[]");
-		expect(layout).toContain('languageTargets: LanguageTargets');
-		expect(layout).toContain('headings.length >= 2');
-		expect(layout).toContain('<SiteLayout');
-		expect(layout).toContain('class="reading-column prose"');
-		expect(layout).toContain('previous');
-		expect(layout).toContain('next');
-	});
-
-	test('legacy blog pages only redirect to English canonical routes', async () => {
-		const [index, article] = await Promise.all([
-			source('src/pages/blog/index.astro'),
-			source('src/pages/blog/[...slug].astro'),
-		]);
-
-		expect(index).toContain("Astro.redirect('/en/blog/'");
-		expect(article).toContain("data.lang === 'en'");
-		expect(article).toContain('Astro.redirect(`/en/blog/${slug}/`');
-		expect(article).not.toContain('<BlogPost');
+		expect(() => assertBlogOutput({
+			...validOutput,
+			'en/blog/with-toc/index.html': article('with-toc'),
+		}, expectations)).toThrow(/table of contents/i);
 	});
 });

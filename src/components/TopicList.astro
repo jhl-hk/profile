@@ -1,5 +1,6 @@
 ---
 import { getUiCopy } from '../i18n/ui';
+import { normalizeFilterValue } from '../lib/blog-filter';
 import type { Locale } from '../lib/i18n';
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 
 const { topics, locale } = Astro.props;
 const copy = getUiCopy(locale).blog;
-const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase(locale);
+const normalize = (value: string) => normalizeFilterValue(value, locale);
 ---
 
 <div class="topic-list">

@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { getUiCopy } from '../i18n/ui';
+import { normalizeFilterValue } from '../lib/blog-filter';
 import { formatDate, formatReadingTime, type Locale } from '../lib/i18n';
 import { postSlug } from '../lib/content';
 
@@ -13,7 +14,7 @@ interface Props {
 const { post, locale, readingMinutes } = Astro.props;
 const copy = getUiCopy(locale).blog;
 const href = `/${locale}/blog/${postSlug(post)}/`;
-const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase(locale);
+const normalize = (value: string) => normalizeFilterValue(value, locale);
 ---
 
 <article

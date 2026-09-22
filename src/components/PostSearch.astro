@@ -30,7 +30,7 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 </div>
 
 <script>
-	const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase().trim();
+	import { matchesPostFilter } from '../lib/blog-filter';
 
 	document.querySelectorAll<HTMLElement>('[data-post-search]').forEach((search) => {
 		const root = search.closest<HTMLElement>('[data-blog-index]');
@@ -43,16 +43,14 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 		let selectedTopic = '';
 
 		const update = () => {
-			const query = normalize(input.value);
+			const query = input.value;
 			let matches = 0;
 
 			rows.forEach((row) => {
 				const title = row.dataset.title ?? '';
 				const description = row.dataset.description ?? '';
 				const topics = (row.dataset.topics ?? '').split('|').filter(Boolean);
-				const matchesSearch = !query || `${title} ${description} ${topics.join(' ')}`.includes(query);
-				const matchesTopic = !selectedTopic || topics.includes(selectedTopic);
-				row.hidden = !(matchesSearch && matchesTopic);
+				row.hidden = !matchesPostFilter({ title, description, topics }, query, selectedTopic);
 				if (!row.hidden) matches += 1;
 			});
 

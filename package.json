@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && bun scripts/verify-blog-output.ts",
     "preview": "astro preview",
     "astro": "astro",
     "test": "bun test",
