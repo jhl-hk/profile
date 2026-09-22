@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { getUiCopy } from '../i18n/ui';
 import { formatDate, formatReadingTime, type Locale } from '../lib/i18n';
 import { postSlug } from '../lib/content';
 
@@ -10,22 +11,29 @@ interface Props {
 }
 
 const { post, locale, readingMinutes } = Astro.props;
-const sampleLabel = { en: 'Sample', ja: 'サンプル', zh: '示例' } as const;
+const copy = getUiCopy(locale).blog;
 const href = `/${locale}/blog/${postSlug(post)}/`;
+const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase(locale);
 ---
 
-<article class="post-row">
+<article
+	class="post-row"
+	data-post-row
+	data-title={normalize(post.data.title)}
+	data-description={normalize(post.data.description)}
+	data-topics={post.data.topics.map(normalize).join('|')}
+>
 	<div class="post-meta meta">
 		<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, locale)}</time>
 		<span aria-hidden="true">·</span>
 		<span>{formatReadingTime(readingMinutes, locale)}</span>
-		{post.data.sample && <span class="sample-badge">{sampleLabel[locale]}</span>}
+		{post.data.sample && <span class="sample-badge">{copy.sample}</span>}
 	</div>
 	<h3><a href={href}>{post.data.title}</a></h3>
 	<p>{post.data.description}</p>
 	{
 		post.data.topics.length > 0 && (
-			<ul class="post-topics" aria-label="Topics">
+			<ul class="post-topics" aria-label={copy.topics}>
 				{post.data.topics.map((topic) => <li>{topic}</li>)}
 			</ul>
 		)

@@ -1,0 +1,90 @@
+---
+import { getUiCopy } from '../i18n/ui';
+import type { Locale } from '../lib/i18n';
+
+interface Props {
+	locale: Locale;
+	count: number;
+}
+
+const { locale, count } = Astro.props;
+const copy = getUiCopy(locale).blog;
+const initialResult = copy.resultCount.replace('{count}', String(count));
+---
+
+<div
+	class="post-search"
+	data-post-search
+	data-result-count={copy.resultCount}
+	data-no-results={copy.noResults}
+>
+	<label for={`post-search-${locale}`}>{copy.search}</label>
+	<input
+		id={`post-search-${locale}`}
+		type="search"
+		name="query"
+		placeholder={copy.searchPlaceholder}
+		autocomplete="off"
+	/>
+	<p class="result-count meta" aria-live="polite" aria-atomic="true">{initialResult}</p>
+</div>
+
+<script>
+	const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase().trim();
+
+	document.querySelectorAll<HTMLElement>('[data-post-search]').forEach((search) => {
+		const root = search.closest<HTMLElement>('[data-blog-index]');
+		const input = search.querySelector<HTMLInputElement>('input[type="search"]');
+		const output = search.querySelector<HTMLElement>('[aria-live="polite"]');
+		if (!root || !input || !output) return;
+
+		const rows = root.querySelectorAll<HTMLElement>('[data-post-row]');
+		const topicButtons = root.querySelectorAll<HTMLButtonElement>('[data-topic-filter]');
+		let selectedTopic = '';
+
+		const update = () => {
+			const query = normalize(input.value);
+			let matches = 0;
+
+			rows.forEach((row) => {
+				const title = row.dataset.title ?? '';
+				const description = row.dataset.description ?? '';
+				const topics = (row.dataset.topics ?? '').split('|').filter(Boolean);
+				const matchesSearch = !query || `${title} ${description} ${topics.join(' ')}`.includes(query);
+				const matchesTopic = !selectedTopic || topics.includes(selectedTopic);
+				row.hidden = !(matchesSearch && matchesTopic);
+				if (!row.hidden) matches += 1;
+			});
+
+			output.textContent = matches === 0
+				? search.dataset.noResults ?? ''
+				: (search.dataset.resultCount ?? '{count}').replace('{count}', String(matches));
+		};
+
+		input.addEventListener('input', update);
+		topicButtons.forEach((button) => {
+			button.addEventListener('click', () => {
+				selectedTopic = button.dataset.topicFilter ?? '';
+				topicButtons.forEach((candidate) => {
+					candidate.setAttribute('aria-pressed', String(candidate === button));
+				});
+				update();
+			});
+		});
+	});
+</script>
+
+<style>
+	label {
+		display: block;
+		margin-bottom: 0.65rem;
+		font-size: 0.82rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.result-count {
+		margin: 0.55rem 0 0;
+	}
+</style>

@@ -1,0 +1,39 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BlogPost from '../../../layouts/BlogPost.astro';
+import {
+	adjacentPosts,
+	estimateReadingMinutes,
+	postSlug,
+	translationTargets,
+} from '../../../lib/content';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog', ({ data }) => !data.draft);
+	return posts.map((post) => ({
+		params: { lang: post.data.lang, slug: postSlug(post) },
+		props: { post },
+	}));
+}
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const posts = await getCollection('blog');
+const { Content, headings } = await render(post);
+const { previous, next } = adjacentPosts(posts, post, post.data.lang);
+---
+
+<BlogPost
+	post={post}
+	locale={post.data.lang}
+	headings={headings}
+	readingMinutes={estimateReadingMinutes(post.body)}
+	languageTargets={translationTargets(posts, post)}
+	previous={previous}
+	next={next}
+>
+	<Content />
+</BlogPost>

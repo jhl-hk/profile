@@ -23,6 +23,20 @@ export interface UiCopy {
   blog: {
     title: string;
     empty: string;
+    featured: string;
+    sample: string;
+    search: string;
+    searchPlaceholder: string;
+    filters: string;
+    topics: string;
+    allTopics: string;
+    resultCount: string;
+    noResults: string;
+    tableOfContents: string;
+    translations: string;
+    previous: string;
+    next: string;
+    updated: string;
   };
   projects: {
     title: string;
@@ -71,7 +85,24 @@ const uiCopy: Record<Locale, UiCopy> = {
       introduction: 'A founder and web developer based in Tokyo.',
       featuredProjects: 'Featured projects',
     },
-    blog: { title: 'Notes on building useful things.', empty: 'No posts yet.' },
+    blog: {
+      title: 'Notes on building useful things.',
+      empty: 'No posts yet.',
+      featured: 'Featured',
+      sample: 'Sample',
+      search: 'Search posts',
+      searchPlaceholder: 'Search by title, description, or topic',
+      filters: 'Filter posts',
+      topics: 'Topics',
+      allTopics: 'All topics',
+      resultCount: '{count} posts',
+      noResults: 'No matching posts',
+      tableOfContents: 'On this page',
+      translations: 'Translations',
+      previous: 'Previous post',
+      next: 'Next post',
+      updated: 'Updated',
+    },
     projects: {
       title: 'Selected work and long-running ideas.',
       introduction: 'Projects and organisations I work on.',
@@ -111,7 +142,24 @@ const uiCopy: Record<Locale, UiCopy> = {
       introduction: '東京を拠点に活動する起業家・Web 開発者です。',
       featuredProjects: '注目のプロジェクト',
     },
-    blog: { title: '役に立つものをつくるための記録。', empty: 'まだ投稿はありません。' },
+    blog: {
+      title: '役に立つものをつくるための記録。',
+      empty: 'まだ投稿はありません。',
+      featured: '注目の記事',
+      sample: 'サンプル',
+      search: '記事を検索',
+      searchPlaceholder: 'タイトル、概要、トピックで検索',
+      filters: '記事を絞り込む',
+      topics: 'トピック',
+      allTopics: 'すべて',
+      resultCount: '{count}件の記事',
+      noResults: '一致する記事はありません',
+      tableOfContents: '目次',
+      translations: '翻訳',
+      previous: '前の記事',
+      next: '次の記事',
+      updated: '更新',
+    },
     projects: {
       title: '取り組んできた仕事と、育て続けている構想。',
       introduction: '取り組んでいるプロジェクトと組織です。',
@@ -151,7 +199,24 @@ const uiCopy: Record<Locale, UiCopy> = {
       introduction: '一名常驻东京的创业者和 Web 开发者。',
       featuredProjects: '重点项目',
     },
-    blog: { title: '关于创造有用事物的笔记。', empty: '暂时没有文章。' },
+    blog: {
+      title: '关于创造有用事物的笔记。',
+      empty: '暂时没有文章。',
+      featured: '精选文章',
+      sample: '示例',
+      search: '搜索文章',
+      searchPlaceholder: '按标题、摘要或主题搜索',
+      filters: '筛选文章',
+      topics: '主题',
+      allTopics: '全部',
+      resultCount: '{count} 篇文章',
+      noResults: '没有匹配的文章',
+      tableOfContents: '本文目录',
+      translations: '翻译',
+      previous: '上一篇',
+      next: '下一篇',
+      updated: '更新于',
+    },
     projects: {
       title: '持续投入的项目与长期构想。',
       introduction: '我正在参与的项目和组织。',

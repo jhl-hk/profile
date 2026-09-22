@@ -1,86 +1,364 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
+import type { MarkdownHeading } from 'astro';
+import { getUiCopy } from '../i18n/ui';
+import { postSlug } from '../lib/content';
+import { formatDate, formatReadingTime, localeLabels, type Locale } from '../lib/i18n';
+import type { LanguageTargets } from '../lib/seo';
+import SiteLayout from './SiteLayout.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+interface Props {
+	post: CollectionEntry<'blog'>;
+	locale: Locale;
+	headings: MarkdownHeading[];
+	readingMinutes: number;
+	languageTargets: LanguageTargets;
+	previous?: CollectionEntry<'blog'>;
+	next?: CollectionEntry<'blog'>;
+}
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { post, locale, headings, readingMinutes, languageTargets, previous, next } = Astro.props;
+const copy = getUiCopy(locale).blog;
+const pathname = `/${locale}/blog/${postSlug(post)}/`;
+const translations = Object.entries(languageTargets) as [Locale, string][];
+const showTableOfContents = headings.length >= 2;
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
+<SiteLayout
+	locale={locale}
+	title={post.data.title}
+	description={post.data.description}
+	pathname={pathname}
+	languageTargets={languageTargets}
+	image={post.data.heroImage}
+	type="article"
+	mainClass="blog-post-page"
+>
+	<article class="page-shell">
+		<header class="article-header reading-column">
+			<div class="article-meta meta">
+				<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, locale)}</time>
+				<span aria-hidden="true">·</span>
+				<span>{formatReadingTime(readingMinutes, locale)}</span>
+				{post.data.sample && <span class="sample-badge">{copy.sample}</span>}
+			</div>
+			<h1>{post.data.title}</h1>
+			<p class="description">{post.data.description}</p>
+			{
+				post.data.updatedDate && (
+					<p class="updated meta">
+						{copy.updated} <time datetime={post.data.updatedDate.toISOString()}>{formatDate(post.data.updatedDate, locale)}</time>
+					</p>
+				)
 			}
-			.hero-image {
-				width: 100%;
+			{
+				post.data.topics.length > 0 && (
+					<ul class="article-topics" aria-label={copy.topics}>
+						{post.data.topics.map((topic) => <li>{topic}</li>)}
+					</ul>
+				)
 			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+		</header>
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
+		{
+			post.data.heroImage && (
+				<div class="hero-image surface">
+					<Image src={post.data.heroImage} width={1080} alt="" loading="eager" />
 				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+			)
+		}
+
+		<div class:list={['article-body', { 'has-toc': showTableOfContents }]}>
+			{
+				showTableOfContents && (
+					<aside class="table-of-contents" aria-labelledby="toc-title">
+						<h2 id="toc-title">{copy.tableOfContents}</h2>
+						<ol>
+							{headings.map((heading) => (
+								<li class={`depth-${heading.depth}`}><a href={`#${heading.slug}`}>{heading.text}</a></li>
+							))}
+						</ol>
+					</aside>
+				)
+			}
+			<div class="reading-column prose">
+				<slot />
+			</div>
+		</div>
+
+		<footer class="article-footer reading-column">
+			<section class="translations" aria-labelledby="translations-title">
+				<h2 id="translations-title">{copy.translations}</h2>
+				<ul>
+					{
+						translations.map(([targetLocale, href]) => (
+							<li>
+								<a href={href} hreflang={targetLocale} lang={targetLocale} aria-current={targetLocale === locale ? 'page' : undefined}>
+									{localeLabels[targetLocale]}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			{
+				(previous || next) && (
+					<nav class="post-navigation" aria-label={`${copy.previous} / ${copy.next}`}>
+						{previous ? (
+							<a class="previous" href={`/${locale}/blog/${postSlug(previous)}/`}>
+								<span>{copy.previous}</span>
+								<strong>{previous.data.title}</strong>
+							</a>
+						) : <span />}
+						{next && (
+							<a class="next" href={`/${locale}/blog/${postSlug(next)}/`}>
+								<span>{copy.next}</span>
+								<strong>{next.data.title}</strong>
+							</a>
+						)}
+					</nav>
+				)
+			}
+		</footer>
+	</article>
+</SiteLayout>
+
+<style>
+	.article-header {
+		padding-block: clamp(2rem, 6vw, 5rem);
+		text-align: center;
+	}
+
+	.article-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.45rem;
+		margin-bottom: 1rem;
+	}
+
+	.article-header h1 {
+		margin-bottom: 0.25em;
+		font-size: clamp(2.5rem, 8vw, 5.4rem);
+	}
+
+	.description {
+		max-width: 42rem;
+		margin-inline: auto;
+		color: var(--text-muted);
+		font-family: var(--font-reading);
+		font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+	}
+
+	.updated {
+		margin-bottom: 1rem;
+	}
+
+	.sample-badge {
+		padding: 0.08rem 0.45rem;
+		border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--border));
+		border-radius: var(--radius-pill);
+		color: var(--accent-strong);
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+	}
+
+	.article-topics {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.45rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.article-topics li {
+		color: var(--text-faint);
+		font-size: 0.82rem;
+	}
+
+	.article-topics li::before {
+		content: '#';
+	}
+
+	.hero-image {
+		overflow: hidden;
+		margin-bottom: clamp(3rem, 8vw, 6rem);
+	}
+
+	.hero-image :global(img) {
+		width: 100%;
+		max-height: 38rem;
+		object-fit: cover;
+	}
+
+	.article-body {
+		position: relative;
+	}
+
+	.article-body.has-toc {
+		display: grid;
+		grid-template-columns: minmax(10rem, 14rem) minmax(0, var(--reading-width)) minmax(10rem, 14rem);
+		gap: clamp(1.5rem, 4vw, 4rem);
+		align-items: start;
+	}
+
+	.article-body.has-toc .prose {
+		grid-column: 2;
+	}
+
+	.table-of-contents {
+		position: sticky;
+		top: 1.5rem;
+		grid-column: 1;
+		max-height: calc(100vh - 3rem);
+		overflow-y: auto;
+		padding-inline-end: 1rem;
+	}
+
+	.table-of-contents h2 {
+		font-size: 0.78rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.table-of-contents ol {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.table-of-contents li {
+		margin-bottom: 0.45rem;
+		font-size: 0.82rem;
+		line-height: 1.4;
+	}
+
+	.table-of-contents .depth-3,
+	.table-of-contents .depth-4,
+	.table-of-contents .depth-5,
+	.table-of-contents .depth-6 {
+		padding-inline-start: 0.8rem;
+	}
+
+	.table-of-contents a {
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+
+	.prose {
+		font-size: 1.08rem;
+	}
+
+	.prose :global(h2),
+	.prose :global(h3),
+	.prose :global(h4) {
+		scroll-margin-top: 1.5rem;
+		margin-top: 1.8em;
+	}
+
+	.prose :global(img) {
+		border-radius: var(--radius-medium);
+	}
+
+	.article-footer {
+		padding-top: clamp(3rem, 8vw, 6rem);
+	}
+
+	.translations {
+		padding-block: 1.5rem;
+		border-block: 1px solid var(--border);
+	}
+
+	.translations h2 {
+		margin-bottom: 0.7rem;
+		font-size: 0.82rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.translations ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.translations a[aria-current='page'] {
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+
+	.post-navigation {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+		padding-top: 2rem;
+	}
+
+	.post-navigation a {
+		display: flex;
+		min-height: 6rem;
+		flex-direction: column;
+		justify-content: center;
+		padding: 1rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-small);
+		color: var(--text);
+		text-decoration: none;
+	}
+
+	.post-navigation a:hover {
+		border-color: var(--accent);
+	}
+
+	.post-navigation span {
+		color: var(--text-faint);
+		font-size: 0.75rem;
+		letter-spacing: 0.07em;
+		text-transform: uppercase;
+	}
+
+	.post-navigation .next {
+		text-align: end;
+	}
+
+	@media (max-width: 1050px) {
+		.article-body.has-toc {
+			grid-template-columns: minmax(0, var(--reading-width));
+			justify-content: center;
+		}
+
+		.article-body.has-toc .prose,
+		.table-of-contents {
+			grid-column: 1;
+		}
+
+		.table-of-contents {
+			position: static;
+			width: min(100%, var(--reading-width));
+			margin-inline: auto;
+			padding: 1rem;
+			border: 1px solid var(--border);
+			border-radius: var(--radius-small);
+		}
+	}
+
+	@media (max-width: 600px) {
+		.post-navigation {
+			grid-template-columns: 1fr;
+		}
+
+		.post-navigation .next {
+			text-align: start;
+		}
+	}
+</style>
