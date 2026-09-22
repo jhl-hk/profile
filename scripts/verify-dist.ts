@@ -5,11 +5,13 @@ import { SITE_ORIGIN } from '../src/consts';
 import { profile } from '../src/data/profile';
 import { getUiCopy } from '../src/i18n/ui';
 import { locales, type Locale } from '../src/lib/i18n';
+import { sitemapAlternateMap } from '../src/lib/sitemap';
 
 interface PublishedArticle {
 	lang: Locale;
 	slug: string;
 	sample: boolean;
+	translationKey?: string;
 }
 
 function includesHtmlText(html: string, text: string): boolean {
@@ -127,10 +129,12 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 		assert(sitemap.includes(`<loc>${SITE_ORIGIN}/${locale}/</loc>`), `Sitemap locale root for ${locale}`);
 	}
 	const sitemapEntries = sitemap.match(/<url>[\s\S]*?<\/url>/g) ?? [];
+	const expectedAlternates = sitemapAlternateMap(articles, SITE_ORIGIN);
 	for (const entry of sitemapEntries) {
 		const location = entry.match(/<loc>([^<]+)<\/loc>/)?.[1];
 		assert(location, 'Sitemap entry is missing a location');
 		const locationUrl = new URL(location);
+		assert(!/^\/(?:en|ja|zh)\/(?:404|500)\/?$/.test(locationUrl.pathname), `Status page in sitemap: ${location}`);
 		assert(
 			locationUrl.origin === SITE_ORIGIN && locales.some((locale) => locationUrl.pathname.startsWith(`/${locale}/`)),
 			`Non-canonical sitemap location: ${location}`,
@@ -151,6 +155,16 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 				`Non-canonical sitemap alternate: ${href}`,
 			);
 		}
+
+		const actualLinks = alternateTags
+			.map((tag) => ({
+				lang: tag.match(/hreflang="([^"]+)"/)?.[1],
+				url: tag.match(/href="([^"]+)"/)?.[1],
+			}))
+			.sort((a, b) => (a.lang ?? '').localeCompare(b.lang ?? ''));
+		const wantedLinks = [...(expectedAlternates.get(location) ?? [])]
+			.sort((a, b) => a.lang.localeCompare(b.lang));
+		assert.deepEqual(actualLinks, wantedLinks, `Sitemap alternates for ${location}`);
 	}
 	assert(
 		![...feedDocuments, sitemap].some((document) => document.includes('example.com')),

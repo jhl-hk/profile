@@ -3,18 +3,21 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
+import { readBlogManifest } from './scripts/blog-manifest.ts';
+import { includeInSitemap, sitemapAlternateMap } from './src/lib/sitemap.ts';
+
+const site = 'https://jhl.idv.hk';
+const blogManifest = await readBlogManifest(new URL('./src/content/blog', import.meta.url).pathname);
+const sitemapAlternates = sitemapAlternateMap(blogManifest, site);
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://jhl.idv.hk',
+	site,
 	integrations: [
 		mdx(),
 		sitemap({
-			filter: (page) => ['/en/', '/ja/', '/zh/'].some((prefix) => new URL(page).pathname.startsWith(prefix)),
-			i18n: {
-				defaultLocale: 'en',
-				locales: { en: 'en-GB', ja: 'ja-JP', zh: 'zh-CN' },
-			},
+			filter: includeInSitemap,
+			serialize: (item) => ({ ...item, links: sitemapAlternates.get(item.url) }),
 		}),
 	],
 	fonts: [
