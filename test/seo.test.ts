@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { buildSeoLinks } from '../src/lib/seo';
+import { buildSeoLinks, staticLanguageTargets } from '../src/lib/seo';
 
 test('creates canonical, hreflang, and x-default URLs', () => {
 	const result = buildSeoLinks('https://jhl.idv.hk', 'ja', {
@@ -16,5 +16,13 @@ test('creates canonical, hreflang, and x-default URLs', () => {
 	expect(result.alternates).toContainEqual({
 		lang: 'x-default',
 		href: 'https://jhl.idv.hk/en/blog/shared/',
+	});
+});
+
+test('maps a static page to the equivalent route in every locale', () => {
+	expect(staticLanguageTargets('/projects/')).toEqual({
+		en: '/en/projects/',
+		ja: '/ja/projects/',
+		zh: '/zh/projects/',
 	});
 });

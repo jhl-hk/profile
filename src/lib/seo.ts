@@ -1,6 +1,10 @@
-import { defaultLocale, type Locale } from './i18n';
+import { defaultLocale, locales, localizedPath, type Locale } from './i18n';
 
 export type LanguageTargets = Partial<Record<Locale, string>>;
+
+export function staticLanguageTargets(pathname: string): LanguageTargets {
+	return Object.fromEntries(locales.map((locale) => [locale, localizedPath(locale, pathname)]));
+}
 
 export function buildSeoLinks(origin: string, locale: Locale, targets: LanguageTargets) {
 	const canonicalPath = targets[locale] ?? `/${locale}/`;
