@@ -1,0 +1,115 @@
+---
+import { SITE_NAME } from '../consts';
+import { getUiCopy } from '../i18n/ui';
+import { defaultLocale, isLocale, type Locale } from '../lib/i18n';
+import type { LanguageTargets } from '../lib/seo';
+import HeaderLink from './HeaderLink.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import ThemeSwitcher from './ThemeSwitcher.astro';
+
+interface Props {
+	locale?: Locale;
+	pathname?: string;
+	languageTargets?: LanguageTargets;
+}
+
+const {
+	locale = defaultLocale,
+	pathname = Astro.url.pathname,
+	languageTargets = { [defaultLocale]: Astro.url.pathname },
+} = Astro.props;
+const copy = getUiCopy(locale);
+const firstSegment = pathname.split('/').filter(Boolean)[0];
+const usesLocalePrefix = isLocale(firstSegment);
+const route = (segment = '') => {
+	const suffix = segment ? `${segment}/` : '';
+	return usesLocalePrefix ? `/${locale}/${suffix}` : `/${suffix}`;
+};
+const fallbackPath = '/blog/';
+---
+
+<header class="site-header">
+	<div class="header-inner page-shell">
+		<a class="site-name" href={route()}>{SITE_NAME}</a>
+
+		<nav class="primary-nav pill-nav" aria-label={copy.accessibility.primaryNavigation}>
+			<HeaderLink href={route()} exact>{copy.nav.home}</HeaderLink>
+			<HeaderLink href={route('blog')}>{copy.nav.blog}</HeaderLink>
+			<HeaderLink href={route('projects')}>{copy.nav.projects}</HeaderLink>
+			<HeaderLink href={route('about')}>{copy.nav.about}</HeaderLink>
+		</nav>
+
+		<div class="site-controls">
+			<LanguageSwitcher locale={locale} targets={languageTargets} fallbackPath={fallbackPath} />
+			<ThemeSwitcher locale={locale} />
+		</div>
+	</div>
+</header>
+
+<style>
+	.site-header {
+		padding-block: 1.25rem;
+	}
+
+	.header-inner {
+		display: grid;
+		grid-template-columns: minmax(10rem, 1fr) auto minmax(10rem, 1fr);
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.site-name {
+		display: inline-flex;
+		width: fit-content;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		align-items: center;
+		color: var(--text);
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		text-decoration: none;
+	}
+
+	.primary-nav {
+		justify-self: center;
+	}
+
+	.site-controls {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 0.35rem;
+	}
+
+	@media (max-width: 880px) {
+		.header-inner {
+			grid-template-columns: 1fr auto;
+		}
+
+		.primary-nav {
+			grid-column: 1 / -1;
+			grid-row: 2;
+			max-width: 100%;
+			overflow-x: auto;
+		}
+	}
+
+	@media (max-width: 520px) {
+		.site-header {
+			padding-block: 0.9rem;
+		}
+
+		.header-inner {
+			gap: 0.75rem;
+		}
+
+		.site-name {
+			font-size: 0.92rem;
+		}
+
+		.primary-nav :global(a) {
+			padding-inline: 0.65rem;
+			font-size: 0.8rem;
+		}
+	}
+</style>

@@ -1,0 +1,36 @@
+---
+import PageIntro from '../../../components/PageIntro.astro';
+import ProjectRow from '../../../components/ProjectRow.astro';
+import { projects } from '../../../data/projects';
+import { getUiCopy } from '../../../i18n/ui';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { locales, type Locale } from '../../../lib/i18n';
+import { staticLanguageTargets } from '../../../lib/seo';
+
+export function getStaticPaths() {
+	return locales.map((locale) => ({ params: { lang: locale }, props: { locale } }));
+}
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getUiCopy(locale);
+const pathname = `/${locale}/projects/`;
+---
+
+<SiteLayout
+	locale={locale}
+	title={copy.projects.title}
+	description={copy.projects.introduction}
+	pathname={pathname}
+	languageTargets={staticLanguageTargets('/projects/')}
+>
+	<div class="page-shell">
+		<PageIntro eyebrow={copy.nav.projects} title={copy.projects.title} description={copy.projects.introduction} />
+		<section aria-label={copy.nav.projects}>
+			{projects.map((project) => <ProjectRow project={project} locale={locale} />)}
+		</section>
+	</div>
+</SiteLayout>

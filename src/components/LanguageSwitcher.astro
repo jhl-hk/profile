@@ -1,0 +1,86 @@
+---
+import { getUiCopy } from '../i18n/ui';
+import {
+	defaultLocale,
+	localeLabels,
+	locales,
+	localizedPath,
+	type Locale,
+} from '../lib/i18n';
+import type { LanguageTargets } from '../lib/seo';
+
+interface Props {
+	locale?: Locale;
+	targets?: LanguageTargets;
+	fallbackPath?: string;
+}
+
+const {
+	locale = defaultLocale,
+	targets = { [defaultLocale]: Astro.url.pathname },
+	fallbackPath = '/blog/',
+} = Astro.props;
+const copy = getUiCopy(locale).accessibility;
+---
+
+<nav class="language-switcher" aria-label={copy.languageSwitcher}>
+	{
+		locales.map((targetLocale) => {
+			const translatedPath = targets[targetLocale];
+			const isFallback = !translatedPath;
+			const href = translatedPath ?? localizedPath(targetLocale, fallbackPath);
+			const fallbackContext = `${copy.translationUnavailable} ${localeLabels[targetLocale]}`;
+
+			return (
+				<a
+					href={href}
+					hreflang={targetLocale}
+					lang={targetLocale}
+					aria-current={targetLocale === locale ? 'page' : undefined}
+					aria-label={isFallback ? fallbackContext : localeLabels[targetLocale]}
+					title={isFallback ? fallbackContext : undefined}
+					data-fallback={isFallback ? '' : undefined}
+				>
+					{targetLocale.toUpperCase()}
+					{isFallback && <span class="sr-only"> — {fallbackContext}</span>}
+				</a>
+			);
+		})
+	}
+</nav>
+
+<style>
+	.language-switcher {
+		display: flex;
+		align-items: center;
+		gap: 0.1rem;
+	}
+
+	a {
+		display: inline-flex;
+		min-width: 2.6rem;
+		min-height: 2.75rem;
+		align-items: center;
+		justify-content: center;
+		border-radius: var(--radius-pill);
+		color: var(--text-muted);
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-decoration: none;
+	}
+
+	a:hover,
+	a[aria-current='page'] {
+		color: var(--text);
+	}
+
+	a[aria-current='page'] {
+		background: var(--surface-muted);
+	}
+
+	a[data-fallback] {
+		text-decoration: underline dotted;
+		text-underline-offset: 0.18em;
+	}
+</style>

@@ -1,0 +1,64 @@
+---
+import { getUiCopy } from '../../i18n/ui';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { locales, type Locale } from '../../lib/i18n';
+import { staticLanguageTargets } from '../../lib/seo';
+
+export function getStaticPaths() {
+	return locales.map((locale) => ({ params: { lang: locale }, props: { locale } }));
+}
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getUiCopy(locale);
+---
+
+<SiteLayout
+	locale={locale}
+	title={copy.notFound.title}
+	description={copy.notFound.description}
+	pathname={`/${locale}/404/`}
+	languageTargets={staticLanguageTargets('/404/')}
+>
+	<section class="not-found page-shell">
+		<p class="error-code" aria-hidden="true">404</p>
+		<h1>{copy.notFound.title}</h1>
+		<p>{copy.notFound.description}</p>
+		<a href={`/${locale}/`}>{copy.actions.backHome}</a>
+	</section>
+</SiteLayout>
+
+<style>
+	.not-found {
+		padding-block: clamp(3rem, 10vw, 9rem);
+		text-align: center;
+	}
+
+	.error-code {
+		margin: 0;
+		color: var(--accent-strong);
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.18em;
+	}
+
+	.not-found h1 {
+		margin-block: 0.2em;
+	}
+
+	.not-found > p:not(.error-code) {
+		color: var(--text-muted);
+		font-family: var(--font-reading);
+		font-size: 1.2rem;
+	}
+
+	.not-found a {
+		display: inline-flex;
+		min-height: 2.75rem;
+		align-items: center;
+		font-weight: 700;
+	}
+</style>

@@ -1,0 +1,61 @@
+---
+import type { ImageMetadata } from 'astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { getUiCopy } from '../i18n/ui';
+import { defaultLocale, type Locale } from '../lib/i18n';
+import type { LanguageTargets } from '../lib/seo';
+
+interface Props {
+	locale?: Locale;
+	title: string;
+	description: string;
+	pathname?: string;
+	languageTargets?: LanguageTargets;
+	image?: ImageMetadata | string;
+	type?: 'website' | 'article';
+	mainClass?: string;
+}
+
+const locale = Astro.props.locale ?? defaultLocale;
+const pathname = Astro.props.pathname ?? Astro.url.pathname;
+const languageTargets = Astro.props.languageTargets ?? { [locale]: pathname };
+const {
+	title,
+	description,
+	image,
+	type = 'website',
+	mainClass,
+} = Astro.props;
+const copy = getUiCopy(locale);
+---
+
+<!doctype html>
+<html lang={locale}>
+	<head>
+		<BaseHead
+			locale={locale}
+			title={title}
+			description={description}
+			image={image}
+			type={type}
+			languageTargets={languageTargets}
+		/>
+	</head>
+	<body>
+		<a class="skip-link" href="#content">{copy.accessibility.skipToContent}</a>
+		<Header locale={locale} pathname={pathname} languageTargets={languageTargets} />
+		<main id="content" class:list={['site-main', mainClass]}>
+			<slot />
+		</main>
+		<Footer locale={locale} />
+	</body>
+</html>
+
+<style>
+	.site-main {
+		min-height: 60vh;
+		padding-block: clamp(2.5rem, 8vw, 7rem);
+	}
+</style>

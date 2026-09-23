@@ -1,0 +1,145 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { getUiCopy } from '../i18n/ui';
+import { normalizeFilterValue } from '../lib/blog-filter';
+import { postSlug } from '../lib/content';
+import { formatDate, formatReadingTime, type Locale } from '../lib/i18n';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+	locale: Locale;
+	readingMinutes: number;
+}
+
+const { post, locale, readingMinutes } = Astro.props;
+const copy = getUiCopy(locale).blog;
+const href = `/${locale}/blog/${postSlug(post)}/`;
+const normalize = (value: string) => normalizeFilterValue(value, locale);
+---
+
+<article
+	class="featured-post surface"
+	data-post-row
+	data-title={normalize(post.data.title)}
+	data-description={normalize(post.data.description)}
+	data-topics={post.data.topics.map(normalize).join('|')}
+>
+	{
+		post.data.heroImage && (
+			<a class="featured-image" href={href} tabindex="-1" aria-hidden="true">
+				<Image src={post.data.heroImage} width={720} alt="" loading="eager" />
+			</a>
+		)
+	}
+	<div class="featured-copy">
+		<p class="eyebrow">{copy.featured}</p>
+		<div class="post-meta meta">
+			<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, locale)}</time>
+			<span aria-hidden="true">·</span>
+			<span>{formatReadingTime(readingMinutes, locale)}</span>
+			{post.data.sample && <span class="sample-badge">{copy.sample}</span>}
+		</div>
+		<h2><a href={href}>{post.data.title}</a></h2>
+		<p class="description">{post.data.description}</p>
+		{
+			post.data.topics.length > 0 && (
+				<ul class="post-topics" aria-label={copy.topics}>
+					{post.data.topics.map((topic) => <li>{topic}</li>)}
+				</ul>
+			)
+		}
+	</div>
+</article>
+
+<style>
+	.featured-post {
+		display: grid;
+		grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
+		overflow: hidden;
+	}
+
+	.featured-image {
+		min-height: 100%;
+		background: var(--surface-muted);
+	}
+
+	.featured-image :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.featured-copy {
+		align-self: center;
+		padding: clamp(1.5rem, 5vw, 3.5rem);
+	}
+
+	.post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.45rem;
+		margin-bottom: 0.75rem;
+	}
+
+	h2 {
+		margin-bottom: 0.35em;
+		font-size: clamp(1.8rem, 4vw, 3.25rem);
+	}
+
+	h2 a {
+		color: var(--text);
+		text-decoration: none;
+	}
+
+	h2 a:hover {
+		color: var(--accent-strong);
+	}
+
+	.description {
+		margin-bottom: 1.1rem;
+		color: var(--text-muted);
+		font-family: var(--font-reading);
+		font-size: 1.08rem;
+	}
+
+	.sample-badge {
+		padding: 0.08rem 0.45rem;
+		border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--border));
+		border-radius: var(--radius-pill);
+		color: var(--accent-strong);
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+	}
+
+	.post-topics {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.post-topics li {
+		color: var(--text-faint);
+		font-size: 0.78rem;
+	}
+
+	.post-topics li::before {
+		content: '#';
+	}
+
+	@media (max-width: 720px) {
+		.featured-post {
+			grid-template-columns: 1fr;
+		}
+
+		.featured-image {
+			aspect-ratio: 16 / 9;
+		}
+	}
+</style>

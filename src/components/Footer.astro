@@ -1,0 +1,65 @@
+---
+import { SITE_NAME } from '../consts';
+import { getUiCopy } from '../i18n/ui';
+import { defaultLocale, type Locale } from '../lib/i18n';
+import SocialLinks from './SocialLinks.astro';
+
+interface Props {
+	locale?: Locale;
+}
+
+const { locale = defaultLocale } = Astro.props;
+const copy = getUiCopy(locale);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+	<div class="footer-inner page-shell">
+		<div>
+			<p class="footer-name">{SITE_NAME}</p>
+			<p class="footer-meta meta">&copy; {year} {copy.footer.copyright}</p>
+		</div>
+		<SocialLinks locale={locale} />
+		<p class="filing meta">萌ICP备20260331号</p>
+	</div>
+</footer>
+
+<style>
+	.site-footer {
+		margin-top: clamp(4rem, 10vw, 8rem);
+		padding-block: 2.5rem 3.5rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.footer-inner {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: end;
+		gap: 1.5rem 2rem;
+	}
+
+	.footer-name,
+	.footer-meta,
+	.filing {
+		margin: 0;
+	}
+
+	.footer-name {
+		font-weight: 700;
+	}
+
+	.filing {
+		grid-column: 1 / -1;
+	}
+
+	@media (max-width: 620px) {
+		.footer-inner {
+			grid-template-columns: 1fr;
+			align-items: start;
+		}
+
+		.filing {
+			grid-column: auto;
+		}
+	}
+</style>

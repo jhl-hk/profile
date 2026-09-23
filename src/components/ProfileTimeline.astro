@@ -1,0 +1,110 @@
+---
+import type { profile } from '../data/profile';
+import { getUiCopy } from '../i18n/ui';
+import type { Locale } from '../lib/i18n';
+
+type TimelineRecord = (typeof profile.experience)[number] | (typeof profile.education)[number];
+
+interface Props {
+	locale: Locale;
+	title: string;
+	records: readonly TimelineRecord[];
+}
+
+const { locale, title, records } = Astro.props;
+const copy = getUiCopy(locale).about;
+const formatPeriod = (value: string) => {
+	const [year, month] = value.split('-');
+	return new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : locale === 'ja' ? 'ja-JP' : 'zh-CN', {
+		year: 'numeric',
+		month: 'short',
+	}).format(new Date(Number(year), Number(month) - 1, 1));
+};
+---
+
+<section class="timeline-section">
+	<h2>{title}</h2>
+	<ol class="timeline">
+		{
+			records.map((record) => {
+				const recordCopy = record.copy[locale];
+				return (
+					<li class:list={{ 'timeline-entry': true, 'timeline-entry--undated': !record.start }}>
+						{record.start && (
+							<div class="timeline-period meta">
+								<time datetime={record.start}>{formatPeriod(record.start)}</time>
+								<span aria-hidden="true">—</span>
+								{record.end ? <time datetime={record.end}>{formatPeriod(record.end)}</time> : <span>{copy.present}</span>}
+							</div>
+						)}
+						<div>
+							<h3>{recordCopy.title}</h3>
+							<p class="timeline-organisation">{record.organisation}{recordCopy.location && <> · {recordCopy.location}</>}</p>
+							<p class="timeline-description">{recordCopy.description}</p>
+						</div>
+					</li>
+				);
+			})
+		}
+	</ol>
+</section>
+
+<style>
+	.timeline-section {
+		padding-block: clamp(2.5rem, 6vw, 5rem);
+		border-top: 1px solid var(--border);
+	}
+
+	.timeline-section > h2 {
+		margin-bottom: 1.25rem;
+		font-size: clamp(1.6rem, 3vw, 2.4rem);
+	}
+
+	.timeline {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.timeline li {
+		display: grid;
+		grid-template-columns: minmax(9rem, 0.55fr) minmax(16rem, 1.45fr);
+		gap: clamp(1rem, 4vw, 3.5rem);
+		padding-block: 1.5rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.timeline-period {
+		display: flex;
+		gap: 0.4rem;
+	}
+
+	.timeline li.timeline-entry--undated {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	h3 {
+		margin: 0 0 0.25rem;
+		font-size: 1.18rem;
+	}
+
+	.timeline-organisation {
+		margin: 0 0 0.7rem;
+		color: var(--text-muted);
+		font-size: 0.9rem;
+	}
+
+	.timeline-description {
+		max-width: 42rem;
+		margin: 0;
+		color: var(--text-muted);
+		font-family: var(--font-reading);
+	}
+
+	@media (max-width: 640px) {
+		.timeline li {
+			grid-template-columns: 1fr;
+			gap: 0.65rem;
+		}
+	}
+</style>

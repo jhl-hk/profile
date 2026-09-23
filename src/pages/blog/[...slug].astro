@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import { postSlug } from '../../lib/content';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog', ({ data }) => !data.draft && data.lang === 'en');
+	return posts.map((post) => {
+		const slug = postSlug(post);
+		return { params: { slug }, props: { slug } };
+	});
+}
+
+interface Props {
+	slug: string;
+}
+
+const { slug } = Astro.props;
+return Astro.redirect(`/en/blog/${slug}/`, 302);
+---

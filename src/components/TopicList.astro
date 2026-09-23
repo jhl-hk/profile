@@ -1,0 +1,61 @@
+---
+import { getUiCopy } from '../i18n/ui';
+import { normalizeFilterValue } from '../lib/blog-filter';
+import type { Locale } from '../lib/i18n';
+
+interface Props {
+	topics: string[];
+	locale: Locale;
+}
+
+const { topics, locale } = Astro.props;
+const copy = getUiCopy(locale).blog;
+const normalize = (value: string) => normalizeFilterValue(value, locale);
+---
+
+<div class="topic-list">
+	<h2>{copy.topics}</h2>
+	<div class="topic-buttons">
+		<button type="button" data-topic-filter="" aria-pressed="true">{copy.allTopics}</button>
+		{
+			topics.map((topic) => (
+				<button type="button" data-topic-filter={normalize(topic)} aria-pressed="false">{topic}</button>
+			))
+		}
+	</div>
+</div>
+
+<style>
+	h2 {
+		margin-bottom: 0.65rem;
+		font-size: 0.82rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.topic-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+	}
+
+	button {
+		min-height: 2.75rem;
+		padding: 0.45rem 0.75rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-pill);
+		background: transparent;
+		color: var(--text-muted);
+		font-size: 0.82rem;
+	}
+
+	button:hover,
+	button[aria-pressed='true'] {
+		border-color: var(--accent);
+		color: var(--text);
+	}
+
+	button[aria-pressed='true'] {
+		background: var(--surface-raised);
+	}
+</style>

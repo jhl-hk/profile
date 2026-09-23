@@ -1,0 +1,166 @@
+---
+import { getCollection } from 'astro:content';
+import PostRow from '../../components/PostRow.astro';
+import ProjectRow from '../../components/ProjectRow.astro';
+import SocialLinks from '../../components/SocialLinks.astro';
+import { profile } from '../../data/profile';
+import { projects } from '../../data/projects';
+import { getUiCopy } from '../../i18n/ui';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { estimateReadingMinutes, publishedPosts } from '../../lib/content';
+import { locales, type Locale } from '../../lib/i18n';
+import { staticLanguageTargets } from '../../lib/seo';
+
+export function getStaticPaths() {
+	return locales.map((locale) => ({ params: { lang: locale }, props: { locale } }));
+}
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getUiCopy(locale);
+const posts = publishedPosts(await getCollection('blog'), locale).slice(0, 3);
+const languageTargets = staticLanguageTargets('/');
+---
+
+<SiteLayout
+	locale={locale}
+	title={profile.name}
+	description={profile.copy[locale].bio}
+	pathname={`/${locale}/`}
+	languageTargets={languageTargets}
+	mainClass="home-page"
+>
+	<div class="page-shell">
+		<section class="home-hero" aria-labelledby="home-title">
+			<p class="eyebrow">{copy.home.eyebrow}</p>
+			<h1 id="home-title">{profile.name}</h1>
+			<p class="home-introduction">{profile.copy[locale].bio}</p>
+			<div class="home-facts">
+				<p><span>{copy.home.currentRole}</span>{profile.copy[locale].role}</p>
+				<p><span>{copy.home.basedIn}</span>{profile.copy[locale].location}</p>
+			</div>
+		</section>
+
+		<section class="home-section" aria-labelledby="featured-projects">
+			<div class="section-heading">
+				<h2 id="featured-projects">{copy.home.featuredProjects}</h2>
+				<a href={`/${locale}/projects/`}>{copy.actions.viewAll}</a>
+			</div>
+			{projects.slice(0, 2).map((project) => <ProjectRow project={project} locale={locale} />)}
+		</section>
+
+		<section class="home-section" aria-labelledby="recent-writing">
+			<div class="section-heading">
+				<h2 id="recent-writing">{copy.home.recentWriting}</h2>
+				<a href={`/${locale}/blog/`}>{copy.actions.viewAll}</a>
+			</div>
+			{
+				posts.length > 0
+					? posts.map((post) => (
+						<PostRow post={post} locale={locale} readingMinutes={estimateReadingMinutes(post.body)} />
+					))
+					: <p class="empty-state">{copy.blog.empty}</p>
+			}
+		</section>
+
+		<section class="home-contact surface" aria-labelledby="contact-title">
+			<div>
+				<p class="eyebrow">{copy.actions.getInTouch}</p>
+				<h2 id="contact-title">{profile.copy[locale].contact}</h2>
+			</div>
+			<SocialLinks locale={locale} />
+		</section>
+	</div>
+</SiteLayout>
+
+<style>
+	.home-hero {
+		max-width: 58rem;
+		padding-block: clamp(2rem, 7vw, 6rem) clamp(5rem, 12vw, 10rem);
+	}
+
+	.home-hero h1 {
+		margin-bottom: 0.25em;
+	}
+
+	.home-introduction {
+		max-width: 48rem;
+		margin-bottom: 2.25rem;
+		color: var(--text-muted);
+		font-family: var(--font-reading);
+		font-size: clamp(1.3rem, 3vw, 2rem);
+	}
+
+	.home-facts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem clamp(2rem, 6vw, 5rem);
+	}
+
+	.home-facts p {
+		margin: 0;
+		font-weight: 700;
+	}
+
+	.home-facts span {
+		display: block;
+		margin-bottom: 0.2rem;
+		color: var(--text-faint);
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.home-section {
+		margin-bottom: clamp(5rem, 12vw, 9rem);
+	}
+
+	.section-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 1.25rem;
+	}
+
+	.section-heading h2 {
+		margin: 0;
+		font-size: clamp(1.8rem, 4vw, 3rem);
+	}
+
+	.section-heading a {
+		font-size: 0.9rem;
+		font-weight: 700;
+		white-space: nowrap;
+	}
+
+	.empty-state {
+		padding-block: 1.75rem;
+		border-top: 1px solid var(--border);
+		color: var(--text-muted);
+	}
+
+	.home-contact {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 2rem;
+		align-items: end;
+		padding: clamp(1.5rem, 5vw, 3.5rem);
+	}
+
+	.home-contact h2 {
+		max-width: 46rem;
+		margin: 0;
+		font-size: clamp(1.6rem, 4vw, 2.75rem);
+	}
+
+	@media (max-width: 720px) {
+		.home-contact {
+			grid-template-columns: 1fr;
+			align-items: start;
+		}
+	}
+</style>

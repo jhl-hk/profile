@@ -1,0 +1,127 @@
+---
+import type { projects } from '../data/projects';
+import { getUiCopy } from '../i18n/ui';
+import type { Locale } from '../lib/i18n';
+
+interface Props {
+	project: (typeof projects)[number];
+	locale: Locale;
+}
+
+const { project, locale } = Astro.props;
+const projectCopy = project.copy[locale];
+const copy = getUiCopy(locale).projects;
+---
+
+<article class="project-row">
+	<div class="project-heading">
+		<p class="project-status"><span aria-hidden="true"></span>{copy[project.status]}</p>
+		<h2>{project.name}</h2>
+	</div>
+	<div class="project-copy">
+		<p>{projectCopy.description}</p>
+		<ul class="project-tags" aria-label={copy.tags}>
+			{project.tags.map((tag) => <li>{tag}</li>)}
+		</ul>
+	</div>
+	<a
+		class="project-link"
+		href={project.url}
+		target="_blank"
+		rel="noreferrer"
+		aria-label={`${copy.externalProject}: ${project.name}`}
+	>
+		<span aria-hidden="true">↗</span>
+	</a>
+</article>
+
+<style>
+	.project-row {
+		display: grid;
+		grid-template-columns: minmax(12rem, 0.85fr) minmax(16rem, 1.35fr) auto;
+		gap: clamp(1.5rem, 4vw, 4rem);
+		align-items: start;
+		padding-block: clamp(1.75rem, 4vw, 3rem);
+		border-top: 1px solid var(--border);
+	}
+
+	.project-heading h2 {
+		margin: 0;
+		font-size: clamp(1.45rem, 2.5vw, 2.15rem);
+	}
+
+	.project-status {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		margin: 0 0 0.65rem;
+		color: var(--text-muted);
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.project-status span {
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background: var(--accent);
+	}
+
+	.project-copy p {
+		margin: 0 0 1rem;
+		color: var(--text-muted);
+		font-family: var(--font-reading);
+	}
+
+	.project-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.project-tags li {
+		padding: 0.18rem 0.6rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-pill);
+		color: var(--text-muted);
+		font-size: 0.76rem;
+	}
+
+	.project-link {
+		display: inline-flex;
+		width: 2.75rem;
+		height: 2.75rem;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--border);
+		border-radius: 50%;
+		color: var(--text);
+		text-decoration: none;
+	}
+
+	.project-link:hover {
+		border-color: var(--accent);
+		color: var(--accent-strong);
+	}
+
+	@media (max-width: 720px) {
+		.project-row {
+			grid-template-columns: 1fr auto;
+			gap: 1.25rem;
+		}
+
+		.project-copy {
+			grid-column: 1 / -1;
+		}
+
+		.project-link {
+			grid-column: 2;
+			grid-row: 1;
+		}
+	}
+</style>
