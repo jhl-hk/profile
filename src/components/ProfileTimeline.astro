@@ -29,15 +29,17 @@ const formatPeriod = (value: string) => {
 			records.map((record) => {
 				const recordCopy = record.copy[locale];
 				return (
-					<li>
-						<div class="timeline-period meta">
-							<time datetime={record.start}>{formatPeriod(record.start)}</time>
-							<span aria-hidden="true">—</span>
-							{record.end ? <time datetime={record.end}>{formatPeriod(record.end)}</time> : <span>{copy.present}</span>}
-						</div>
+					<li class:list={{ 'timeline-entry': true, 'timeline-entry--undated': !record.start }}>
+						{record.start && (
+							<div class="timeline-period meta">
+								<time datetime={record.start}>{formatPeriod(record.start)}</time>
+								<span aria-hidden="true">—</span>
+								{record.end ? <time datetime={record.end}>{formatPeriod(record.end)}</time> : <span>{copy.present}</span>}
+							</div>
+						)}
 						<div>
 							<h3>{recordCopy.title}</h3>
-							<p class="timeline-organisation">{record.organisation} · {recordCopy.location}</p>
+							<p class="timeline-organisation">{record.organisation}{recordCopy.location && <> · {recordCopy.location}</>}</p>
 							<p class="timeline-description">{recordCopy.description}</p>
 						</div>
 					</li>
@@ -75,6 +77,10 @@ const formatPeriod = (value: string) => {
 	.timeline-period {
 		display: flex;
 		gap: 0.4rem;
+	}
+
+	.timeline li.timeline-entry--undated {
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	h3 {

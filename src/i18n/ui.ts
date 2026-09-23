@@ -58,6 +58,7 @@ export interface UiCopy {
     business: string;
     technical: string;
     languages: string;
+    interests: string;
     present: string;
   };
   notFound: {
@@ -134,6 +135,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       business: 'Business',
       technical: 'Technical',
       languages: 'Languages',
+      interests: 'Interests',
       present: 'Present',
     },
     notFound: { title: 'Page not found', description: 'The page you requested does not exist.' },
@@ -202,6 +204,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       business: 'ビジネス',
       technical: '技術',
       languages: '言語',
+      interests: '関心',
       present: '現在',
     },
     notFound: { title: 'ページが見つかりません', description: 'お探しのページは存在しません。' },
@@ -270,6 +273,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       business: '商业',
       technical: '技术',
       languages: '语言',
+      interests: '兴趣',
       present: '至今',
     },
     notFound: { title: '页面未找到', description: '你访问的页面不存在。' },

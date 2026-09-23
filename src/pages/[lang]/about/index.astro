@@ -21,6 +21,7 @@ const copy = getUiCopy(locale);
 const businessSkills = profile.skills.filter((skill) => skill.category === 'business');
 const technicalSkills = profile.skills.filter((skill) => skill.category === 'technical');
 const languages = profile.skills.filter((skill) => skill.category === 'language');
+const interests = profile.interests;
 const pathname = `/${locale}/about/`;
 ---
 
@@ -47,6 +48,13 @@ const pathname = `/${locale}/about/`;
 
 		<ProfileTimeline locale={locale} title={copy.about.experience} records={profile.experience} />
 		<ProfileTimeline locale={locale} title={copy.about.education} records={profile.education} />
+
+		<section class="profile-details" aria-labelledby="interests-title">
+			<h2 id="interests-title">{copy.about.interests}</h2>
+			<ul class="interests">
+				{interests.map((interest) => <li>{interest.copy[locale].label}</li>)}
+			</ul>
+		</section>
 
 		<section class="profile-details" aria-labelledby="skills-title">
 			<h2 id="skills-title">{copy.about.skills}</h2>
@@ -137,6 +145,7 @@ const pathname = `/${locale}/about/`;
 	}
 
 	.detail-grid ul,
+	.interests,
 	.certifications {
 		margin: 0;
 		padding: 0;
@@ -144,6 +153,7 @@ const pathname = `/${locale}/about/`;
 	}
 
 	.detail-grid li,
+	.interests li,
 	.certifications li {
 		display: flex;
 		justify-content: space-between;
@@ -159,6 +169,10 @@ const pathname = `/${locale}/about/`;
 	}
 
 	.certifications {
+		max-width: 44rem;
+	}
+
+	.interests {
 		max-width: 44rem;
 	}
 

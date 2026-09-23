@@ -5,15 +5,20 @@ type Localized<T> = Record<Locale, T>;
 interface TimelineCopy {
   title: string;
   description: string;
-  location: string;
+  location?: string;
 }
 
 interface TimelineEntry {
   id: string;
   organisation: string;
-  start: string;
-  end: string | null;
+  start?: string;
+  end?: string | null;
   copy: Localized<TimelineCopy>;
+}
+
+interface Interest {
+  id: string;
+  copy: Localized<{ label: string }>;
 }
 
 interface Skill {
@@ -40,19 +45,19 @@ export const profile = {
     en: {
       role: 'Founder & CEO @ JianyueLab Ltd.',
       location: 'Tokyo, Japan',
-      bio: 'Founder and web developer based in Tokyo, building JianyueLab while studying the International Baccalaureate.',
+      bio: 'Developer, translator, and student in Japan, building JianyueLab while studying the International Baccalaureate. Interested in server and network programming, and aviation.',
       contact: 'Open to thoughtful conversations about software, infrastructure, and new projects.',
     },
     ja: {
       role: 'JianyueLab Ltd. 創業者・CEO',
       location: '日本・東京',
-      bio: '東京を拠点に、国際バカロレアを学びながら JianyueLab を運営する起業家・Web 開発者です。',
+      bio: '日本で国際バカロレアを学びながら JianyueLab を運営する、開発者・翻訳者・学生です。サーバー・ネットワークプログラミングと航空に関心があります。',
       contact: 'ソフトウェア、インフラ、新しいプロジェクトについてのご相談を歓迎します。',
     },
     zh: {
       role: 'JianyueLab Ltd. 创始人兼 CEO',
       location: '日本东京',
-      bio: '常驻东京，在学习国际文凭课程的同时经营 JianyueLab，并从事 Web 开发。',
+      bio: '在日本学习国际文凭课程，同时经营 JianyueLab 的开发者、翻译者和学生。关注服务器与网络编程，以及航空。',
       contact: '欢迎交流软件、基础设施以及新的项目合作。',
     },
   },
@@ -101,6 +106,24 @@ export const profile = {
         zh: { title: '所有者', location: '日本东京千代田', description: '运营专注于虚拟服务器、域名管理和应用开发的个人家庭实验室。' },
       },
     },
+    {
+      id: 'airway-simulation-network',
+      organisation: 'Airway Simulation Network',
+      copy: {
+        en: { title: 'Co-founder', description: 'Co-founded Airway Simulation Network and contributed to its server infrastructure.' },
+        ja: { title: '共同創設者', description: 'Airway Simulation Network を共同設立し、サーバーインフラに貢献。' },
+        zh: { title: '联合创始人', description: '联合创办 Airway Simulation Network，并为其服务器基础设施作出贡献。' },
+      },
+    },
+    {
+      id: 'mcsmanager',
+      organisation: 'MCSManager',
+      copy: {
+        en: { title: 'Translator & Community Moderator', description: 'Translated MCSManager and moderated its community.' },
+        ja: { title: '翻訳者・コミュニティモデレーター', description: 'MCSManager の翻訳とコミュニティモデレーションを担当。' },
+        zh: { title: '翻译者兼社区管理员', description: '参与 MCSManager 翻译并担任社区管理员。' },
+      },
+    },
   ] satisfies readonly TimelineEntry[],
   education: [
     {
@@ -126,6 +149,10 @@ export const profile = {
       },
     },
   ] satisfies readonly TimelineEntry[],
+  interests: [
+    { id: 'server-network-programming', copy: { en: { label: 'Server and network programming' }, ja: { label: 'サーバー・ネットワークプログラミング' }, zh: { label: '服务器与网络编程' } } },
+    { id: 'aviation', copy: { en: { label: 'Aviation' }, ja: { label: '航空' }, zh: { label: '航空' } } },
+  ] satisfies readonly Interest[],
   skills: [
     { id: 'startup-operations', category: 'business', copy: { en: { label: 'Startup operations' }, ja: { label: 'スタートアップ経営' }, zh: { label: '创业运营' } } },
     { id: 'business-development', category: 'business', copy: { en: { label: 'Business development' }, ja: { label: '事業開発' }, zh: { label: '业务开发' } } },
@@ -134,6 +161,13 @@ export const profile = {
     { id: 'web-development', category: 'technical', copy: { en: { label: 'Web development' }, ja: { label: 'Web 開発' }, zh: { label: 'Web 开发' } } },
     { id: 'server-management', category: 'technical', copy: { en: { label: 'Server management' }, ja: { label: 'サーバー管理' }, zh: { label: '服务器管理' } } },
     { id: 'domain-management', category: 'technical', copy: { en: { label: 'Domain management' }, ja: { label: 'ドメイン管理' }, zh: { label: '域名管理' } } },
+    { id: 'javascript', category: 'technical', copy: { en: { label: 'JavaScript' }, ja: { label: 'JavaScript' }, zh: { label: 'JavaScript' } } },
+    { id: 'python', category: 'technical', copy: { en: { label: 'Python' }, ja: { label: 'Python' }, zh: { label: 'Python' } } },
+    { id: 'go', category: 'technical', copy: { en: { label: 'Go' }, ja: { label: 'Go' }, zh: { label: 'Go' } } },
+    { id: 'java', category: 'technical', copy: { en: { label: 'Java' }, ja: { label: 'Java' }, zh: { label: 'Java' } } },
+    { id: 'svelte', category: 'technical', copy: { en: { label: 'Svelte' }, ja: { label: 'Svelte' }, zh: { label: 'Svelte' } } },
+    { id: 'vue', category: 'technical', copy: { en: { label: 'Vue' }, ja: { label: 'Vue' }, zh: { label: 'Vue' } } },
+    { id: 'nextjs', category: 'technical', copy: { en: { label: 'Next.js' }, ja: { label: 'Next.js' }, zh: { label: 'Next.js' } } },
     { id: 'chinese', category: 'language', copy: { en: { label: 'Chinese', proficiency: 'Native' }, ja: { label: '中国語', proficiency: 'ネイティブ' }, zh: { label: '中文', proficiency: '母语' } } },
     { id: 'english', category: 'language', copy: { en: { label: 'English', proficiency: 'Business' }, ja: { label: '英語', proficiency: 'ビジネス' }, zh: { label: '英语', proficiency: '商务' } } },
     { id: 'japanese', category: 'language', copy: { en: { label: 'Japanese', proficiency: 'Conversational' }, ja: { label: '日本語', proficiency: '日常会話' }, zh: { label: '日语', proficiency: '日常会话' } } },
