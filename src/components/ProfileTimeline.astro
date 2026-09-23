@@ -40,7 +40,7 @@ const formatPeriod = (value: string) => {
 						<div>
 							<h3>{recordCopy.title}</h3>
 							<p class="timeline-organisation">{record.organisation}{recordCopy.location && <> · {recordCopy.location}</>}</p>
-							<p class="timeline-description">{recordCopy.description}</p>
+							{recordCopy.description && <p class="timeline-description">{recordCopy.description}</p>}
 						</div>
 					</li>
 				);

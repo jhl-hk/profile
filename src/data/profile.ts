@@ -4,7 +4,7 @@ type Localized<T> = Record<Locale, T>;
 
 interface TimelineCopy {
   title: string;
-  description: string;
+  description?: string;
   location?: string;
 }
 
@@ -43,19 +43,19 @@ export const profile = {
   },
   copy: {
     en: {
-      role: 'Founder & CEO @ JianyueLab Ltd.',
+      role: 'Co-Founder & CEO @ JianyueLab Ltd.',
       location: 'Tokyo, Japan',
       bio: 'Developer, translator, and student in Japan, building JianyueLab while studying the International Baccalaureate. Interested in server and network programming, and aviation.',
       contact: 'Open to thoughtful conversations about software, infrastructure, and new projects.',
     },
     ja: {
-      role: 'JianyueLab Ltd. 創業者・CEO',
+      role: 'JianyueLab Ltd. 共同創業者・CEO',
       location: '日本・東京',
       bio: '日本で国際バカロレアを学びながら JianyueLab を運営する、開発者・翻訳者・学生です。サーバー・ネットワークプログラミングと航空に関心があります。',
       contact: 'ソフトウェア、インフラ、新しいプロジェクトについてのご相談を歓迎します。',
     },
     zh: {
-      role: 'JianyueLab Ltd. 创始人兼 CEO',
+      role: 'JianyueLab Ltd. 联合创始人兼 CEO',
       location: '日本东京',
       bio: '在日本学习国际文凭课程，同时经营 JianyueLab 的开发者、翻译者和学生。关注服务器与网络编程，以及航空。',
       contact: '欢迎交流软件、基础设施以及新的项目合作。',
@@ -63,14 +63,36 @@ export const profile = {
   },
   experience: [
     {
+      id: 'hangzhou-silicon-based-agile-technology',
+      organisation: 'Hangzhou Silicon-based Agile Technology Limited',
+      start: '2026-04',
+      end: null,
+      copy: {
+        en: { title: 'Director', location: 'Hangzhou' },
+        ja: { title: '取締役', location: '杭州' },
+        zh: { title: '董事', location: '杭州' },
+      },
+    },
+    {
+      id: 'kyouyuu-shanghai-commercial',
+      organisation: 'Kyouyuu (Shanghai) Commercial Co., Ltd',
+      start: '2026-01',
+      end: null,
+      copy: {
+        en: { title: 'Information Technology Administrator', location: 'Shanghai, China' },
+        ja: { title: '情報技術管理者', location: '中国・上海' },
+        zh: { title: '信息技术管理员', location: '中国上海' },
+      },
+    },
+    {
       id: 'jianyuelab-ltd',
       organisation: 'JianyueLab Ltd.',
       start: '2025-12',
       end: null,
       copy: {
-        en: { title: 'Founder & CEO', location: 'United Kingdom', description: 'Founded a technology company working on web development, domain management, and application development.' },
-        ja: { title: 'Founder & CEO', location: 'イギリス', description: 'Web 開発、ドメイン管理、アプリケーション開発を行うテクノロジー企業を設立。' },
-        zh: { title: '创始人兼 CEO', location: '英国', description: '创办从事 Web 开发、域名管理和应用开发的科技公司。' },
+        en: { title: 'Co-Founder & CEO', location: 'United Kingdom', description: 'Network infrastructure and cloud-computing startup; a RIPE NCC Local Internet Registry and ARIN member.' },
+        ja: { title: '共同創業者・CEO', location: 'イギリス', description: 'ネットワークインフラとクラウドコンピューティングのスタートアップ。RIPE NCC の Local Internet Registry であり、ARIN の会員。' },
+        zh: { title: '联合创始人兼 CEO', location: '英国', description: '网络基础设施与云计算初创企业；RIPE NCC 本地互联网注册机构（LIR）及 ARIN 会员。' },
       },
     },
     {
@@ -168,9 +190,12 @@ export const profile = {
     { id: 'svelte', category: 'technical', copy: { en: { label: 'Svelte' }, ja: { label: 'Svelte' }, zh: { label: 'Svelte' } } },
     { id: 'vue', category: 'technical', copy: { en: { label: 'Vue' }, ja: { label: 'Vue' }, zh: { label: 'Vue' } } },
     { id: 'nextjs', category: 'technical', copy: { en: { label: 'Next.js' }, ja: { label: 'Next.js' }, zh: { label: 'Next.js' } } },
-    { id: 'chinese', category: 'language', copy: { en: { label: 'Chinese', proficiency: 'Native' }, ja: { label: '中国語', proficiency: 'ネイティブ' }, zh: { label: '中文', proficiency: '母语' } } },
-    { id: 'english', category: 'language', copy: { en: { label: 'English', proficiency: 'Business' }, ja: { label: '英語', proficiency: 'ビジネス' }, zh: { label: '英语', proficiency: '商务' } } },
-    { id: 'japanese', category: 'language', copy: { en: { label: 'Japanese', proficiency: 'Conversational' }, ja: { label: '日本語', proficiency: '日常会話' }, zh: { label: '日语', proficiency: '日常会话' } } },
+    { id: 'mikrotik', category: 'technical', copy: { en: { label: 'MikroTik' }, ja: { label: 'MikroTik' }, zh: { label: 'MikroTik' } } },
+    { id: 'mediawiki', category: 'technical', copy: { en: { label: 'MediaWiki' }, ja: { label: 'MediaWiki' }, zh: { label: 'MediaWiki' } } },
+    { id: 'system-administration', category: 'technical', copy: { en: { label: 'System administration' }, ja: { label: 'システム管理' }, zh: { label: '系统管理' } } },
+    { id: 'chinese', category: 'language', copy: { en: { label: 'Chinese', proficiency: 'Native or bilingual' }, ja: { label: '中国語', proficiency: 'ネイティブまたはバイリンガル' }, zh: { label: '中文', proficiency: '母语或双语' } } },
+    { id: 'english', category: 'language', copy: { en: { label: 'English', proficiency: 'Professional working' }, ja: { label: '英語', proficiency: '業務上の使用が可能' }, zh: { label: '英语', proficiency: '专业工作能力' } } },
+    { id: 'japanese', category: 'language', copy: { en: { label: 'Japanese', proficiency: 'Limited working' }, ja: { label: '日本語', proficiency: '限定的な業務使用' }, zh: { label: '日语', proficiency: '有限工作能力' } } },
   ] satisfies readonly Skill[],
   certifications: [
     {
