@@ -21,12 +21,23 @@ const year = new Date().getFullYear();
         &copy; {year} {copy.footer.copyright}
       </p>
       <p class="powered-by meta">
-        {copy.footer.poweredBy.before && <span>{copy.footer.poweredBy.before}</span>}
+        {copy.footer.poweredBy.before && (
+          <span>{copy.footer.poweredBy.before}</span>
+        )}
         <a href="https://yunzheng.space/orbit" target="_blank" rel="noopener">
-          <img src="https://yunzheng.space/assets/logo-sm.webp" alt="" width="45" height="20" loading="lazy" decoding="async" />
-          Orbit (YunzhengLab)
+          <img
+            src="https://yunzheng.space/assets/logo-sm.webp"
+            alt=""
+            width="45"
+            height="20"
+            loading="lazy"
+            decoding="async"
+          />
+          Orbit (YunZheng Lab)
         </a>
-        {copy.footer.poweredBy.after && <span>{copy.footer.poweredBy.after}</span>}
+        {copy.footer.poweredBy.after && (
+          <span>{copy.footer.poweredBy.after}</span>
+        )}
       </p>
     </div>
     <SocialLinks locale={locale} />
