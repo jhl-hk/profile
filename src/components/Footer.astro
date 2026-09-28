@@ -20,6 +20,14 @@ const year = new Date().getFullYear();
       <p class="footer-meta meta">
         &copy; {year} {copy.footer.copyright}
       </p>
+      <p class="powered-by meta">
+        {copy.footer.poweredBy.before && <span>{copy.footer.poweredBy.before}</span>}
+        <a href="https://yunzheng.space/orbit" target="_blank" rel="noopener">
+          <img src="https://yunzheng.space/assets/logo-sm.webp" alt="" width="45" height="20" loading="lazy" decoding="async" />
+          Orbit (YunzhengLab)
+        </a>
+        {copy.footer.poweredBy.after && <span>{copy.footer.poweredBy.after}</span>}
+      </p>
     </div>
     <SocialLinks locale={locale} />
   </div>
@@ -41,6 +49,7 @@ const year = new Date().getFullYear();
 
   .footer-name,
   .footer-meta,
+  .powered-by,
   .filing {
     margin: 0;
   }
@@ -51,6 +60,30 @@ const year = new Date().getFullYear();
 
   .filing {
     grid-column: 1 / -1;
+  }
+
+  .powered-by {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.35rem;
+  }
+
+  .powered-by a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--text-muted);
+  }
+
+  .powered-by a:hover {
+    color: var(--accent-strong);
+  }
+
+  .powered-by img {
+    width: auto;
+    height: 1.1rem;
   }
 
   @media (max-width: 620px) {

@@ -98,7 +98,7 @@ export interface UiCopy {
   };
   footer: {
     copyright: string;
-    builtWith: string;
+    poweredBy: { before: string; after: string };
   };
 }
 
@@ -195,7 +195,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       darkTheme: 'Use dark theme',
       translationUnavailable: 'Translation unavailable; view the blog in',
     },
-    footer: { copyright: 'All rights reserved.', builtWith: 'Built with Astro.' },
+    footer: { copyright: 'All rights reserved.', poweredBy: { before: 'Proudly powered by', after: '' } },
   },
   ja: {
     nav: { home: 'ホーム', projects: 'プロジェクト', about: 'プロフィール', blog: 'ブログ', links: 'リンク' },
@@ -289,7 +289,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       darkTheme: 'ダークテーマを使用',
       translationUnavailable: '翻訳はありません。次の言語のブログを表示:',
     },
-    footer: { copyright: 'All rights reserved.', builtWith: 'Astro で構築。' },
+    footer: { copyright: '無断転載を禁じます。', poweredBy: { before: '', after: 'で運営しています' } },
   },
   zh: {
     nav: { home: '首页', projects: '项目', about: '关于', blog: '博客', links: '友链' },
@@ -383,7 +383,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       darkTheme: '使用深色主题',
       translationUnavailable: '暂无翻译；查看此语言的博客：',
     },
-    footer: { copyright: '版权所有。', builtWith: '使用 Astro 构建。' },
+    footer: { copyright: '版权所有。', poweredBy: { before: '由', after: '强力驱动' } },
   },
 };
 
