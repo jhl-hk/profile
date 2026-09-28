@@ -21,66 +21,232 @@ const {
 	fallbackPath = '/blog/',
 } = Astro.props;
 const copy = getUiCopy(locale).accessibility;
+const menuId = 'language-menu';
 ---
 
-<nav class="language-switcher" aria-label={copy.languageSwitcher}>
-	{
-		locales.map((targetLocale) => {
-			const translatedPath = targets[targetLocale];
-			const isFallback = !translatedPath;
-			const href = translatedPath ?? localizedPath(targetLocale, fallbackPath);
-			const fallbackContext = `${copy.translationUnavailable} ${localeLabels[targetLocale]}`;
+<nav class="language-switcher" aria-label={copy.languageSwitcher} data-language-switcher>
+	<button
+		type="button"
+		class="language-trigger"
+		aria-haspopup="true"
+		aria-expanded="false"
+		aria-controls={menuId}
+		aria-label={`${copy.languageSwitcher}: ${localeLabels[locale]}`}
+		data-language-trigger
+	>
+		<svg class="globe" viewBox="0 0 24 24" aria-hidden="true">
+			<circle cx="12" cy="12" r="8.5"></circle>
+			<path d="M3.5 12h17M12 3.5c2.3 2.4 3.4 5.2 3.4 8.5s-1.1 6.1-3.4 8.5c-2.3-2.4-3.4-5.2-3.4-8.5s1.1-6.1 3.4-8.5Z"></path>
+		</svg>
+		<span class="code">{locale.toUpperCase()}</span>
+		<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
+			<path d="m7 10 5 5 5-5"></path>
+		</svg>
+	</button>
 
-			return (
-				<a
-					href={href}
-					hreflang={targetLocale}
-					lang={targetLocale}
-					aria-current={targetLocale === locale ? 'page' : undefined}
-					aria-label={isFallback ? fallbackContext : localeLabels[targetLocale]}
-					title={isFallback ? fallbackContext : undefined}
-					data-fallback={isFallback ? '' : undefined}
-				>
-					{targetLocale.toUpperCase()}
-					{isFallback && <span class="sr-only"> — {fallbackContext}</span>}
-				</a>
-			);
-		})
-	}
+	<ul class="language-menu" id={menuId} hidden data-language-menu>
+		{
+			locales.map((targetLocale) => {
+				const translatedPath = targets[targetLocale];
+				const isFallback = !translatedPath;
+				const href = translatedPath ?? localizedPath(targetLocale, fallbackPath);
+				const fallbackContext = `${copy.translationUnavailable} ${localeLabels[targetLocale]}`;
+
+				return (
+					<li>
+						<a
+							href={href}
+							hreflang={targetLocale}
+							lang={targetLocale}
+							aria-current={targetLocale === locale ? 'page' : undefined}
+							aria-label={isFallback ? fallbackContext : localeLabels[targetLocale]}
+							title={isFallback ? fallbackContext : undefined}
+							data-fallback={isFallback ? '' : undefined}
+						>
+							<span class="label">{localeLabels[targetLocale]}</span>
+							<span class="code" aria-hidden="true">{targetLocale.toUpperCase()}</span>
+							{isFallback && <span class="sr-only"> — {fallbackContext}</span>}
+						</a>
+					</li>
+				);
+			})
+		}
+	</ul>
 </nav>
+
+<script>
+	const bindLanguageSwitchers = () => {
+		for (const root of document.querySelectorAll<HTMLElement>('[data-language-switcher]')) {
+			if (root.dataset.bound === 'true') continue;
+			root.dataset.bound = 'true';
+
+			const trigger = root.querySelector<HTMLButtonElement>('[data-language-trigger]');
+			const menu = root.querySelector<HTMLElement>('[data-language-menu]');
+			if (!trigger || !menu) continue;
+
+			const links = () => [...menu.querySelectorAll<HTMLAnchorElement>('a')];
+			const setOpen = (open: boolean, focusTarget?: 'first' | 'current' | 'trigger') => {
+				menu.hidden = !open;
+				trigger.setAttribute('aria-expanded', String(open));
+				if (focusTarget === 'trigger') trigger.focus();
+				if (focusTarget === 'first') links()[0]?.focus();
+				if (focusTarget === 'current') (menu.querySelector<HTMLAnchorElement>('[aria-current="page"]') ?? links()[0])?.focus();
+			};
+
+			trigger.addEventListener('click', () => setOpen(menu.hidden, menu.hidden ? 'current' : undefined));
+			trigger.addEventListener('keydown', (event) => {
+				if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+					event.preventDefault();
+					setOpen(true, 'current');
+				}
+			});
+
+			menu.addEventListener('keydown', (event) => {
+				const items = links();
+				const index = items.indexOf(document.activeElement as HTMLAnchorElement);
+				if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+					event.preventDefault();
+					const step = event.key === 'ArrowDown' ? 1 : -1;
+					items[(index + step + items.length) % items.length]?.focus();
+				} else if (event.key === 'Home' || event.key === 'End') {
+					event.preventDefault();
+					items[event.key === 'Home' ? 0 : items.length - 1]?.focus();
+				}
+			});
+
+			root.addEventListener('keydown', (event) => {
+				if (event.key === 'Escape' && !menu.hidden) setOpen(false, 'trigger');
+			});
+			root.addEventListener('focusout', (event) => {
+				if (!root.contains(event.relatedTarget as Node | null)) setOpen(false);
+			});
+			document.addEventListener('pointerdown', (event) => {
+				if (!menu.hidden && !root.contains(event.target as Node)) setOpen(false);
+			});
+		}
+	};
+
+	bindLanguageSwitchers();
+	document.addEventListener('astro:page-load', bindLanguageSwitchers);
+</script>
 
 <style>
 	.language-switcher {
-		display: flex;
-		align-items: center;
-		gap: 0.1rem;
+		position: relative;
 	}
 
-	a {
+	.language-trigger {
 		display: inline-flex;
-		min-width: 2.6rem;
 		min-height: 2.75rem;
 		align-items: center;
-		justify-content: center;
+		gap: 0.35rem;
+		padding: 0 0.7rem 0 0.8rem;
+		border: 1px solid var(--border);
 		border-radius: var(--radius-pill);
-		color: var(--text-muted);
+		background: var(--surface-raised);
+		color: var(--text);
 		font-size: 0.7rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
+		cursor: pointer;
+	}
+
+	.language-trigger:active {
+		transform: scale(0.96);
+	}
+
+	svg {
+		width: 1rem;
+		height: 1rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-width: 1.7;
+	}
+
+	.chevron {
+		width: 0.85rem;
+		height: 0.85rem;
+		color: var(--text-muted);
+		transition: transform 160ms ease;
+	}
+
+	.language-trigger[aria-expanded='true'] .chevron {
+		transform: rotate(180deg);
+	}
+
+	.language-menu {
+		position: absolute;
+		z-index: 20;
+		top: calc(100% + 0.4rem);
+		right: 0;
+		min-width: 10.5rem;
+		margin: 0;
+		padding: 0.3rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-medium);
+		background: var(--surface);
+		box-shadow: var(--shadow-whisper);
+		list-style: none;
+		transform-origin: top right;
+		animation: menu-in 140ms ease-out;
+	}
+
+	.language-menu[hidden] {
+		display: none;
+	}
+
+	.language-menu a {
+		display: flex;
+		min-height: 2.5rem;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0 0.75rem;
+		border-radius: var(--radius-small);
+		color: var(--text-muted);
+		font-size: 0.88rem;
 		text-decoration: none;
 	}
 
-	a:hover,
-	a[aria-current='page'] {
+	.language-menu a:hover,
+	.language-menu a:focus-visible {
+		background: var(--surface-muted);
 		color: var(--text);
 	}
 
-	a[aria-current='page'] {
-		background: var(--surface-muted);
+	.language-menu a[aria-current='page'] {
+		color: var(--text);
+		font-weight: 700;
 	}
 
-	a[data-fallback] {
+	.language-menu .code {
+		color: var(--text-muted);
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+	}
+
+	.language-menu a[data-fallback] .label {
 		text-decoration: underline dotted;
 		text-underline-offset: 0.18em;
+	}
+
+	@keyframes menu-in {
+		from {
+			opacity: 0;
+			transform: translateY(-0.25rem) scale(0.97);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.language-menu {
+			animation: none;
+		}
+
+		.chevron {
+			transition: none;
+		}
 	}
 </style>

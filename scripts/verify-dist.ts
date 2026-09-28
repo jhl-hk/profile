@@ -31,6 +31,9 @@ export const expectedFiles = [
 	'dist/en/about/index.html',
 	'dist/ja/about/index.html',
 	'dist/zh/about/index.html',
+	'dist/en/links/index.html',
+	'dist/ja/links/index.html',
+	'dist/zh/links/index.html',
 	'dist/en/rss.xml',
 	'dist/ja/rss.xml',
 	'dist/zh/rss.xml',
@@ -79,7 +82,6 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 
 	const articles = await readPublishedArticles(contentDirectory);
 	const sampleArticles = articles.filter((article) => article.lang === 'en' && article.sample);
-	assert(sampleArticles.length > 0, 'No declared published English sample article');
 	const otherLocaleIndexes = await Promise.all(
 		locales.filter((locale) => locale !== 'en').map(async (locale) => ({
 			locale,

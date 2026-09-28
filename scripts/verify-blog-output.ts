@@ -133,6 +133,7 @@ function validateLanguageTargets(
 		}
 	}
 
+	if (related.length < 2) return;
 	const translationSection = classBlock(html, 'section', 'translations');
 	if (!translationSection) throw new Error(`Translation links are missing from ${path}`);
 	const translationLinks = openingTags(translationSection, 'a');

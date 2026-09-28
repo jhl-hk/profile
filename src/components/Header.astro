@@ -37,6 +37,7 @@ const fallbackPath = '/blog/';
 			<HeaderLink href={route('blog')}>{copy.nav.blog}</HeaderLink>
 			<HeaderLink href={route('projects')}>{copy.nav.projects}</HeaderLink>
 			<HeaderLink href={route('about')}>{copy.nav.about}</HeaderLink>
+			<HeaderLink href={route('links')}>{copy.nav.links}</HeaderLink>
 		</nav>
 
 		<div class="site-controls">
@@ -110,6 +111,18 @@ const fallbackPath = '/blog/';
 		.primary-nav :global(a) {
 			padding-inline: 0.65rem;
 			font-size: 0.8rem;
+		}
+	}
+
+	@media (max-width: 420px) {
+		.primary-nav {
+			gap: 0;
+		}
+
+		.primary-nav :global(a) {
+			min-width: 2.5rem;
+			padding-inline: 0.5rem;
+			font-size: 0.76rem;
 		}
 	}
 </style>

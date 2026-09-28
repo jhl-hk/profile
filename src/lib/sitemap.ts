@@ -17,7 +17,7 @@ export const sitemapLocaleTags: Record<Locale, string> = {
 	zh: 'zh-CN',
 };
 
-const staticPageSuffixes = ['/', '/about/', '/blog/', '/projects/'] as const;
+const staticPageSuffixes = ['/', '/about/', '/blog/', '/projects/', '/links/'] as const;
 
 export function includeInSitemap(page: string): boolean {
 	const pathname = new URL(page).pathname;

@@ -16,7 +16,7 @@ interface Project {
 export const projects = [
   {
     id: 'jianyuelab-ltd',
-    name: 'JianyueLab Ltd.',
+    name: 'JianyueLab Ltd',
     url: 'https://jianyuelab.co',
     tags: ['Startup', 'Web development', 'TypeScript'],
     status: 'active',
@@ -45,9 +45,9 @@ export const projects = [
     tags: ['Open source', 'Community'],
     status: 'active',
     copy: {
-      en: { description: 'An open-source community project of JianyueLab Ltd.' },
-      ja: { description: 'JianyueLab Ltd. のオープンソース・コミュニティプロジェクト。' },
-      zh: { description: 'JianyueLab Ltd. 的开源社区项目。' },
+      en: { description: 'An open-source community project of JianyueLab Ltd' },
+      ja: { description: 'JianyueLab Ltd のオープンソース・コミュニティプロジェクト。' },
+      zh: { description: 'JianyueLab Ltd 的开源社区项目。' },
     },
   },
 ] as const satisfies readonly Project[];

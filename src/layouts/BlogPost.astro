@@ -88,6 +88,7 @@ const showTableOfContents = headings.length >= 2;
 		</div>
 
 		<footer class="article-footer reading-column">
+			{translations.length > 1 && (
 			<section class="translations" aria-labelledby="translations-title">
 				<h2 id="translations-title">{copy.translations}</h2>
 				<ul>
@@ -102,6 +103,7 @@ const showTableOfContents = headings.length >= 2;
 					}
 				</ul>
 			</section>
+			)}
 
 			{
 				(previous || next) && (
@@ -142,7 +144,8 @@ const showTableOfContents = headings.length >= 2;
 
 	.article-header h1 {
 		margin-bottom: 0.25em;
-		font-size: clamp(2.5rem, 8vw, 5.4rem);
+		font-size: clamp(2.1rem, 5vw, 4rem);
+		line-height: 1.18;
 	}
 
 	.description {
@@ -187,7 +190,13 @@ const showTableOfContents = headings.length >= 2;
 		content: '#';
 	}
 
+	article.page-shell {
+		--page-width: 1320px;
+	}
+
 	.hero-image {
+		width: min(100%, 1080px);
+		margin-inline: auto;
 		overflow: hidden;
 		margin-bottom: clamp(3rem, 8vw, 6rem);
 	}
@@ -204,8 +213,9 @@ const showTableOfContents = headings.length >= 2;
 
 	.article-body.has-toc {
 		display: grid;
-		grid-template-columns: minmax(10rem, 14rem) minmax(0, var(--reading-width)) minmax(10rem, 14rem);
-		gap: clamp(1.5rem, 4vw, 4rem);
+		grid-template-columns: 12rem minmax(0, var(--reading-width)) 12rem;
+		gap: 3rem;
+		justify-content: center;
 		align-items: start;
 	}
 
@@ -265,6 +275,16 @@ const showTableOfContents = headings.length >= 2;
 
 	.prose :global(img) {
 		border-radius: var(--radius-medium);
+	}
+
+	.prose :global(p),
+	.prose :global(li) {
+		text-wrap: pretty;
+	}
+
+	.prose:lang(zh),
+	.prose:lang(ja) {
+		line-height: 1.85;
 	}
 
 	.article-footer {
@@ -331,7 +351,7 @@ const showTableOfContents = headings.length >= 2;
 		text-align: end;
 	}
 
-	@media (max-width: 1050px) {
+	@media (max-width: 1180px) {
 		.article-body.has-toc {
 			grid-template-columns: minmax(0, var(--reading-width));
 			justify-content: center;

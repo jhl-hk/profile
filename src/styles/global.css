@@ -4,11 +4,11 @@
 	--surface-muted: rgba(57, 48, 41, 0.05);
 	--text: #292724;
 	--text-muted: #706a63;
-	--text-faint: #989087;
+	--text-faint: #7d766e;
 	--border: rgba(48, 43, 38, 0.12);
-	--accent: #b95f6e;
-	--accent-strong: #91414f;
-	--focus: #b95f6e;
+	--accent: #b0700f;
+	--accent-strong: #8a5300;
+	--focus: #b0700f;
 	--font-ui: var(--font-atkinson), "Noto Sans", "Noto Sans JP", "Noto Sans SC", sans-serif;
 	--font-reading: "Iowan Old Style", "Yu Mincho", "Noto Serif JP", "Noto Serif SC", serif;
 	--page-width: 1080px;
@@ -32,16 +32,22 @@
 	--surface-muted: rgba(255, 255, 255, 0.035);
 	--text: #eeeae4;
 	--text-muted: #aaa49c;
-	--text-faint: #77726c;
+	--text-faint: #8f8981;
 	--border: rgba(255, 255, 255, 0.1);
-	--accent: #df8f9e;
-	--accent-strong: #f0a7b4;
+	--accent: #e0a449;
+	--accent-strong: #f4c16f;
 	--shadow-whisper: 0 1rem 3rem rgba(0, 0, 0, 0.14);
 	--black: 238, 234, 228;
 	--gray: 170, 164, 156;
 	--gray-dark: 238, 234, 228;
 	--gray-light: 64, 61, 58;
 	color-scheme: dark;
+}
+
+:root:lang(zh),
+:lang(zh) {
+	--font-ui: var(--font-atkinson), "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+	--font-reading: "Iowan Old Style", "Songti SC", "Noto Serif SC", serif;
 }
 
 *,
@@ -120,6 +126,12 @@ h6 {
 	text-wrap: balance;
 }
 
+:lang(zh) :is(h1, h2, h3, h4, h5, h6),
+:lang(ja) :is(h1, h2, h3, h4, h5, h6) {
+	letter-spacing: 0;
+	text-wrap: pretty;
+}
+
 h1 {
 	font-size: clamp(2.5rem, 8vw, 5.75rem);
 }
@@ -186,6 +198,27 @@ pre > code {
 table {
 	width: 100%;
 	border-collapse: collapse;
+}
+
+.prose table {
+	display: block;
+	overflow-x: auto;
+	margin-block: 0 1.35em;
+	font-size: 0.95em;
+}
+
+.prose th {
+	font-family: var(--font-ui);
+	font-size: 0.9em;
+	white-space: nowrap;
+}
+
+.prose td {
+	overflow-wrap: normal;
+}
+
+.prose td:first-child {
+	white-space: nowrap;
 }
 
 th,

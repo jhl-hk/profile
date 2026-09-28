@@ -13,6 +13,12 @@ interface Props {
 
 const { locale, title, records } = Astro.props;
 const copy = getUiCopy(locale).about;
+const ongoing = '9999-12';
+const sortedRecords = [...records].sort((a, b) => {
+	if (!a.start || !b.start) return Number(!a.start) - Number(!b.start);
+	const endOrder = (b.end ?? ongoing).localeCompare(a.end ?? ongoing);
+	return endOrder || b.start.localeCompare(a.start);
+});
 const formatPeriod = (value: string) => {
 	const [year, month] = value.split('-');
 	return new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : locale === 'ja' ? 'ja-JP' : 'zh-CN', {
@@ -26,7 +32,7 @@ const formatPeriod = (value: string) => {
 	<h2>{title}</h2>
 	<ol class="timeline">
 		{
-			records.map((record) => {
+			sortedRecords.map((record) => {
 				const recordCopy = record.copy[locale];
 				return (
 					<li class:list={{ 'timeline-entry': true, 'timeline-entry--undated': !record.start }}>
@@ -79,8 +85,8 @@ const formatPeriod = (value: string) => {
 		gap: 0.4rem;
 	}
 
-	.timeline li.timeline-entry--undated {
-		grid-template-columns: minmax(0, 1fr);
+	.timeline li.timeline-entry--undated > * {
+		grid-column: 2;
 	}
 
 	h3 {
@@ -105,6 +111,10 @@ const formatPeriod = (value: string) => {
 		.timeline li {
 			grid-template-columns: 1fr;
 			gap: 0.65rem;
+		}
+
+		.timeline li.timeline-entry--undated > * {
+			grid-column: auto;
 		}
 	}
 </style>

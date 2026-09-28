@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import portrait from '../../../assets/profile/portrait.jpg';
 import PageIntro from '../../../components/PageIntro.astro';
 import ProfileTimeline from '../../../components/ProfileTimeline.astro';
 import SocialLinks from '../../../components/SocialLinks.astro';
@@ -36,7 +38,7 @@ const pathname = `/${locale}/about/`;
 		<PageIntro eyebrow={copy.nav.about} title={copy.about.title} description={profile.copy[locale].bio} />
 
 		<section class="profile-overview" aria-labelledby="profile-name">
-			<div class="monogram surface" role="img" aria-label={profile.name}>JA</div>
+			<Image class="portrait surface" src={portrait} width={480} height={480} alt={profile.name} loading="eager" />
 			<div>
 				<p class="eyebrow">{copy.about.biography}</p>
 				<h2 id="profile-name">{profile.legalName}</h2>
@@ -96,16 +98,10 @@ const pathname = `/${locale}/about/`;
 		padding-bottom: clamp(4rem, 8vw, 7rem);
 	}
 
-	.monogram {
-		display: grid;
-		aspect-ratio: 4 / 5;
-		place-items: center;
-		background: linear-gradient(145deg, var(--surface-raised), var(--surface-muted));
-		color: var(--accent-strong);
-		font-family: var(--font-reading);
-		font-size: clamp(3rem, 9vw, 6.5rem);
-		font-weight: 700;
-		letter-spacing: -0.06em;
+	.portrait {
+		width: 100%;
+		aspect-ratio: 1;
+		object-fit: cover;
 	}
 
 	.profile-overview h2 {
@@ -182,8 +178,8 @@ const pathname = `/${locale}/about/`;
 			grid-template-columns: 1fr;
 		}
 
-		.monogram {
-			max-width: 12rem;
+		.portrait {
+			max-width: 8rem;
 		}
 	}
 </style>

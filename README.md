@@ -1,63 +1,43 @@
-# Astro Starter Kit: Blog
+# jhl.idv.hk
 
-```sh
-bun create astro@latest -- --template blog
+Personal site and blog of Jianyue Hugo Liang. Built with Astro.
+
+Locales: `en` (default), `ja`, `zh`. Routes are prefixed with the locale, e.g. `/en/blog/`.
+
+## Commands
+
+| Command | Action |
+| :-- | :-- |
+| `bun install` | Install dependencies |
+| `bun run dev` | Start the dev server at `localhost:4321` |
+| `bun run build` | Build to `dist/` and verify Blog output |
+| `bun run test` | Run unit tests |
+| `bun run verify` | Run tests, build, and verify `dist/` |
+
+## Layout
+
+- `src/content/blog/` — posts, one file per language.
+- `src/assets/blog/` — post images.
+- `src/data/profile.ts`, `src/data/projects.ts` — profile and project data.
+- `src/i18n/ui.ts` — interface copy per locale.
+- `scripts/` — build output verifiers.
+
+## Writing a post
+
+```yaml
+---
+title: 'Post title'
+description: 'One-sentence summary.'
+pubDate: 2026-09-28
+lang: en            # en | ja | zh
+translationKey: post-slug
+topics: [Network]
+featured: false
+draft: false
+---
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-Features:
-
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+- Translations of one post share `translationKey`.
+- `heroImage` is a path relative to the post, under `src/assets/`.
+- `slug` overrides the route ID derived from the file path.
+- `draft: true` hides the post.

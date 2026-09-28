@@ -6,6 +6,7 @@ export interface UiCopy {
     projects: string;
     about: string;
     blog: string;
+    links: string;
   };
   actions: {
     viewProjects: string;
@@ -48,6 +49,26 @@ export interface UiCopy {
     active: string;
     externalProject: string;
   };
+  links: {
+    title: string;
+    introduction: string;
+    groups: {
+      bffs: string;
+      friends: string;
+    };
+    visit: string;
+    thisSite: string;
+    thisSiteIntroduction: string;
+    siteName: string;
+    siteUrl: string;
+    avatar: string;
+    description: string;
+    guidelines: string;
+    guidelineItems: readonly string[];
+    apply: string;
+    applyIntroduction: string;
+    applyItems: readonly string[];
+  };
   about: {
     title: string;
     experience: string;
@@ -83,7 +104,7 @@ export interface UiCopy {
 
 const uiCopy: Record<Locale, UiCopy> = {
   en: {
-    nav: { home: 'Home', projects: 'Projects', about: 'About', blog: 'Blog' },
+    nav: { home: 'Home', projects: 'Projects', about: 'About', blog: 'Blog', links: 'Links' },
     actions: {
       viewProjects: 'View projects',
       viewAll: 'View all',
@@ -106,7 +127,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       featured: 'Featured',
       sample: 'Sample',
       search: 'Search posts',
-      searchPlaceholder: 'Search by title, description, or topic',
+      searchPlaceholder: 'Title, summary, or topic',
       filters: 'Filter posts',
       topics: 'Topics',
       allTopics: 'All topics',
@@ -124,6 +145,31 @@ const uiCopy: Record<Locale, UiCopy> = {
       tags: 'Tags',
       active: 'Active',
       externalProject: 'Visit external project',
+    },
+    links: {
+      title: 'Friends and neighbours on the web.',
+      introduction: 'Sites run by friends, and projects worth a visit.',
+      groups: { bffs: 'Best friends', friends: 'Friends & projects' },
+      visit: 'Visit site',
+      thisSite: 'This site',
+      thisSiteIntroduction: 'Details for adding this site to your own links page.',
+      siteName: 'Name',
+      siteUrl: 'URL',
+      avatar: 'Avatar',
+      description: 'Description',
+      guidelines: 'Exchange guidelines',
+      guidelineItems: [
+        'Original content of good quality.',
+        'Updated regularly.',
+        'No illegal, gambling, or adult content.',
+      ],
+      apply: 'Apply for a link',
+      applyIntroduction: 'Send an email to {email} with the following:',
+      applyItems: [
+        'Your site URL',
+        'Site title and description',
+        'Your contact information',
+      ],
     },
     about: {
       title: 'Founder, developer, and student in Tokyo.',
@@ -152,7 +198,7 @@ const uiCopy: Record<Locale, UiCopy> = {
     footer: { copyright: 'All rights reserved.', builtWith: 'Built with Astro.' },
   },
   ja: {
-    nav: { home: 'ホーム', projects: 'プロジェクト', about: 'プロフィール', blog: 'ブログ' },
+    nav: { home: 'ホーム', projects: 'プロジェクト', about: 'プロフィール', blog: 'ブログ', links: 'リンク' },
     actions: {
       viewProjects: 'プロジェクトを見る',
       viewAll: 'すべて見る',
@@ -194,6 +240,31 @@ const uiCopy: Record<Locale, UiCopy> = {
       active: '活動中',
       externalProject: '外部のプロジェクトを見る',
     },
+    links: {
+      title: 'Web でつながる友人たち。',
+      introduction: '友人のサイトと、訪れてほしいプロジェクトです。',
+      groups: { bffs: '親友', friends: '友人とプロジェクト' },
+      visit: 'サイトを開く',
+      thisSite: 'このサイト',
+      thisSiteIntroduction: '相互リンクに掲載いただく際の情報です。',
+      siteName: 'サイト名',
+      siteUrl: 'URL',
+      avatar: 'アイコン',
+      description: '説明',
+      guidelines: '相互リンクの条件',
+      guidelineItems: [
+        '質の高いオリジナルコンテンツがあること。',
+        '定期的に更新されていること。',
+        '違法、ギャンブル、成人向けのコンテンツを含まないこと。',
+      ],
+      apply: '相互リンクの申請',
+      applyIntroduction: '{email} まで次の内容をメールでお送りください。',
+      applyItems: [
+        'サイトの URL',
+        'サイト名と説明',
+        '連絡先',
+      ],
+    },
     about: {
       title: '東京で学び、つくり、事業を育てています。',
       experience: '経験',
@@ -221,7 +292,7 @@ const uiCopy: Record<Locale, UiCopy> = {
     footer: { copyright: 'All rights reserved.', builtWith: 'Astro で構築。' },
   },
   zh: {
-    nav: { home: '首页', projects: '项目', about: '关于', blog: '博客' },
+    nav: { home: '首页', projects: '项目', about: '关于', blog: '博客', links: '友链' },
     actions: {
       viewProjects: '查看项目',
       viewAll: '查看全部',
@@ -262,6 +333,31 @@ const uiCopy: Record<Locale, UiCopy> = {
       tags: '标签',
       active: '进行中',
       externalProject: '访问外部项目',
+    },
+    links: {
+      title: '网上的朋友与邻居。',
+      introduction: '朋友们的网站，以及值得一看的项目。',
+      groups: { bffs: '挚友', friends: '朋友与项目' },
+      visit: '访问网站',
+      thisSite: '本站信息',
+      thisSiteIntroduction: '添加本站友链时可使用以下信息。',
+      siteName: '名称',
+      siteUrl: '网址',
+      avatar: '头像',
+      description: '简介',
+      guidelines: '交换要求',
+      guidelineItems: [
+        '内容原创且有质量。',
+        '保持定期更新。',
+        '不含违法、赌博或成人内容。',
+      ],
+      apply: '申请友链',
+      applyIntroduction: '请发送邮件至 {email}，并附上：',
+      applyItems: [
+        '网站地址',
+        '网站名称和简介',
+        '联系方式',
+      ],
     },
     about: {
       title: '在东京学习、创造并经营事业。',

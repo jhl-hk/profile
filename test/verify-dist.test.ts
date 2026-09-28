@@ -19,7 +19,7 @@ async function write(relativePath: string, content: string): Promise<void> {
 function homeHtml(locale: (typeof locales)[number]): string {
 	const profileCopy = profile.copy[locale];
 	return `<!doctype html><html lang="${locale}"><head>
-		<title>Janyue Aosugi</title>
+		<title>Jianyue Hugo Liang</title>
 		<link rel="canonical" href="${siteOrigin}/${locale}/">
 		${locales.map((target) => `<link rel="alternate" hreflang="${target}" href="${siteOrigin}/${target}/">`).join('')}
 		<link rel="alternate" hreflang="x-default" href="${siteOrigin}/en/">
@@ -50,6 +50,9 @@ async function createValidFixture(): Promise<void> {
 		'en/about/index.html',
 		'ja/about/index.html',
 		'zh/about/index.html',
+		'en/links/index.html',
+		'ja/links/index.html',
+		'zh/links/index.html',
 		'404.html',
 	];
 	for (const path of expectedHtml) await write(`dist/${path}`, '<!doctype html>');
@@ -120,14 +123,14 @@ test('rejects an English sample article leaked into another locale index', async
 	expect(result.stderr).toContain('English sample article leaked into ja Blog index');
 });
 
-test('rejects generated output with no declared published English sample article', async () => {
+test('accepts generated output without English sample articles', async () => {
 	await write(
 		'content/en-post.md',
 		"---\ntitle: 'en post'\ndescription: 'en description'\npubDate: '2026-09-22'\nlang: en\nsample: false\ndraft: false\n---\n",
 	);
 	const result = await runVerifier();
-	expect(result.exitCode).not.toBe(0);
-	expect(result.stderr).toContain('No declared published English sample article');
+	expect(result.stderr).not.toContain('sample');
+	expect(result.exitCode).toBe(0);
 });
 
 test('rejects an RSS feed containing another locale entry', async () => {

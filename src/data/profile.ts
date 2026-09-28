@@ -34,8 +34,8 @@ interface Certification {
 }
 
 export const profile = {
-  name: 'Janyue Aosugi',
-  legalName: 'Janyue Aosugi, a.k.a. Jianyue Hugo Liang',
+  name: 'Jianyue Hugo Liang',
+  legalName: 'Jianyue Hugo Liang, a.k.a. Janyue Aosugi',
   email: 'mailto:ja@jhl.hk',
   socials: {
     github: 'https://github.com/jhl-hk',
@@ -43,19 +43,19 @@ export const profile = {
   },
   copy: {
     en: {
-      role: 'Co-Founder & CEO @ JianyueLab Ltd.',
+      role: 'Co-Founder & CEO @ JianyueLab Ltd',
       location: 'Tokyo, Japan',
       bio: 'Developer, translator, and student in Japan, building JianyueLab while studying the International Baccalaureate. Interested in server and network programming, and aviation.',
       contact: 'Open to thoughtful conversations about software, infrastructure, and new projects.',
     },
     ja: {
-      role: 'JianyueLab Ltd. 共同創業者・CEO',
+      role: 'JianyueLab Ltd 共同創業者・CEO',
       location: '日本・東京',
       bio: '日本で国際バカロレアを学びながら JianyueLab を運営する、開発者・翻訳者・学生です。サーバー・ネットワークプログラミングと航空に関心があります。',
       contact: 'ソフトウェア、インフラ、新しいプロジェクトについてのご相談を歓迎します。',
     },
     zh: {
-      role: 'JianyueLab Ltd. 联合创始人兼 CEO',
+      role: 'JianyueLab Ltd 联合创始人兼 CEO',
       location: '日本东京',
       bio: '在日本学习国际文凭课程，同时经营 JianyueLab 的开发者、翻译者和学生。关注服务器与网络编程，以及航空。',
       contact: '欢迎交流软件、基础设施以及新的项目合作。',
@@ -86,7 +86,7 @@ export const profile = {
     },
     {
       id: 'jianyuelab-ltd',
-      organisation: 'JianyueLab Ltd.',
+      organisation: 'JianyueLab Ltd',
       start: '2025-12',
       end: null,
       copy: {
@@ -129,8 +129,10 @@ export const profile = {
       },
     },
     {
-      id: 'airway-simulation-network',
+      id: 'cerulean-aviation-network',
       organisation: 'Airway Simulation Network',
+      start: '2025-03',
+      end: null,
       copy: {
         en: { title: 'Co-founder', description: 'Co-founded Airway Simulation Network and contributed to its server infrastructure.' },
         ja: { title: '共同創設者', description: 'Airway Simulation Network を共同設立し、サーバーインフラに貢献。' },
@@ -140,6 +142,8 @@ export const profile = {
     {
       id: 'mcsmanager',
       organisation: 'MCSManager',
+      start: '2023-05',
+      end: null,
       copy: {
         en: { title: 'Translator & Community Moderator', description: 'Translated MCSManager and moderated its community.' },
         ja: { title: '翻訳者・コミュニティモデレーター', description: 'MCSManager の翻訳とコミュニティモデレーションを担当。' },

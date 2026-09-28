@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { linkGroups, linkHost, siteLinkCard } from '../src/data/links';
 import { profile } from '../src/data/profile';
 import { projects } from '../src/data/projects';
 import { getUiCopy } from '../src/i18n/ui';
@@ -54,15 +55,16 @@ describe('localized site data', () => {
       'nextjs',
     ]));
 
-    const airwaySimulationNetwork = profile.experience.find((record) => record.id === 'airway-simulation-network');
+    const airwaySimulationNetwork = profile.experience.find((record) => record.id === 'cerulean-aviation-network');
     const mcsManager = profile.experience.find((record) => record.id === 'mcsmanager');
 
-    expect(airwaySimulationNetwork).toBeDefined();
-    expect(mcsManager).toBeDefined();
+    expect(airwaySimulationNetwork?.start).toBe('2025-03');
+    expect(airwaySimulationNetwork?.end).toBeNull();
+    expect(mcsManager?.start).toBe('2023-05');
+    expect(mcsManager?.end).toBeNull();
 
     for (const record of [airwaySimulationNetwork, mcsManager]) {
-      expect(record?.start).toBeUndefined();
-      expect(record?.end).toBeUndefined();
+      expect(record).toBeDefined();
       for (const locale of locales) {
         expect(record?.copy[locale].title.length).toBeGreaterThan(0);
         expect(record?.copy[locale].description?.length).toBeGreaterThan(0);
@@ -85,9 +87,9 @@ describe('localized site data', () => {
   });
 
   test('provides current LinkedIn roles, skills, and language levels', () => {
-    expect(profile.copy.en.role).toBe('Co-Founder & CEO @ JianyueLab Ltd.');
-    expect(profile.copy.ja.role).toBe('JianyueLab Ltd. 共同創業者・CEO');
-    expect(profile.copy.zh.role).toBe('JianyueLab Ltd. 联合创始人兼 CEO');
+    expect(profile.copy.en.role).toBe('Co-Founder & CEO @ JianyueLab Ltd');
+    expect(profile.copy.ja.role).toBe('JianyueLab Ltd 共同創業者・CEO');
+    expect(profile.copy.zh.role).toBe('JianyueLab Ltd 联合创始人兼 CEO');
 
     const jianyueLab = profile.experience.find((record) => record.id === 'jianyuelab-ltd');
     const hangzhouSiliconBasedAgile = profile.experience.find((record) => record.id === 'hangzhou-silicon-based-agile-technology');
@@ -151,6 +153,39 @@ describe('localized site data', () => {
     });
     expect(profile.skills.find((skill) => skill.id === 'chinese')?.copy).toMatchObject({
       en: { proficiency: 'Native or bilingual' }, ja: { proficiency: 'ネイティブまたはバイリンガル' }, zh: { proficiency: '母语或双语' },
+    });
+  });
+
+  test('provides friend links with stable identifiers and https URLs', () => {
+    const links = linkGroups.flatMap((group) => group.links);
+    expect(links.length).toBeGreaterThan(0);
+    expect(new Set(links.map((link) => link.id)).size).toBe(links.length);
+    expect(new Set(linkGroups.map((group) => group.id)).size).toBe(linkGroups.length);
+
+    for (const link of links) {
+      expect(link.name.trim().length).toBeGreaterThan(0);
+      expect(new URL(link.url).protocol).toBe('https:');
+      expect(linkHost(link.url).length).toBeGreaterThan(0);
+    }
+
+    for (const locale of locales) {
+      const copy = getUiCopy(locale);
+      expect(copy.nav.links.length).toBeGreaterThan(0);
+      expect(copy.links.applyIntroduction).toContain('{email}');
+      expect(copy.links.guidelineItems.length).toBe(3);
+      expect(copy.links.applyItems.length).toBe(3);
+      for (const group of linkGroups) {
+        expect(copy.links.groups[group.id].length).toBeGreaterThan(0);
+      }
+    }
+
+    expect(linkHost('https://blog.imlazy.ink:233/')).toBe('blog.imlazy.ink:233');
+    expect(linkHost('https://www.homelabproject.cc')).toBe('homelabproject.cc');
+    expect(siteLinkCard).toEqual({
+      name: 'Jianyue Hugo Liang',
+      url: 'https://jhl.idv.hk',
+      avatar: 'https://jhl.idv.hk/apple-touch-icon.png',
+      email: 'ja@jhl.hk',
     });
   });
 });

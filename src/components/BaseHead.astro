@@ -1,7 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import FallbackImage from '../assets/blog-placeholder-1.jpg';
+import FallbackImage from '../assets/profile/portrait.jpg';
 import { SITE_ORIGIN, SITE_TITLE } from '../consts';
 import { defaultLocale, type Locale } from '../lib/i18n';
 import { buildSeoLinks, type LanguageTargets } from '../lib/seo';
@@ -39,8 +39,9 @@ const openGraphLocales: Record<Locale, string> = {
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="generator" content={Astro.generator} />
 <meta name="description" content={description} />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="icon" href="/favicon.ico" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link
 	rel="alternate"
