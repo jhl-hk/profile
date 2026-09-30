@@ -1,3 +1,8 @@
 ---
-return Astro.redirect('/en/blog/', 302);
+import RedirectPage from '../../components/RedirectPage.astro';
+import { locales, localizedPath } from '../../lib/i18n';
+
+const targets = Object.fromEntries(locales.map((locale) => [locale, localizedPath(locale, '/blog/')])) as Record<(typeof locales)[number], string>;
 ---
+
+<RedirectPage targets={targets} />

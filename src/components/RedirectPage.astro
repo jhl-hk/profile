@@ -1,0 +1,110 @@
+---
+import { SITE_ORIGIN } from '../consts';
+import { defaultLocale, localeLabels, locales, type Locale } from '../lib/i18n';
+
+interface Props {
+	targets: Partial<Record<Locale, string>> & Record<typeof defaultLocale, string>;
+}
+
+const { targets } = Astro.props;
+const fallback = targets[defaultLocale];
+const canonical = new URL(fallback, SITE_ORIGIN).href;
+const available = locales.filter((locale) => targets[locale]);
+---
+
+<!doctype html>
+<html lang={defaultLocale}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<meta name="robots" content="noindex" />
+		<link rel="canonical" href={canonical} />
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<title>Redirecting…</title>
+		<script is:inline define:vars={{ targets, fallback }}>
+			let target = fallback;
+			for (const language of navigator.languages ?? [navigator.language]) {
+				const locale = language.toLowerCase().split('-')[0];
+				if (targets[locale]) {
+					target = targets[locale];
+					break;
+				}
+			}
+			let dark = matchMedia('(prefers-color-scheme: dark)').matches;
+			try {
+				const saved = localStorage.getItem('theme');
+				if (saved === 'light' || saved === 'dark') dark = saved === 'dark';
+			} catch {}
+			document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+			location.replace(target + location.search + location.hash);
+		</script>
+		<noscript><meta http-equiv="refresh" content={`0;url=${fallback}`} /></noscript>
+		<style>
+			:root {
+				color-scheme: light dark;
+				--surface: #f5f0e8;
+				--text: #292724;
+				--text-muted: #706a63;
+				--accent: #8a5300;
+			}
+
+			:root[data-theme='dark'] {
+				--surface: #191817;
+				--text: #eeeae4;
+				--text-muted: #aaa49c;
+				--accent: #f4c16f;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme='light']) {
+					--surface: #191817;
+					--text: #eeeae4;
+					--text-muted: #aaa49c;
+					--accent: #f4c16f;
+				}
+			}
+
+			body {
+				display: grid;
+				min-height: 100vh;
+				margin: 0;
+				place-content: center;
+				gap: 0.75rem;
+				background: var(--surface);
+				color: var(--text-muted);
+				font-family: system-ui, sans-serif;
+				text-align: center;
+				animation: reveal 0s 600ms both;
+			}
+
+			nav {
+				display: flex;
+				gap: 1.25rem;
+				justify-content: center;
+			}
+
+			a {
+				color: var(--accent);
+				font-weight: 700;
+			}
+
+			@keyframes reveal {
+				from {
+					visibility: hidden;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<p>Redirecting…</p>
+		<nav>
+			{
+				available.map((locale) => (
+					<a href={targets[locale]} hreflang={locale} lang={locale}>
+						{localeLabels[locale]}
+					</a>
+				))
+			}
+		</nav>
+	</body>
+</html>

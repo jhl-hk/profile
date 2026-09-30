@@ -1,19 +1,23 @@
 ---
 import { getCollection } from 'astro:content';
-import { postSlug } from '../../lib/content';
+import RedirectPage from '../../components/RedirectPage.astro';
+import { postSlug, translationTargets } from '../../lib/content';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog', ({ data }) => !data.draft && data.lang === 'en');
-	return posts.map((post) => {
-		const slug = postSlug(post);
-		return { params: { slug }, props: { slug } };
-	});
+	const posts = await getCollection('blog', ({ data }) => !data.draft);
+	return posts
+		.filter((post) => post.data.lang === 'en')
+		.map((post) => ({
+			params: { slug: postSlug(post) },
+			props: { targets: { ...translationTargets(posts, post), en: `/en/blog/${postSlug(post)}/` } },
+		}));
 }
 
 interface Props {
-	slug: string;
+	targets: Parameters<typeof RedirectPage>[0]['targets'];
 }
 
-const { slug } = Astro.props;
-return Astro.redirect(`/en/blog/${slug}/`, 302);
+const { targets } = Astro.props;
 ---
+
+<RedirectPage targets={targets} />
