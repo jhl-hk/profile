@@ -14,10 +14,10 @@ const copy = getUiCopy('en');
 	languageTargets={staticLanguageTargets('/404/')}
 >
 	<section class="not-found page-shell">
-		<p class="error-code" aria-hidden="true">404</p>
-		<h1>{copy.notFound.title}</h1>
-		<p>{copy.notFound.description}</p>
-		<a href="/en/">{copy.actions.backHome}</a>
+		<p class="error-code" aria-hidden="true" data-reveal>404</p>
+		<h1 data-reveal>{copy.notFound.title}</h1>
+		<p data-reveal>{copy.notFound.description}</p>
+		<a href="/en/" data-reveal>{copy.actions.backHome}</a>
 	</section>
 </SiteLayout>
 

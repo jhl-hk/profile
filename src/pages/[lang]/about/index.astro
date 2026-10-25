@@ -38,8 +38,8 @@ const pathname = `/${locale}/about/`;
 		<PageIntro eyebrow={copy.nav.about} title={copy.about.title} description={profile.copy[locale].bio} />
 
 		<section class="profile-overview" aria-labelledby="profile-name">
-			<Image class="portrait surface" src={portrait} width={480} height={480} alt={profile.name} loading="eager" />
-			<div>
+			<Image class="portrait surface" src={portrait} width={480} height={480} alt={profile.name} loading="eager" data-reveal />
+			<div data-reveal>
 				<p class="eyebrow">{copy.about.biography}</p>
 				<h2 id="profile-name">{profile.legalName}</h2>
 				<p class="profile-role">{profile.copy[locale].role} · {profile.copy[locale].location}</p>
@@ -51,14 +51,14 @@ const pathname = `/${locale}/about/`;
 		<ProfileTimeline locale={locale} title={copy.about.experience} records={profile.experience} />
 		<ProfileTimeline locale={locale} title={copy.about.education} records={profile.education} />
 
-		<section class="profile-details" aria-labelledby="interests-title">
+		<section class="profile-details" aria-labelledby="interests-title" data-reveal>
 			<h2 id="interests-title">{copy.about.interests}</h2>
 			<ul class="interests">
 				{interests.map((interest) => <li>{interest.copy[locale].label}</li>)}
 			</ul>
 		</section>
 
-		<section class="profile-details" aria-labelledby="skills-title">
+		<section class="profile-details" aria-labelledby="skills-title" data-reveal>
 			<h2 id="skills-title">{copy.about.skills}</h2>
 			<div class="detail-grid">
 				<div>
@@ -78,7 +78,7 @@ const pathname = `/${locale}/about/`;
 			</div>
 		</section>
 
-		<section class="profile-details" aria-labelledby="certifications-title">
+		<section class="profile-details" aria-labelledby="certifications-title" data-reveal>
 			<h2 id="certifications-title">{copy.about.certifications}</h2>
 			<ul class="certifications">
 				{profile.certifications.map((certification) => (

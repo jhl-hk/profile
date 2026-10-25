@@ -20,6 +20,7 @@ Locales: `en` (default), `ja`, `zh`. Routes are prefixed with the locale, e.g. `
 - `src/assets/blog/` — post images.
 - `src/data/profile.ts`, `src/data/projects.ts` — profile and project data.
 - `src/i18n/ui.ts` — interface copy per locale.
+- `src/lib/motion.ts` — anime.js motion. Elements marked `data-reveal` fade in on scroll; `data-reveal="words"` staggers words.
 - `scripts/` — build output verifiers.
 
 ## Writing a post

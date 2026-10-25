@@ -75,6 +75,8 @@ const menuId = 'language-menu';
 </nav>
 
 <script>
+	import { animateMenu } from '../lib/motion';
+
 	const bindLanguageSwitchers = () => {
 		for (const root of document.querySelectorAll<HTMLElement>('[data-language-switcher]')) {
 			if (root.dataset.bound === 'true') continue;
@@ -85,15 +87,27 @@ const menuId = 'language-menu';
 			if (!trigger || !menu) continue;
 
 			const links = () => [...menu.querySelectorAll<HTMLAnchorElement>('a')];
+			const isOpen = () => trigger.getAttribute('aria-expanded') === 'true';
 			const setOpen = (open: boolean, focusTarget?: 'first' | 'current' | 'trigger') => {
-				menu.hidden = !open;
-				trigger.setAttribute('aria-expanded', String(open));
+				if (open !== isOpen()) {
+					trigger.setAttribute('aria-expanded', String(open));
+					menu.inert = !open;
+					if (open) {
+						const fromHidden = menu.hidden;
+						menu.hidden = false;
+						animateMenu(menu, true, fromHidden);
+					} else {
+						animateMenu(menu, false).then(() => {
+							if (!isOpen()) menu.hidden = true;
+						});
+					}
+				}
 				if (focusTarget === 'trigger') trigger.focus();
 				if (focusTarget === 'first') links()[0]?.focus();
 				if (focusTarget === 'current') (menu.querySelector<HTMLAnchorElement>('[aria-current="page"]') ?? links()[0])?.focus();
 			};
 
-			trigger.addEventListener('click', () => setOpen(menu.hidden, menu.hidden ? 'current' : undefined));
+			trigger.addEventListener('click', () => setOpen(!isOpen(), isOpen() ? undefined : 'current'));
 			trigger.addEventListener('keydown', (event) => {
 				if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
 					event.preventDefault();
@@ -115,13 +129,13 @@ const menuId = 'language-menu';
 			});
 
 			root.addEventListener('keydown', (event) => {
-				if (event.key === 'Escape' && !menu.hidden) setOpen(false, 'trigger');
+				if (event.key === 'Escape' && isOpen()) setOpen(false, 'trigger');
 			});
 			root.addEventListener('focusout', (event) => {
 				if (!root.contains(event.relatedTarget as Node | null)) setOpen(false);
 			});
 			document.addEventListener('pointerdown', (event) => {
-				if (!menu.hidden && !root.contains(event.target as Node)) setOpen(false);
+				if (isOpen() && !root.contains(event.target as Node)) setOpen(false);
 			});
 		}
 	};
@@ -149,6 +163,7 @@ const menuId = 'language-menu';
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		cursor: pointer;
+		transition: transform 120ms var(--ease-out);
 	}
 
 	.language-trigger:active {
@@ -190,7 +205,6 @@ const menuId = 'language-menu';
 		box-shadow: var(--shadow-whisper);
 		list-style: none;
 		transform-origin: top right;
-		animation: menu-in 140ms ease-out;
 	}
 
 	.language-menu[hidden] {
@@ -233,18 +247,7 @@ const menuId = 'language-menu';
 		text-underline-offset: 0.18em;
 	}
 
-	@keyframes menu-in {
-		from {
-			opacity: 0;
-			transform: translateY(-0.25rem) scale(0.97);
-		}
-	}
-
 	@media (prefers-reduced-motion: reduce) {
-		.language-menu {
-			animation: none;
-		}
-
 		.chevron {
 			transition: none;
 		}

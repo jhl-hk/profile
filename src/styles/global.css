@@ -17,6 +17,7 @@
 	--radius-medium: 1rem;
 	--radius-pill: 999px;
 	--shadow-whisper: 0 1rem 3rem rgba(48, 43, 38, 0.06);
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 	--black: 41, 39, 36;
 	--gray: 112, 106, 99;
 	--gray-dark: 41, 39, 36;
@@ -323,11 +324,31 @@ textarea {
 	background: var(--text);
 	color: var(--surface);
 	transform: translateY(-200%);
-	transition: transform 160ms ease-out;
+	transition: transform 160ms var(--ease-out);
 }
 
 .skip-link:focus {
 	transform: translateY(0);
+}
+
+/* src/lib/motion.ts reveals these; the fallback shows them if the script never runs. */
+:root[data-motion='pending'] [data-reveal] {
+	opacity: 0;
+	animation: reveal-fallback 0s 2s forwards;
+}
+
+@keyframes reveal-fallback {
+	to {
+		opacity: 1;
+	}
+}
+
+@media print {
+	[data-reveal],
+	[data-reveal] * {
+		opacity: 1 !important;
+		transform: none !important;
+	}
 }
 
 @media (max-width: 720px) {

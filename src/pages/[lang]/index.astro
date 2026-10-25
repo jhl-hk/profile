@@ -35,17 +35,17 @@ const languageTargets = staticLanguageTargets('/');
 >
 	<div class="page-shell">
 		<section class="home-hero" aria-labelledby="home-title">
-			<p class="eyebrow">{copy.home.eyebrow}</p>
-			<h1 id="home-title">{profile.name}</h1>
-			<p class="home-introduction">{profile.copy[locale].bio}</p>
-			<div class="home-facts">
+			<p class="eyebrow" data-reveal>{copy.home.eyebrow}</p>
+			<h1 id="home-title" data-reveal="words">{profile.name}</h1>
+			<p class="home-introduction" data-reveal>{profile.copy[locale].bio}</p>
+			<div class="home-facts" data-reveal>
 				<p><span>{copy.home.currentRole}</span>{profile.copy[locale].role}</p>
 				<p><span>{copy.home.basedIn}</span>{profile.copy[locale].location}</p>
 			</div>
 		</section>
 
 		<section class="home-section" aria-labelledby="featured-projects">
-			<div class="section-heading">
+			<div class="section-heading" data-reveal>
 				<h2 id="featured-projects">{copy.home.featuredProjects}</h2>
 				<a href={`/${locale}/projects/`}>{copy.actions.viewAll}</a>
 			</div>
@@ -53,7 +53,7 @@ const languageTargets = staticLanguageTargets('/');
 		</section>
 
 		<section class="home-section" aria-labelledby="recent-writing">
-			<div class="section-heading">
+			<div class="section-heading" data-reveal>
 				<h2 id="recent-writing">{copy.home.recentWriting}</h2>
 				<a href={`/${locale}/blog/`}>{copy.actions.viewAll}</a>
 			</div>
@@ -62,11 +62,11 @@ const languageTargets = staticLanguageTargets('/');
 					? posts.map((post) => (
 						<PostRow post={post} locale={locale} readingMinutes={estimateReadingMinutes(post.body)} />
 					))
-					: <p class="empty-state">{copy.blog.empty}</p>
+					: <p class="empty-state" data-reveal>{copy.blog.empty}</p>
 			}
 		</section>
 
-		<section class="home-contact surface" aria-labelledby="contact-title">
+		<section class="home-contact surface" aria-labelledby="contact-title" data-reveal>
 			<div>
 				<p class="eyebrow">{copy.actions.getInTouch}</p>
 				<h2 id="contact-title">{profile.copy[locale].contact}</h2>

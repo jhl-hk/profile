@@ -32,6 +32,8 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 
 <script>
 	import { matchesPostFilter, setPostFilterVisibility } from '../lib/blog-filter';
+	import { createListLayout } from '../lib/list-layout';
+	import { settleReveals } from '../lib/motion';
 
 	document.querySelectorAll<HTMLElement>('[data-post-search]').forEach((search) => {
 		const root = search.closest<HTMLElement>('[data-blog-index]');
@@ -40,22 +42,31 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 		if (!root || !input || !output) return;
 
 		const rows = root.querySelectorAll<HTMLElement>('[data-post-row]');
+		const list = root.querySelector<HTMLElement>('[data-post-list]');
 		const topicButtons = root.querySelectorAll<HTMLButtonElement>('[data-topic-filter]');
 		const locale = search.dataset.locale ?? 'en';
 		let selectedTopic = '';
+		let updateList: ((apply: () => void) => void) | undefined;
 
 		const update = () => {
 			const query = input.value;
 			let matches = 0;
+			const applyFilter = () => {
+				rows.forEach((row) => {
+					const title = row.dataset.title ?? '';
+					const description = row.dataset.description ?? '';
+					const topics = (row.dataset.topics ?? '').split('|').filter(Boolean);
+					const matchesPost = matchesPostFilter({ title, description, topics }, query, selectedTopic, locale);
+					setPostFilterVisibility(row, matchesPost);
+					if (!row.hidden) matches += 1;
+				});
+			};
 
-			rows.forEach((row) => {
-				const title = row.dataset.title ?? '';
-				const description = row.dataset.description ?? '';
-				const topics = (row.dataset.topics ?? '').split('|').filter(Boolean);
-				const matchesPost = matchesPostFilter({ title, description, topics }, query, selectedTopic, locale);
-				setPostFilterVisibility(row, matchesPost);
-				if (!row.hidden) matches += 1;
-			});
+			if (!updateList) {
+				settleReveals(root);
+				updateList = list ? createListLayout(list, '[data-post-row]') : (apply) => apply();
+			}
+			updateList(applyFilter);
 
 			output.textContent = matches === 0
 				? search.dataset.noResults ?? ''

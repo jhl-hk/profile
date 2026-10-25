@@ -20,6 +20,7 @@ const normalize = (value: string) => normalizeFilterValue(value, locale);
 <article
 	class="post-row"
 	data-post-row
+	data-reveal
 	data-title={normalize(post.data.title)}
 	data-description={normalize(post.data.description)}
 	data-topics={post.data.topics.map(normalize).join('|')}

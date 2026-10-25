@@ -29,13 +29,13 @@ const formatPeriod = (value: string) => {
 ---
 
 <section class="timeline-section">
-	<h2>{title}</h2>
+	<h2 data-reveal>{title}</h2>
 	<ol class="timeline">
 		{
 			sortedRecords.map((record) => {
 				const recordCopy = record.copy[locale];
 				return (
-					<li class:list={{ 'timeline-entry': true, 'timeline-entry--undated': !record.start }}>
+					<li class:list={{ 'timeline-entry': true, 'timeline-entry--undated': !record.start }} data-reveal>
 						{record.start && (
 							<div class="timeline-period meta">
 								<time datetime={record.start}>{formatPeriod(record.start)}</time>

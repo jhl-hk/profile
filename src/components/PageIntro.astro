@@ -9,9 +9,9 @@ const { eyebrow, title, description } = Astro.props;
 ---
 
 <header class="page-intro">
-	<p class="eyebrow">{eyebrow}</p>
-	<h1>{title}</h1>
-	<p class="description">{description}</p>
+	<p class="eyebrow" data-reveal>{eyebrow}</p>
+	<h1 data-reveal>{title}</h1>
+	<p class="description" data-reveal>{description}</p>
 </header>
 
 <style>

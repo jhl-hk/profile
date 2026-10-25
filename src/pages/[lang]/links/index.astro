@@ -40,10 +40,10 @@ const [applyBefore, applyAfter = ''] = copy.links.applyIntroduction.split('{emai
 		{
 			linkGroups.map((group) => (
 				<section class="link-group" aria-labelledby={`links-${group.id}`}>
-					<h2 id={`links-${group.id}`}>{copy.links.groups[group.id]}</h2>
+					<h2 id={`links-${group.id}`} data-reveal>{copy.links.groups[group.id]}</h2>
 					<ul class="link-grid">
 						{group.links.map((link) => (
-							<li>
+							<li data-reveal>
 								<a
 									class="link-card surface"
 									href={link.url}
@@ -66,8 +66,8 @@ const [applyBefore, applyAfter = ''] = copy.links.applyIntroduction.split('{emai
 		}
 
 		<section class="link-group" aria-labelledby="links-this-site">
-			<h2 id="links-this-site">{copy.links.thisSite}</h2>
-			<div class="site-card surface">
+			<h2 id="links-this-site" data-reveal>{copy.links.thisSite}</h2>
+			<div class="site-card surface" data-reveal>
 				<img class="site-avatar" src="/apple-touch-icon.png" width="72" height="72" alt="" loading="lazy" />
 				<div>
 					<p class="site-intro meta">{copy.links.thisSiteIntroduction}</p>
@@ -85,7 +85,7 @@ const [applyBefore, applyAfter = ''] = copy.links.applyIntroduction.split('{emai
 			</div>
 		</section>
 
-		<div class="link-notes">
+		<div class="link-notes" data-reveal>
 			<section aria-labelledby="links-guidelines">
 				<h2 id="links-guidelines">{copy.links.guidelines}</h2>
 				<ol>
@@ -150,10 +150,17 @@ const [applyBefore, applyAfter = ''] = copy.links.applyIntroduction.split('{emai
 
 	.link-arrow {
 		color: var(--text-muted);
+		transition: transform 160ms var(--ease-out);
 	}
 
 	.link-card:hover .link-arrow {
 		color: var(--accent-strong);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.link-card:hover .link-arrow {
+			transform: translate(2px, -2px);
+		}
 	}
 
 	.link-description {

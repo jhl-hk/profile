@@ -13,7 +13,7 @@ const projectCopy = project.copy[locale];
 const copy = getUiCopy(locale).projects;
 ---
 
-<article class="project-row">
+<article class="project-row" data-reveal>
 	<div class="project-heading">
 		<p class="project-status"><span aria-hidden="true"></span>{copy[project.status]}</p>
 		<h2>{project.name}</h2>
@@ -107,6 +107,16 @@ const copy = getUiCopy(locale).projects;
 	.project-link:hover {
 		border-color: var(--accent);
 		color: var(--accent-strong);
+	}
+
+	.project-link span {
+		transition: transform 160ms var(--ease-out);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.project-link:hover span {
+			transform: translate(2px, -2px);
+		}
 	}
 
 	@media (max-width: 720px) {
