@@ -4,6 +4,7 @@ import type { CollectionEntry } from 'astro:content';
 import { getUiCopy } from '../i18n/ui';
 import { normalizeFilterValue } from '../lib/blog-filter';
 import { postSlug } from '../lib/content';
+import { flightNumber } from '../lib/flight';
 import { formatDate, formatReadingTime, type Locale } from '../lib/i18n';
 
 interface Props {
@@ -35,6 +36,8 @@ const normalize = (value: string) => normalizeFilterValue(value, locale);
 	<div class="featured-copy">
 		<p class="eyebrow">{copy.featured}</p>
 		<div class="post-meta meta">
+			<span class="flight">{flightNumber(post.data.pubDate)}</span>
+			<span aria-hidden="true">·</span>
 			<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, locale)}</time>
 			<span aria-hidden="true">·</span>
 			<span>{formatReadingTime(readingMinutes, locale)}</span>
@@ -73,6 +76,11 @@ const normalize = (value: string) => normalizeFilterValue(value, locale);
 	.featured-copy {
 		align-self: center;
 		padding: clamp(1.5rem, 5vw, 3.5rem);
+	}
+
+	.flight {
+		color: var(--accent-strong);
+		font-weight: 700;
 	}
 
 	.post-meta {

@@ -43,7 +43,7 @@ const copy = getUiCopy(locale);
 			languageTargets={languageTargets}
 		/>
 	</head>
-	<body>
+	<body data-copy-label={copy.actions.copy} data-copied-label={copy.actions.copied}>
 		<a class="skip-link" href="#content">{copy.accessibility.skipToContent}</a>
 		<Header locale={locale} pathname={pathname} languageTargets={languageTargets} />
 		<main id="content" class:list={['site-main', mainClass]}>
@@ -54,9 +54,11 @@ const copy = getUiCopy(locale);
 </html>
 
 <script>
+	import { initCodeCopy } from '../lib/code-copy';
 	import { initReveals } from '../lib/motion';
 
 	initReveals();
+	initCodeCopy(document.body);
 </script>
 
 <style>

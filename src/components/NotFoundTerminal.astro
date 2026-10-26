@@ -1,0 +1,30 @@
+---
+import type { ComponentProps } from 'astro/types';
+import { getUiCopy } from '../i18n/ui';
+import type { Locale } from '../lib/i18n';
+import CodeWindow from './CodeWindow.astro';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const lines: ComponentProps<typeof CodeWindow>['lines'] = [
+	[['muted', '$ '], [null, 'curl -sI https://jhl.idv.hk/this-page']],
+	[['keyword', 'HTTP/2 404']],
+	[[null, 'content-type: text/html; charset=utf-8']],
+	[['comment', `# no route to destination — divert to /${locale}/`]],
+];
+---
+
+<div class="terminal">
+	<CodeWindow filename="zsh" label={getUiCopy(locale).notFound.terminal} lines={lines} />
+</div>
+
+<style>
+	.terminal {
+		max-width: 34rem;
+		margin: 2.5rem auto 0;
+		text-align: start;
+	}
+</style>

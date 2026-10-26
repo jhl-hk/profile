@@ -35,7 +35,14 @@ const formatPeriod = (value: string) => {
 			sortedRecords.map((record) => {
 				const recordCopy = record.copy[locale];
 				return (
-					<li class:list={{ 'timeline-entry': true, 'timeline-entry--undated': !record.start }} data-reveal>
+					<li
+						class:list={{
+							'timeline-entry': true,
+							'timeline-entry--undated': !record.start,
+							'timeline-entry--current': Boolean(record.start) && !record.end,
+						}}
+						data-reveal
+					>
 						{record.start && (
 							<div class="timeline-period meta">
 								<time datetime={record.start}>{formatPeriod(record.start)}</time>
@@ -43,7 +50,7 @@ const formatPeriod = (value: string) => {
 								{record.end ? <time datetime={record.end}>{formatPeriod(record.end)}</time> : <span>{copy.present}</span>}
 							</div>
 						)}
-						<div>
+						<div class="timeline-body">
 							<h3>{recordCopy.title}</h3>
 							<p class="timeline-organisation">{record.organisation}{recordCopy.location && <> · {recordCopy.location}</>}</p>
 							{recordCopy.description && <p class="timeline-description">{recordCopy.description}</p>}
@@ -116,5 +123,43 @@ const formatPeriod = (value: string) => {
 		.timeline li.timeline-entry--undated > * {
 			grid-column: auto;
 		}
+	}
+
+	/* Logbook route: a waypoint per entry, filled while the role is current. */
+	.timeline-body {
+		position: relative;
+		padding-inline-start: 1.6rem;
+	}
+
+	.timeline-body::before {
+		content: '';
+		position: absolute;
+		top: 0.4rem;
+		left: 0.25rem;
+		width: 8px;
+		height: 8px;
+		border: 1.5px solid var(--text-faint);
+		background: var(--surface);
+		transform: rotate(45deg);
+	}
+
+	.timeline-body::after {
+		content: '';
+		position: absolute;
+		top: calc(0.4rem + 12px);
+		bottom: -1.5rem;
+		left: calc(0.25rem + 3.5px);
+		width: 1px;
+		background: var(--border);
+	}
+
+	.timeline li:last-child .timeline-body::after {
+		display: none;
+	}
+
+	.timeline-entry--current .timeline-body::before {
+		border-color: var(--accent);
+		background: var(--accent);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
 	}
 </style>

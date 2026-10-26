@@ -4,6 +4,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 import { readBlogManifest } from './scripts/blog-manifest.ts';
+import { codeFrameTransformer } from './src/lib/code-frame.ts';
 import { includeInSitemap, sitemapAlternateMap } from './src/lib/sitemap.ts';
 
 const site = 'https://jhl.idv.hk';
@@ -20,6 +21,13 @@ export default defineConfig({
 			serialize: (item) => ({ ...item, links: sitemapAlternates.get(item.url) }),
 		}),
 	],
+	markdown: {
+		shikiConfig: {
+			themes: { light: 'vitesse-light', dark: 'vitesse-dark' },
+			defaultColor: false,
+			transformers: [codeFrameTransformer],
+		},
+	},
 	fonts: [
 		{
 			provider: fontProviders.local(),
@@ -38,6 +46,50 @@ export default defineConfig({
 						src: ['./src/assets/fonts/atkinson-bold.woff'],
 						weight: 700,
 						style: 'normal',
+						display: 'swap',
+					},
+				],
+			},
+		},
+		{
+			provider: fontProviders.local(),
+			name: 'JetBrains Mono',
+			cssVariable: '--font-jetbrains-mono',
+			fallbacks: ['monospace'],
+			options: {
+				variants: [
+					{
+						src: ['./src/assets/fonts/jetbrains-mono-latin-400-normal.woff2'],
+						weight: 400,
+						style: 'normal',
+						display: 'swap',
+					},
+					{
+						src: ['./src/assets/fonts/jetbrains-mono-latin-700-normal.woff2'],
+						weight: 700,
+						style: 'normal',
+						display: 'swap',
+					},
+				],
+			},
+		},
+		{
+			provider: fontProviders.local(),
+			name: 'Source Serif 4',
+			cssVariable: '--font-source-serif',
+			fallbacks: ['serif'],
+			options: {
+				variants: [
+					{
+						src: ['./src/assets/fonts/source-serif-4-latin-wght-normal.woff2'],
+						weight: '200 900',
+						style: 'normal',
+						display: 'swap',
+					},
+					{
+						src: ['./src/assets/fonts/source-serif-4-latin-wght-italic.woff2'],
+						weight: '200 900',
+						style: 'italic',
 						display: 'swap',
 					},
 				],

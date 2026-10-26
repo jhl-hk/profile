@@ -20,13 +20,16 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 	data-no-results={copy.noResults}
 >
 	<label for={`post-search-${locale}`}>{copy.search}</label>
-	<input
-		id={`post-search-${locale}`}
-		type="search"
-		name="query"
-		placeholder={copy.searchPlaceholder}
-		autocomplete="off"
-	/>
+	<div class="search-field">
+		<span class="prompt" aria-hidden="true">grep -i</span>
+		<input
+			id={`post-search-${locale}`}
+			type="search"
+			name="query"
+			placeholder={copy.searchPlaceholder}
+			autocomplete="off"
+		/>
+	</div>
 	<p class="result-count meta" aria-live="polite" aria-atomic="true">{initialResult}</p>
 </div>
 
@@ -96,7 +99,41 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 		text-transform: uppercase;
 	}
 
+	.search-field {
+		position: relative;
+	}
+
+	.prompt {
+		position: absolute;
+		inset: 0 auto 0 0.8rem;
+		display: flex;
+		align-items: center;
+		color: var(--accent-strong);
+		font-family: var(--font-mono);
+		font-size: 0.82rem;
+		pointer-events: none;
+	}
+
+	.prompt::before {
+		content: '$ ';
+		content: '$ ' / '';
+		color: var(--text-faint);
+		white-space: pre;
+	}
+
+	input {
+		padding-inline-start: 5.6rem;
+		font-family: var(--font-mono);
+		font-size: 0.86rem;
+	}
+
 	.result-count {
 		margin: 0.55rem 0 0;
+	}
+
+	.result-count::before {
+		content: '→ ';
+		content: '→ ' / '';
+		color: var(--text-faint);
 	}
 </style>

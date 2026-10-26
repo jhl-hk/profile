@@ -4,6 +4,7 @@ import FeaturedPost from '../../../components/FeaturedPost.astro';
 import PostRow from '../../../components/PostRow.astro';
 import PostSearch from '../../../components/PostSearch.astro';
 import TopicList from '../../../components/TopicList.astro';
+import TraceBreadcrumb from '../../../components/TraceBreadcrumb.astro';
 import { getUiCopy } from '../../../i18n/ui';
 import SiteLayout from '../../../layouts/SiteLayout.astro';
 import { estimateReadingMinutes, publishedPosts } from '../../../lib/content';
@@ -36,6 +37,7 @@ const pathname = `/${locale}/blog/`;
 >
 	<div class="blog-index page-shell" data-blog-index>
 		<header class="blog-header">
+			<TraceBreadcrumb locale={locale} hops={[{ label: 'blog' }]} />
 			<p class="eyebrow" data-reveal>{copy.nav.blog}</p>
 			<h1 data-reveal>{copy.blog.title}</h1>
 		</header>

@@ -1,0 +1,70 @@
+---
+import { getUiCopy } from '../i18n/ui';
+import { flightNumber, notamDate } from '../lib/flight';
+import { formatDate, formatReadingTime, localeLabels, type Locale } from '../lib/i18n';
+import Flaps from './Flaps.astro';
+
+interface Props {
+	date: Date;
+	readingMinutes: number;
+	locale: Locale;
+}
+
+const { date, readingMinutes, locale } = Astro.props;
+const copy = getUiCopy(locale).home.board;
+const flight = flightNumber(date);
+---
+
+<dl class="flight-strip board-surface" data-reveal="flaps">
+	<div>
+		<dt>{copy.flight}</dt>
+		<dd><span class="sr-only">{flight}</span><span class="tiles" aria-hidden="true"><Flaps text={flight} /></span></dd>
+	</div>
+	<div>
+		<dt>{copy.date}</dt>
+		<dd>
+			<time datetime={date.toISOString()}>
+				<span class="sr-only">{formatDate(date, locale)}</span><span class="tiles" aria-hidden="true"><Flaps text={notamDate(date)} /></span>
+			</time>
+		</dd>
+	</div>
+	<div>
+		<dt>{copy.duration}</dt>
+		<dd>
+			<span class="sr-only">{formatReadingTime(readingMinutes, locale)}</span><span class="tiles" aria-hidden="true"><Flaps text={`${String(readingMinutes).padStart(2, '0')}MIN`} /></span>
+		</dd>
+	</div>
+	<div>
+		<dt>{copy.language}</dt>
+		<dd><span class="sr-only">{localeLabels[locale]}</span><span class="tiles" aria-hidden="true"><Flaps text={locale.toUpperCase()} /></span></dd>
+	</div>
+</dl>
+
+<style>
+	.flight-strip {
+		display: inline-flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.6rem 1.4rem;
+		margin: 0 0 1.25rem;
+		padding: 0.7rem 1rem 0.8rem;
+		font-size: 0.82rem;
+		text-align: start;
+	}
+
+	dt {
+		margin-bottom: 0.3rem;
+		color: var(--board-muted);
+		font-size: 0.62rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	dd {
+		margin: 0;
+	}
+
+	.tiles {
+		display: flex;
+	}
+</style>

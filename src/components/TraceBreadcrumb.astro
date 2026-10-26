@@ -1,0 +1,91 @@
+---
+import { SITE_ORIGIN } from '../consts';
+import { getUiCopy } from '../i18n/ui';
+import type { Locale } from '../lib/i18n';
+
+interface Props {
+	locale: Locale;
+	hops: { label: string; href?: string }[];
+}
+
+const { locale, hops } = Astro.props;
+const host = new URL(SITE_ORIGIN).host;
+const route = [{ label: host, href: `/${locale}/` }, ...hops];
+---
+
+<nav class="trace" aria-label={getUiCopy(locale).accessibility.breadcrumb} data-reveal>
+	<span class="trace-command" aria-hidden="true">traceroute</span>
+	<ol>
+		{route.map((hop, index) => (
+			<li>
+				<span class="hop" aria-hidden="true">{index + 1}</span>
+				{hop.href ? <a href={hop.href}>{hop.label}</a> : <span aria-current="page">{hop.label}</span>}
+			</li>
+		))}
+	</ol>
+</nav>
+
+<style>
+	.trace {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: var(--trace-align, flex-start);
+		gap: 0.3rem 0.75rem;
+		margin-bottom: 1.25rem;
+		color: var(--text-muted);
+		font-family: var(--font-mono);
+		font-size: 0.74rem;
+	}
+
+	.trace-command {
+		color: var(--text-faint);
+	}
+
+	.trace-command::before {
+		content: '$ ';
+		content: '$ ' / '';
+	}
+
+	ol {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: var(--trace-align, flex-start);
+		gap: 0.3rem 0.6rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	li {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.35rem;
+	}
+
+	li + li::before {
+		content: '→';
+		content: '→' / '';
+		color: var(--text-faint);
+	}
+
+	.hop {
+		color: var(--accent-strong);
+		font-weight: 700;
+	}
+
+	a {
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+
+	a:hover {
+		color: var(--text);
+		text-decoration: underline;
+	}
+
+	[aria-current='page'] {
+		color: var(--text);
+		overflow-wrap: anywhere;
+	}
+</style>

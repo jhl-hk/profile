@@ -1,0 +1,211 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getUiCopy } from '../i18n/ui';
+import { postSlug } from '../lib/content';
+import { fitWords, flightNumber, notamDate } from '../lib/flight';
+import { formatDate, type Locale } from '../lib/i18n';
+import Flaps from './Flaps.astro';
+
+interface Props {
+	posts: CollectionEntry<'blog'>[];
+	locale: Locale;
+}
+
+const { posts, locale } = Astro.props;
+const copy = getUiCopy(locale).home.board;
+const destinationTiles = 30;
+
+const rows = posts.map((post, index) => ({
+	href: `/${locale}/blog/${postSlug(post)}/`,
+	title: post.data.title,
+	readableDate: formatDate(post.data.pubDate, locale),
+	date: notamDate(post.data.pubDate),
+	flight: flightNumber(post.data.pubDate),
+	destination: fitWords(post.data.title, destinationTiles),
+	boarding: index === 0,
+}));
+---
+
+<div class="departure-board board-surface">
+	<div class="board-head">
+		<span class="board-title"><span aria-hidden="true">✈</span> {copy.title}</span>
+		<span class="board-clock" aria-hidden="true">JST <span data-board-clock>--:--</span></span>
+	</div>
+	<div class="board-columns" aria-hidden="true">
+		<span>{copy.date}</span>
+		<span class="col-flight">{copy.flight}</span>
+		<span>{copy.destination}</span>
+		<span class="col-status">{copy.status}</span>
+	</div>
+	<ol class="board-rows">
+		{rows.map((row) => (
+			<li data-reveal="flaps">
+				<a href={row.href} title={row.title}>
+					<span class="sr-only">{row.readableDate} — {row.title}</span>
+					<span class="cell" aria-hidden="true"><Flaps text={row.date} /></span>
+					<span class="cell col-flight" aria-hidden="true"><Flaps text={row.flight} /></span>
+					<span class="cell destination" aria-hidden="true">
+						{row.destination.map((word) => (
+							<span class="word"><Flaps text={`${word} `} /></span>
+						))}
+					</span>
+					<span class:list={['cell', 'col-status', { boarding: row.boarding }]} aria-hidden="true">
+						<Flaps text={row.boarding ? copy.boarding : copy.departed} />
+					</span>
+				</a>
+			</li>
+		))}
+	</ol>
+</div>
+
+<script>
+	const format = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+	const clocks = document.querySelectorAll<HTMLElement>('[data-board-clock]');
+	const tick = () => {
+		const now = new Date();
+		for (const clock of clocks) clock.textContent = format.format(now);
+		setTimeout(tick, 60_000 - (now.getTime() % 60_000));
+	};
+	if (clocks.length > 0) tick();
+</script>
+
+<style>
+	.departure-board {
+		--columns: calc(7 * var(--tile)) calc(6 * var(--tile)) minmax(0, 1fr) calc(8 * var(--tile));
+		padding: 1rem 1.1rem 0.6rem;
+		font-size: 0.86rem;
+	}
+
+	.board-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 0.75rem;
+		color: var(--board-amber);
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+	}
+
+	.board-title {
+		font-size: 1rem;
+	}
+
+	.board-clock {
+		color: var(--board-text);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.board-columns,
+	.board-rows a {
+		display: grid;
+		grid-template-columns: var(--columns);
+		gap: 0.9rem;
+		align-items: center;
+	}
+
+	/* Column widths are in tiles (em), so the header keeps the board font size. */
+	.board-columns {
+		padding: 0 0.4rem 0.4rem;
+		color: var(--board-muted);
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.board-columns span {
+		font-size: 0.66rem;
+	}
+
+	.board-rows {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		text-transform: uppercase;
+	}
+
+	.board-rows li + li {
+		border-top: 1px solid rgba(255, 255, 255, 0.06);
+	}
+
+	.board-rows a {
+		padding: 0.5rem 0.4rem;
+		border-radius: var(--radius-small);
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.cell {
+		display: flex;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.destination {
+		mask-image: linear-gradient(90deg, #000 calc(100% - 2.5em), transparent);
+	}
+
+	.word {
+		display: flex;
+		flex: none;
+		max-width: 100%;
+	}
+
+	.col-status {
+		color: var(--board-muted);
+	}
+
+	.col-status.boarding {
+		color: var(--board-amber);
+	}
+
+	.board-rows a:focus-visible {
+		outline-offset: 0;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.board-rows a:hover {
+			background: rgba(255, 255, 255, 0.035);
+		}
+
+		.board-rows a:hover .destination {
+			color: var(--board-amber);
+		}
+	}
+
+	@media (max-width: 720px) {
+		.departure-board {
+			--columns: calc(7 * var(--tile)) minmax(0, 1fr) calc(8 * var(--tile));
+			font-size: 0.78rem;
+		}
+
+		.col-flight {
+			display: none;
+		}
+
+		/* Narrow boards wrap the destination instead of clipping it. */
+		.destination,
+		.word {
+			flex-wrap: wrap;
+			row-gap: 0.14em;
+		}
+
+		.destination {
+			mask-image: none;
+		}
+
+		.board-rows a {
+			align-items: start;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.departure-board {
+			--columns: calc(7 * var(--tile)) minmax(0, 1fr);
+			padding-inline: 0.75rem;
+		}
+
+		.col-status {
+			display: none;
+		}
+	}
+</style>

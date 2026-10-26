@@ -1,14 +1,21 @@
 ---
+import type { Locale } from '../lib/i18n';
+import TraceBreadcrumb from './TraceBreadcrumb.astro';
+
 interface Props {
+	locale: Locale;
+	/** Last breadcrumb hop: the page's path segment, e.g. `projects`. */
+	hop: string;
 	eyebrow: string;
 	title: string;
 	description: string;
 }
 
-const { eyebrow, title, description } = Astro.props;
+const { locale, hop, eyebrow, title, description } = Astro.props;
 ---
 
 <header class="page-intro">
+	<TraceBreadcrumb locale={locale} hops={[{ label: hop }]} />
 	<p class="eyebrow" data-reveal>{eyebrow}</p>
 	<h1 data-reveal>{title}</h1>
 	<p class="description" data-reveal>{description}</p>

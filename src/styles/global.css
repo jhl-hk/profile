@@ -8,9 +8,11 @@
 	--border: rgba(48, 43, 38, 0.12);
 	--accent: #b0700f;
 	--accent-strong: #8a5300;
+	--code-string: #4f6b22;
 	--focus: #b0700f;
 	--font-ui: var(--font-atkinson), "Noto Sans", "Noto Sans JP", "Noto Sans SC", sans-serif;
-	--font-reading: "Iowan Old Style", "Yu Mincho", "Noto Serif JP", "Noto Serif SC", serif;
+	--font-reading: var(--font-source-serif), "Iowan Old Style", "Yu Mincho", "Noto Serif JP", "Noto Serif SC", Georgia, serif;
+	--font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
 	--page-width: 1080px;
 	--reading-width: 720px;
 	--radius-small: 0.55rem;
@@ -18,12 +20,6 @@
 	--radius-pill: 999px;
 	--shadow-whisper: 0 1rem 3rem rgba(48, 43, 38, 0.06);
 	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-	--black: 41, 39, 36;
-	--gray: 112, 106, 99;
-	--gray-dark: 41, 39, 36;
-	--gray-light: 225, 218, 208;
-	--gray-gradient: rgba(255, 255, 255, 0), rgba(255, 255, 255, 0);
-	--box-shadow: var(--shadow-whisper);
 	color-scheme: light;
 }
 
@@ -37,18 +33,15 @@
 	--border: rgba(255, 255, 255, 0.1);
 	--accent: #e0a449;
 	--accent-strong: #f4c16f;
+	--code-string: #a9c47f;
 	--shadow-whisper: 0 1rem 3rem rgba(0, 0, 0, 0.14);
-	--black: 238, 234, 228;
-	--gray: 170, 164, 156;
-	--gray-dark: 238, 234, 228;
-	--gray-light: 64, 61, 58;
 	color-scheme: dark;
 }
 
 :root:lang(zh),
 :lang(zh) {
 	--font-ui: var(--font-atkinson), "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
-	--font-reading: "Iowan Old Style", "Songti SC", "Noto Serif SC", serif;
+	--font-reading: var(--font-source-serif), "Iowan Old Style", "Songti SC", "Noto Serif SC", Georgia, serif;
 }
 
 *,
@@ -121,8 +114,9 @@ h5,
 h6 {
 	margin-block: 0 0.65em;
 	color: var(--text);
+	font-family: var(--font-ui);
 	font-weight: 700;
-	line-height: 1.13;
+	line-height: 1.1;
 	letter-spacing: -0.025em;
 	text-wrap: balance;
 }
@@ -177,11 +171,20 @@ blockquote {
 	color: var(--text-muted);
 }
 
+code,
+kbd,
+samp,
+pre {
+	font-family: var(--font-mono);
+}
+
 code {
-	padding: 0.15em 0.35em;
+	padding: 0.12em 0.36em;
+	border: 1px solid var(--border);
 	border-radius: 0.3rem;
 	background: var(--surface-muted);
-	font-size: 0.9em;
+	font-size: 0.86em;
+	overflow-wrap: anywhere;
 }
 
 pre {
@@ -196,21 +199,208 @@ pre > code {
 	all: unset;
 }
 
+/* Code block with a header strip; used by CodeWindow and by Shiki blocks in posts. */
+.code-window {
+	margin: 0 0 1.5em;
+	overflow: hidden;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-medium);
+	background: var(--surface-raised);
+}
+
+.code-header {
+	display: flex;
+	min-height: 2.4rem;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.3rem 0.45rem 0.3rem 1.1rem;
+	border-bottom: 1px solid var(--border);
+	background: var(--surface-muted);
+	color: var(--text-muted);
+	font-family: var(--font-mono);
+	font-size: 0.74rem;
+	line-height: 1.4;
+}
+
+.code-label {
+	text-transform: lowercase;
+}
+
+.code-copy {
+	min-width: 2.75rem;
+	min-height: 1.85rem;
+	padding: 0 0.65rem;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-small);
+	background: transparent;
+	color: var(--text-muted);
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	transition: color 160ms ease, border-color 160ms ease, transform 120ms var(--ease-out);
+}
+
+.code-copy:active {
+	transform: scale(0.96);
+}
+
+.code-copy[data-copied] {
+	border-color: var(--accent);
+	color: var(--accent-strong);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.code-copy:hover {
+		border-color: var(--accent);
+		color: var(--text);
+	}
+}
+
+.code-window pre {
+	margin: 0;
+	padding: 1rem 1.1rem 1.1rem;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	font-size: 0.84rem;
+	line-height: 1.7;
+	tab-size: 2;
+}
+
+/* Shiki dual themes (defaultColor: false) only emit custom properties. */
+.astro-code,
+.astro-code span {
+	color: var(--shiki-light);
+	font-style: var(--shiki-light-font-style, inherit);
+}
+
+:root[data-theme='dark'] :is(.astro-code, .astro-code span) {
+	color: var(--shiki-dark);
+	font-style: var(--shiki-dark-font-style, inherit);
+}
+
+/* Split-flap board: a dark physical panel in both themes. */
+.board-surface {
+	--tile: 1.32em;
+	--board-text: #f3eee5;
+	--board-amber: #f2b33d;
+	--board-muted: #a39d93;
+	border-radius: var(--radius-medium);
+	background: #1c1b19;
+	box-shadow: var(--shadow-whisper), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+	color: var(--board-text);
+	font-family: var(--font-mono);
+	font-weight: 700;
+}
+
+.flap {
+	position: relative;
+	display: inline-block;
+	flex: none;
+	min-width: calc(var(--tile) - 0.14em);
+	margin-right: 0.14em;
+	border-radius: 2px;
+	background: linear-gradient(#2c2a27 50%, #23211f 50%);
+	line-height: 1.75;
+	text-align: center;
+}
+
+.flap::after {
+	content: '';
+	position: absolute;
+	inset: 50% 0 auto;
+	height: 1px;
+	background: rgba(0, 0, 0, 0.6);
+}
+
 table {
 	width: 100%;
 	border-collapse: collapse;
 }
 
+/* Article body. */
+.prose {
+	font-family: var(--font-reading);
+	font-size: 1.125rem;
+	line-height: 1.75;
+	font-kerning: normal;
+	font-variant-numeric: oldstyle-nums proportional-nums;
+}
+
+.prose:lang(en) {
+	hyphens: auto;
+}
+
+.prose:lang(zh),
+.prose:lang(ja) {
+	line-height: 1.9;
+	text-autospace: normal;
+}
+
+.prose > :first-child {
+	margin-top: 0;
+}
+
+.prose :is(p, li) {
+	text-wrap: pretty;
+}
+
+.prose :is(h1, h2, h3, h4) {
+	margin: 2em 0 0.6em;
+	scroll-margin-top: 1.5rem;
+	line-height: 1.2;
+}
+
+.prose h1 {
+	font-size: clamp(1.8rem, 3.4vw, 2.3rem);
+}
+
+.prose h2 {
+	font-size: clamp(1.45rem, 2.6vw, 1.85rem);
+}
+
+.prose h3 {
+	font-size: 1.3rem;
+}
+
+.prose h4 {
+	font-size: 1.1rem;
+}
+
+.prose :is(ul, ol) {
+	padding-inline-start: 1.4em;
+}
+
+.prose li + li {
+	margin-top: 0.35em;
+}
+
+.prose li::marker {
+	color: var(--accent);
+}
+
+.prose :is(code, kbd, samp, th) {
+	font-variant-numeric: normal;
+}
+
+.prose img {
+	border-radius: var(--radius-medium);
+}
+
 .prose table {
 	display: block;
 	overflow-x: auto;
-	margin-block: 0 1.35em;
-	font-size: 0.95em;
+	margin-block: 0 1.5em;
+	font-size: 0.92em;
+	font-variant-numeric: lining-nums tabular-nums;
 }
 
 .prose th {
-	font-family: var(--font-ui);
-	font-size: 0.9em;
+	color: var(--text-muted);
+	font-family: var(--font-mono);
+	font-size: 0.78em;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
 	white-space: nowrap;
 }
 
@@ -219,6 +409,26 @@ table {
 }
 
 .prose td:first-child {
+	white-space: nowrap;
+}
+
+/* Network resource tags (ASNs, prefixes, peers); prose links to registries get the look automatically. */
+.net-tag,
+.prose a:is(
+	[href^='https://bgp.tools/'],
+	[href^='https://bgp.he.net/'],
+	[href*='peeringdb.com/'],
+	[href^='https://stat.ripe.net/'],
+	[href^='https://apps.db.ripe.net/']
+) {
+	padding: 0.05em 0.45em;
+	border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+	border-radius: 0.3rem;
+	background: var(--surface-muted);
+	font-family: var(--font-mono);
+	font-size: 0.86em;
+	font-variant-numeric: lining-nums;
+	text-decoration: none;
 	white-space: nowrap;
 }
 
@@ -262,17 +472,14 @@ textarea {
 .reading-column {
 	width: min(100%, var(--reading-width));
 	margin-inline: auto;
-}
-
-.reading-column,
-.prose {
 	font-family: var(--font-reading);
 }
 
 .eyebrow {
 	margin: 0 0 0.8rem;
 	color: var(--accent-strong);
-	font-size: 0.76rem;
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
 	font-weight: 700;
 	letter-spacing: 0.14em;
 	line-height: 1.4;
@@ -298,8 +505,10 @@ textarea {
 
 .meta {
 	color: var(--text-muted);
-	font-size: 0.88rem;
-	letter-spacing: 0.015em;
+	font-family: var(--font-mono);
+	font-size: 0.78rem;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.01em;
 }
 
 .sr-only {

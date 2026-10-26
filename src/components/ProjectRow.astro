@@ -1,7 +1,9 @@
 ---
+import { linkHost } from '../data/links';
 import type { projects } from '../data/projects';
 import { getUiCopy } from '../i18n/ui';
 import type { Locale } from '../lib/i18n';
+import Flaps from './Flaps.astro';
 
 interface Props {
 	project: (typeof projects)[number];
@@ -11,11 +13,16 @@ interface Props {
 const { project, locale } = Astro.props;
 const projectCopy = project.copy[locale];
 const copy = getUiCopy(locale).projects;
+const status = copy[project.status];
+const url = new URL(project.url);
 ---
 
-<article class="project-row" data-reveal>
+<article class="project-row" data-reveal="flaps">
 	<div class="project-heading">
-		<p class="project-status"><span aria-hidden="true"></span>{copy[project.status]}</p>
+		<p class="project-status">
+			<span class="sr-only">{status}</span>
+			<span class="status-board board-surface" aria-hidden="true"><span class="lamp"></span><Flaps text={status} /></span>
+		</p>
 		<h2>{project.name}</h2>
 	</div>
 	<div class="project-copy">
@@ -23,6 +30,7 @@ const copy = getUiCopy(locale).projects;
 		<ul class="project-tags" aria-label={copy.tags}>
 			{project.tags.map((tag) => <li>{tag}</li>)}
 		</ul>
+		<p class="project-host meta"><span class="scheme">{url.protocol}//</span>{linkHost(project.url)}</p>
 	</div>
 	<a
 		class="project-link"
@@ -51,22 +59,33 @@ const copy = getUiCopy(locale).projects;
 	}
 
 	.project-status {
-		display: flex;
+		margin: 0 0 0.75rem;
+	}
+
+	.status-board {
+		display: inline-flex;
 		align-items: center;
 		gap: 0.45rem;
-		margin: 0 0 0.65rem;
-		color: var(--text-muted);
-		font-size: 0.78rem;
-		font-weight: 700;
-		letter-spacing: 0.08em;
+		padding: 0.3rem 0.45rem 0.3rem 0.6rem;
+		font-size: 0.72rem;
 		text-transform: uppercase;
 	}
 
-	.project-status span {
-		width: 0.5rem;
-		height: 0.5rem;
+	.lamp {
+		width: 0.45rem;
+		height: 0.45rem;
 		border-radius: 50%;
-		background: var(--accent);
+		background: #6fd08c;
+		box-shadow: 0 0 6px #6fd08c;
+	}
+
+	.project-copy .project-host {
+		margin: 0.85rem 0 0;
+		font-family: var(--font-mono);
+	}
+
+	.scheme {
+		color: var(--text-faint);
 	}
 
 	.project-copy p {

@@ -1,4 +1,6 @@
 ---
+import Flaps from '../components/Flaps.astro';
+import NotFoundTerminal from '../components/NotFoundTerminal.astro';
 import { getUiCopy } from '../i18n/ui';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { staticLanguageTargets } from '../lib/seo';
@@ -14,9 +16,10 @@ const copy = getUiCopy('en');
 	languageTargets={staticLanguageTargets('/404/')}
 >
 	<section class="not-found page-shell">
-		<p class="error-code" aria-hidden="true" data-reveal>404</p>
+		<p class="error-code" aria-hidden="true" data-reveal="flaps"><span class="error-board board-surface"><Flaps text="404" /></span></p>
 		<h1 data-reveal>{copy.notFound.title}</h1>
 		<p data-reveal>{copy.notFound.description}</p>
+		<NotFoundTerminal locale="en" />
 		<a href="/en/" data-reveal>{copy.actions.backHome}</a>
 	</section>
 </SiteLayout>
@@ -28,11 +31,14 @@ const copy = getUiCopy('en');
 	}
 
 	.error-code {
-		margin: 0;
-		color: var(--accent-strong);
-		font-size: 0.8rem;
-		font-weight: 700;
-		letter-spacing: 0.18em;
+		margin: 0 0 0.5rem;
+	}
+
+	.error-board {
+		display: inline-flex;
+		padding: 0.4rem 0.5rem 0.4rem 0.64rem;
+		color: var(--board-amber);
+		font-size: 1.6rem;
 	}
 
 	.not-found h1 {
@@ -47,6 +53,7 @@ const copy = getUiCopy('en');
 
 	.not-found a {
 		display: inline-flex;
+		margin-top: 1.5rem;
 		min-height: 2.75rem;
 		align-items: center;
 		font-weight: 700;

@@ -1,13 +1,15 @@
 ---
+import type { ComponentProps } from 'astro/types';
 import { getCollection } from 'astro:content';
-import PostRow from '../../components/PostRow.astro';
+import CodeWindow from '../../components/CodeWindow.astro';
+import DepartureBoard from '../../components/DepartureBoard.astro';
 import ProjectRow from '../../components/ProjectRow.astro';
 import SocialLinks from '../../components/SocialLinks.astro';
 import { profile } from '../../data/profile';
 import { projects } from '../../data/projects';
 import { getUiCopy } from '../../i18n/ui';
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { estimateReadingMinutes, publishedPosts } from '../../lib/content';
+import { publishedPosts } from '../../lib/content';
 import { locales, type Locale } from '../../lib/i18n';
 import { staticLanguageTargets } from '../../lib/seo';
 
@@ -21,8 +23,17 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = getUiCopy(locale);
-const posts = publishedPosts(await getCollection('blog'), locale).slice(0, 3);
+const posts = publishedPosts(await getCollection('blog'), locale).slice(0, 5);
 const languageTargets = staticLanguageTargets('/');
+const { role, location } = profile.copy[locale];
+const profileSnippet: ComponentProps<typeof CodeWindow>['lines'] = [
+	[['keyword', 'export const'], [null, ' jhl = {']],
+	[[null, '  role: '], ['string', `'${role}'`], [null, ',']],
+	[[null, '  base: '], ['string', `'${location}'`], [null, ', '], ['comment', '// RJTT 35°33′N 139°47′E']],
+	[[null, '  stack: ['], ['string', "'TypeScript'"], [null, ', '], ['string', "'Go'"], [null, ', '], ['string', "'Python'"], [null, '],']],
+	[[null, '  interests: ['], ['string', "'networks'"], [null, ', '], ['string', "'servers'"], [null, ', '], ['string', "'aviation'"], [null, '],']],
+	[[null, '} '], ['keyword', 'as const'], [null, ';']],
+];
 ---
 
 <SiteLayout
@@ -42,6 +53,9 @@ const languageTargets = staticLanguageTargets('/');
 				<p><span>{copy.home.currentRole}</span>{profile.copy[locale].role}</p>
 				<p><span>{copy.home.basedIn}</span>{profile.copy[locale].location}</p>
 			</div>
+			<div class="home-snippet">
+				<CodeWindow filename="~/jhl/profile.ts" label={copy.home.profileSnippet} lines={profileSnippet} />
+			</div>
 		</section>
 
 		<section class="home-section" aria-labelledby="featured-projects">
@@ -59,9 +73,7 @@ const languageTargets = staticLanguageTargets('/');
 			</div>
 			{
 				posts.length > 0
-					? posts.map((post) => (
-						<PostRow post={post} locale={locale} readingMinutes={estimateReadingMinutes(post.body)} />
-					))
+					? <DepartureBoard posts={posts} locale={locale} />
 					: <p class="empty-state" data-reveal>{copy.blog.empty}</p>
 			}
 		</section>
@@ -112,6 +124,11 @@ const languageTargets = staticLanguageTargets('/');
 		font-size: 0.72rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
+	}
+
+	.home-snippet {
+		max-width: 40rem;
+		margin-top: 2.75rem;
 	}
 
 	.home-section {

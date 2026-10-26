@@ -15,6 +15,8 @@ export interface UiCopy {
     getInTouch: string;
     sendEmail: string;
     backHome: string;
+    copy: string;
+    copied: string;
   };
   home: {
     eyebrow: string;
@@ -23,6 +25,18 @@ export interface UiCopy {
     currentRole: string;
     basedIn: string;
     recentWriting: string;
+    profileSnippet: string;
+    board: {
+      title: string;
+      date: string;
+      flight: string;
+      destination: string;
+      status: string;
+      boarding: string;
+      departed: string;
+      duration: string;
+      language: string;
+    };
   };
   blog: {
     title: string;
@@ -81,10 +95,15 @@ export interface UiCopy {
     languages: string;
     interests: string;
     present: string;
+    network: string;
+    networkIntroduction: string;
+    peeringTemplate: string;
+    peeringContact: string;
   };
   notFound: {
     title: string;
     description: string;
+    terminal: string;
   };
   accessibility: {
     skipToContent: string;
@@ -95,10 +114,13 @@ export interface UiCopy {
     lightTheme: string;
     darkTheme: string;
     translationUnavailable: string;
+    breadcrumb: string;
   };
   footer: {
     copyright: string;
     poweredBy: { before: string; after: string };
+    connection: string;
+    cached: string;
   };
 }
 
@@ -112,6 +134,8 @@ const uiCopy: Record<Locale, UiCopy> = {
       getInTouch: 'Get in touch',
       sendEmail: 'Send an email',
       backHome: 'Back home',
+      copy: 'Copy',
+      copied: 'Copied',
     },
     home: {
       eyebrow: 'Hello, I am',
@@ -120,6 +144,18 @@ const uiCopy: Record<Locale, UiCopy> = {
       currentRole: 'Current role',
       basedIn: 'Based in',
       recentWriting: 'Recent writing',
+      profileSnippet: 'Profile, written as a TypeScript object',
+      board: {
+        title: 'Departures',
+        date: 'Date',
+        flight: 'Flight',
+        destination: 'Destination',
+        status: 'Status',
+        boarding: 'Boarding',
+        departed: 'Departed',
+        duration: 'Read time',
+        language: 'Language',
+      },
     },
     blog: {
       title: 'Notes on building useful things.',
@@ -183,8 +219,16 @@ const uiCopy: Record<Locale, UiCopy> = {
       languages: 'Languages',
       interests: 'Interests',
       present: 'Present',
+      network: 'Network',
+      networkIntroduction: 'JianyueLab operates AS215172 with an IPv6 /40 and is open to peering. A BIRD 2 session template:',
+      peeringTemplate: 'BIRD 2 BGP session template for peering with AS215172',
+      peeringContact: 'Peering requests by email',
     },
-    notFound: { title: 'Page not found', description: 'The page you requested does not exist.' },
+    notFound: {
+      title: 'Page not found',
+      description: 'The page you requested does not exist.',
+      terminal: 'HTTP request for this page returning 404',
+    },
     accessibility: {
       skipToContent: 'Skip to content',
       primaryNavigation: 'Primary navigation',
@@ -194,8 +238,14 @@ const uiCopy: Record<Locale, UiCopy> = {
       lightTheme: 'Use light theme',
       darkTheme: 'Use dark theme',
       translationUnavailable: 'Translation unavailable; view the blog in',
+      breadcrumb: 'Breadcrumb',
     },
-    footer: { copyright: 'All rights reserved.', poweredBy: { before: 'Proudly powered by', after: '' } },
+    footer: {
+      copyright: 'All rights reserved.',
+      poweredBy: { before: 'Proudly powered by', after: '' },
+      connection: 'This page load: ',
+      cached: 'served from cache',
+    },
   },
   ja: {
     nav: { home: 'ホーム', projects: 'プロジェクト', about: 'プロフィール', blog: 'ブログ', links: 'リンク' },
@@ -206,6 +256,8 @@ const uiCopy: Record<Locale, UiCopy> = {
       getInTouch: '問い合わせる',
       sendEmail: 'メールを送る',
       backHome: 'ホームに戻る',
+      copy: 'コピー',
+      copied: 'コピー済み',
     },
     home: {
       eyebrow: 'こんにちは、私は',
@@ -214,6 +266,18 @@ const uiCopy: Record<Locale, UiCopy> = {
       currentRole: '現在の役割',
       basedIn: '拠点',
       recentWriting: '最近の執筆',
+      profileSnippet: 'TypeScript オブジェクトで書いたプロフィール',
+      board: {
+        title: '出発',
+        date: '日付',
+        flight: '便名',
+        destination: '行先',
+        status: '状況',
+        boarding: '搭乗中',
+        departed: '出発済',
+        duration: '読了時間',
+        language: '言語',
+      },
     },
     blog: {
       title: '役に立つものをつくるための記録。',
@@ -277,8 +341,16 @@ const uiCopy: Record<Locale, UiCopy> = {
       languages: '言語',
       interests: '関心',
       present: '現在',
+      network: 'ネットワーク',
+      networkIntroduction: 'JianyueLab は AS215172 と IPv6 /40 を運用しており、ピアリングを歓迎しています。BIRD 2 のセッション例：',
+      peeringTemplate: 'AS215172 とピアリングするための BIRD 2 BGP セッション例',
+      peeringContact: 'ピアリングのご相談はメールで',
     },
-    notFound: { title: 'ページが見つかりません', description: 'お探しのページは存在しません。' },
+    notFound: {
+      title: 'ページが見つかりません',
+      description: 'お探しのページは存在しません。',
+      terminal: 'このページへの HTTP リクエストが 404 を返す様子',
+    },
     accessibility: {
       skipToContent: '本文へ移動',
       primaryNavigation: 'メインナビゲーション',
@@ -288,8 +360,14 @@ const uiCopy: Record<Locale, UiCopy> = {
       lightTheme: 'ライトテーマを使用',
       darkTheme: 'ダークテーマを使用',
       translationUnavailable: '翻訳はありません。次の言語のブログを表示:',
+      breadcrumb: 'パンくずリスト',
     },
-    footer: { copyright: '無断転載を禁じます。', poweredBy: { before: '', after: 'で運営しています' } },
+    footer: {
+      copyright: '無断転載を禁じます。',
+      poweredBy: { before: '', after: 'で運営しています' },
+      connection: 'このページの読み込み：',
+      cached: 'キャッシュから配信',
+    },
   },
   zh: {
     nav: { home: '首页', projects: '项目', about: '关于', blog: '博客', links: '友链' },
@@ -300,6 +378,8 @@ const uiCopy: Record<Locale, UiCopy> = {
       getInTouch: '联系我',
       sendEmail: '发送邮件',
       backHome: '返回首页',
+      copy: '复制',
+      copied: '已复制',
     },
     home: {
       eyebrow: '你好，我是',
@@ -308,6 +388,18 @@ const uiCopy: Record<Locale, UiCopy> = {
       currentRole: '当前职务',
       basedIn: '所在地',
       recentWriting: '近期文章',
+      profileSnippet: '用 TypeScript 对象写成的个人简介',
+      board: {
+        title: '出发',
+        date: '日期',
+        flight: '航班',
+        destination: '目的地',
+        status: '状态',
+        boarding: '登机中',
+        departed: '已起飞',
+        duration: '阅读时长',
+        language: '语言',
+      },
     },
     blog: {
       title: '关于创造有用事物的笔记。',
@@ -371,8 +463,16 @@ const uiCopy: Record<Locale, UiCopy> = {
       languages: '语言',
       interests: '兴趣',
       present: '至今',
+      network: '网络',
+      networkIntroduction: 'JianyueLab 运营 AS215172 与一段 IPv6 /40，欢迎 Peering。BIRD 2 会话模板：',
+      peeringTemplate: '与 AS215172 建立 Peering 的 BIRD 2 BGP 会话模板',
+      peeringContact: '通过邮件申请 Peering',
     },
-    notFound: { title: '页面未找到', description: '你访问的页面不存在。' },
+    notFound: {
+      title: '页面未找到',
+      description: '你访问的页面不存在。',
+      terminal: '请求本页面时返回 404 的 HTTP 响应',
+    },
     accessibility: {
       skipToContent: '跳到正文',
       primaryNavigation: '主导航',
@@ -382,8 +482,14 @@ const uiCopy: Record<Locale, UiCopy> = {
       lightTheme: '使用浅色主题',
       darkTheme: '使用深色主题',
       translationUnavailable: '暂无翻译；查看此语言的博客：',
+      breadcrumb: '面包屑导航',
     },
-    footer: { copyright: '版权所有。', poweredBy: { before: '由', after: '强力驱动' } },
+    footer: {
+      copyright: '版权所有。',
+      poweredBy: { before: '由', after: '强力驱动' },
+      connection: '本次页面加载：',
+      cached: '来自缓存',
+    },
   },
 };
 

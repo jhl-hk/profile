@@ -20,7 +20,10 @@ Locales: `en` (default), `ja`, `zh`. Routes are prefixed with the locale, e.g. `
 - `src/assets/blog/` — post images.
 - `src/data/profile.ts`, `src/data/projects.ts` — profile and project data.
 - `src/i18n/ui.ts` — interface copy per locale.
-- `src/lib/motion.ts` — anime.js motion. Elements marked `data-reveal` fade in on scroll; `data-reveal="words"` staggers words.
+- `src/lib/motion.ts` — anime.js motion. Elements marked `data-reveal` fade in on scroll; `="words"` staggers words, `="lines"` code lines, `="flaps"` flips departure-board tiles.
+- `src/lib/code-frame.ts` — frames post code blocks with a language label and copy button.
+- `src/lib/flight.ts` — flight number (`JH0623`) and date (`23JUN25`) codes shared by the departure board, post header and post lists.
+- `src/lib/connection.ts` — footer readout of this page load (protocol, DNS, TCP, TLS, TTFB) from Navigation Timing.
 - `scripts/` — build output verifiers.
 
 ## Writing a post

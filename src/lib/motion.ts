@@ -1,4 +1,4 @@
-import { animate, createTimeline, cubicBezier, splitText, stagger, utils } from 'animejs';
+import { animate, createTimeline, cubicBezier, scrambleText, splitText, stagger, utils } from 'animejs';
 import type { AnimationParams } from 'animejs';
 
 // Same curve as --ease-out in global.css.
@@ -10,11 +10,14 @@ const revealDuration = 640;
 const revealStagger = 70;
 const revealStaggerTotal = 420;
 const wordStagger = 45;
+const lineDistance = 8;
+const lineStagger = 90;
 // global.css reveals [data-reveal] on its own at 2000ms; past this point JS leaves the page alone.
 const fallbackDeadline = 1800;
 
 const pendingReveals = new Set<HTMLElement>();
-const splitWords = new Map<HTMLElement, HTMLElement[]>();
+// Parts animated in place of their [data-reveal] element: words or code lines.
+const revealParts = new Map<HTMLElement, HTMLElement[]>();
 let revealObserver: IntersectionObserver | undefined;
 
 // utils.cleanInlineStyles would restore the hidden state written by utils.set, so clear by hand.
@@ -32,17 +35,31 @@ function playReveal(batch: HTMLElement[]): void {
 	batch.sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
 	batch.forEach((element, index) => {
 		pendingReveals.delete(element);
-		const words = splitWords.get(element);
-		const targets = words ?? [element];
-		animated.push(...targets);
-		timeline.add(targets, { opacity: 1, translateY: 0, delay: words ? stagger(wordStagger) : 0 }, index * step);
+		const at = index * step;
+		const mode = element.dataset.reveal;
+		const parts = revealParts.get(element);
+		if (parts) {
+			animated.push(...parts);
+			const settled: AnimationParams = mode === 'lines' ? { opacity: 1, translateX: 0 } : { opacity: 1, translateY: 0 };
+			timeline.add(parts, { ...settled, delay: stagger(mode === 'lines' ? lineStagger : wordStagger) }, at);
+			return;
+		}
+		animated.push(element);
+		timeline.add(element, { opacity: 1, translateY: 0 }, at);
+		if (mode === 'flaps') {
+			// Split-flap tiles cycle through glyphs and land at slightly different times.
+			const flaps = element.querySelectorAll('.flap:not([data-blank])');
+			const flip = scrambleText({ chars: 'A-Z0-9', settleRate: 18, duration: () => 280 + Math.random() * 520 });
+			timeline.add(flaps, { innerHTML: flip, delay: stagger(10) }, at);
+		}
 	});
 	timeline.then(() => clearRevealStyles(animated));
 }
 
 /**
  * Reveals every `[data-reveal]` element as it scrolls into view.
- * `data-reveal="words"` staggers the element's words instead of the element.
+ * `data-reveal="words"` staggers the element's words; `"lines"` staggers its
+ * `[data-line]` children; `"flaps"` also flips its `.flap` tiles.
  * Runs only when the head script marked the page `data-motion="pending"`.
  */
 export function initReveals(): void {
@@ -56,13 +73,18 @@ export function initReveals(): void {
 	const targets = [...document.querySelectorAll<HTMLElement>('[data-reveal]')];
 	for (const element of targets) {
 		pendingReveals.add(element);
-		if (element.dataset.reveal !== 'words') {
+		const mode = element.dataset.reveal;
+		if (mode === 'words') {
+			const { words } = splitText(element, { words: true });
+			revealParts.set(element, words);
+			utils.set(words, { opacity: 0, translateY: revealDistance });
+		} else if (mode === 'lines') {
+			const lines = [...element.querySelectorAll<HTMLElement>('[data-line]')];
+			revealParts.set(element, lines);
+			utils.set(lines, { opacity: 0, translateX: -lineDistance });
+		} else {
 			utils.set(element, { opacity: 0, translateY: revealDistance });
-			continue;
 		}
-		const { words } = splitText(element, { words: true });
-		splitWords.set(element, words);
-		utils.set(words, { opacity: 0, translateY: revealDistance });
 	}
 	root.dataset.motion = 'ready';
 
@@ -84,7 +106,7 @@ export function settleReveals(container: ParentNode): void {
 		if (!container.contains(element)) continue;
 		pendingReveals.delete(element);
 		revealObserver?.unobserve(element);
-		clearRevealStyles(splitWords.get(element) ?? [element]);
+		clearRevealStyles(revealParts.get(element) ?? [element]);
 	}
 }
 

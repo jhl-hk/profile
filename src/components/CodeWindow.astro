@@ -1,0 +1,51 @@
+---
+type TokenKind = 'keyword' | 'string' | 'comment' | 'muted';
+
+interface Props {
+	filename: string;
+	label: string;
+	/** Each line is a list of [kind, text] tokens; `null` kind is plain text. */
+	lines: (readonly [TokenKind | null, string])[][];
+	/** Shows a copy button; SiteLayout labels and enables it. */
+	copyable?: boolean;
+}
+
+const { filename, label, lines, copyable = false } = Astro.props;
+---
+
+<figure class="code-window" aria-label={label} data-reveal="lines">
+	<figcaption class="code-header">
+		<span>{filename}</span>
+		{copyable && <button type="button" class="code-copy" hidden data-code-copy></button>}
+	</figcaption>
+	<pre><code>{lines.map((line) => <span data-line>{line.map(([kind, text]) => (kind ? <span class={`tok-${kind}`}>{text}</span> : text))}</span>)}</code></pre>
+</figure>
+
+<style>
+	.code-window {
+		margin: 0;
+	}
+
+	[data-line] {
+		display: block;
+		min-height: 1lh;
+		white-space: pre;
+	}
+
+	.tok-keyword {
+		color: var(--accent-strong);
+	}
+
+	.tok-string {
+		color: var(--code-string);
+	}
+
+	.tok-comment {
+		color: var(--text-faint);
+		font-style: italic;
+	}
+
+	.tok-muted {
+		color: var(--text-muted);
+	}
+</style>

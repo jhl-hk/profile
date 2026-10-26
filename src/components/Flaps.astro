@@ -1,0 +1,9 @@
+---
+interface Props {
+	text: string;
+}
+
+const { text } = Astro.props;
+---
+
+{Array.from(text).map((char) => (char === ' ' ? <span class="flap" data-blank>&nbsp;</span> : <span class="flap">{char}</span>))}

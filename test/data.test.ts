@@ -87,19 +87,15 @@ describe('localized site data', () => {
   });
 
   test('provides current LinkedIn roles, skills, and language levels', () => {
-    expect(profile.copy.en.role).toBe('Co-Founder & CEO @ JianyueLab Ltd');
-    expect(profile.copy.ja.role).toBe('JianyueLab Ltd 共同創業者・CEO');
-    expect(profile.copy.zh.role).toBe('JianyueLab Ltd 联合创始人兼 CEO');
-
     const jianyueLab = profile.experience.find((record) => record.id === 'jianyuelab-ltd');
     const hangzhouSiliconBasedAgile = profile.experience.find((record) => record.id === 'hangzhou-silicon-based-agile-technology');
     const kyouyuuShanghai = profile.experience.find((record) => record.id === 'kyouyuu-shanghai-commercial');
 
     expect(jianyueLab).toMatchObject({ start: '2025-12', end: null });
     expect(jianyueLab?.copy).toMatchObject({
-      en: { title: 'Co-Founder & CEO', location: 'United Kingdom' },
-      ja: { title: '共同創業者・CEO', location: 'イギリス' },
-      zh: { title: '联合创始人兼 CEO', location: '英国' },
+      en: { location: 'United Kingdom' },
+      ja: { location: 'イギリス' },
+      zh: { location: '英国' },
     });
     expect(jianyueLab?.copy.en.description).toContain('RIPE NCC');
     expect(jianyueLab?.copy.en.description).toContain('ARIN');

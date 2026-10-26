@@ -4,6 +4,7 @@ import { getUiCopy } from '../i18n/ui';
 import { normalizeFilterValue } from '../lib/blog-filter';
 import { formatDate, formatReadingTime, type Locale } from '../lib/i18n';
 import { postSlug } from '../lib/content';
+import { flightNumber } from '../lib/flight';
 
 interface Props {
 	post: CollectionEntry<'blog'>;
@@ -26,6 +27,8 @@ const normalize = (value: string) => normalizeFilterValue(value, locale);
 	data-topics={post.data.topics.map(normalize).join('|')}
 >
 	<div class="post-meta meta">
+		<span class="flight">{flightNumber(post.data.pubDate)}</span>
+		<span aria-hidden="true">·</span>
 		<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, locale)}</time>
 		<span aria-hidden="true">·</span>
 		<span>{formatReadingTime(readingMinutes, locale)}</span>
@@ -46,6 +49,11 @@ const normalize = (value: string) => normalizeFilterValue(value, locale);
 	.post-row {
 		padding-block: 1.65rem;
 		border-top: 1px solid var(--border);
+	}
+
+	.flight {
+		color: var(--accent-strong);
+		font-weight: 700;
 	}
 
 	.post-meta {
