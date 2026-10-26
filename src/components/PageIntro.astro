@@ -8,7 +8,7 @@ interface Props {
 	hop: string;
 	eyebrow: string;
 	title: string;
-	description: string;
+	description?: string;
 }
 
 const { locale, hop, eyebrow, title, description } = Astro.props;
@@ -18,7 +18,7 @@ const { locale, hop, eyebrow, title, description } = Astro.props;
 	<TraceBreadcrumb locale={locale} hops={[{ label: hop }]} />
 	<p class="eyebrow" data-reveal>{eyebrow}</p>
 	<h1 data-reveal>{title}</h1>
-	<p class="description" data-reveal>{description}</p>
+	{description && <p class="description" data-reveal>{description}</p>}
 </header>
 
 <style>

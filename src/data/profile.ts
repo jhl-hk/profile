@@ -37,8 +37,6 @@ export const profile = {
   name: 'Jianyue Hugo Liang',
   legalName: 'Jianyue Hugo Liang, a.k.a. Janyue Aosugi',
   email: 'mailto:ja@jhl.hk',
-  // JianyueLab's network, not a personal ASN.
-  jianyueLabAsn: 215172,
   socials: {
     github: 'https://github.com/jhl-hk',
     linkedin: 'https://www.linkedin.com/in/jhl-hk/',
@@ -48,18 +46,24 @@ export const profile = {
       role: 'Founder & CEO @ JianyueLab',
       location: 'Tokyo, Japan',
       bio: 'Developer, translator, and student in Japan, building JianyueLab while studying the International Baccalaureate. Interested in server and network programming, and aviation.',
+      tagline: 'Developer, translator and student in Tokyo.',
+      highlights: ['Building JianyueLab', 'Studying the IB', 'Translating zh · en · ja', 'Networks, servers, aviation'],
       contact: 'Open to thoughtful conversations about software, infrastructure, and new projects.',
     },
     ja: {
       role: 'JianyueLab 創業者・CEO',
       location: '日本・東京',
       bio: '日本で国際バカロレアを学びながら JianyueLab を運営する、開発者・翻訳者・学生です。サーバー・ネットワークプログラミングと航空に関心があります。',
+      tagline: '東京の開発者・翻訳者・学生。',
+      highlights: ['JianyueLab を運営', '国際バカロレアを学習中', '翻訳：中・英・日', 'ネットワーク・サーバー・航空'],
       contact: 'ソフトウェア、インフラ、新しいプロジェクトについてのご相談を歓迎します。',
     },
     zh: {
       role: 'JianyueLab 创始人兼 CEO',
       location: '日本东京',
       bio: '在日本学习国际文凭课程，同时经营 JianyueLab 的开发者、翻译者和学生。关注服务器与网络编程，以及航空。',
+      tagline: '常驻东京的开发者、翻译者和学生。',
+      highlights: ['经营 JianyueLab', '学习国际文凭（IB）', '翻译：中 · 英 · 日', '网络、服务器与航空'],
       contact: '欢迎交流软件、基础设施以及新的项目合作。',
     },
   },

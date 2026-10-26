@@ -18,7 +18,7 @@ const { filename, label, lines, copyable = false } = Astro.props;
 		<span>{filename}</span>
 		{copyable && <button type="button" class="code-copy" hidden data-code-copy></button>}
 	</figcaption>
-	<pre><code>{lines.map((line) => <span data-line>{line.map(([kind, text]) => (kind ? <span class={`tok-${kind}`}>{text}</span> : text))}</span>)}</code></pre>
+	<pre><code>{lines.map((line, index) => <span data-line>{line.map(([kind, text]) => (kind ? <span class={`tok-${kind}`}>{text}</span> : text))}{index === lines.length - 1 && <span class="caret" aria-hidden="true" />}</span>)}</code></pre>
 </figure>
 
 <style>
@@ -26,10 +26,28 @@ const { filename, label, lines, copyable = false } = Astro.props;
 		margin: 0;
 	}
 
+	/* fit-content so the typing clip-path tracks the text, not the full row. */
 	[data-line] {
 		display: block;
+		width: fit-content;
 		min-height: 1lh;
 		white-space: pre;
+	}
+
+	.caret {
+		display: inline-block;
+		width: 0.55em;
+		height: 1.15em;
+		margin-left: 0.15em;
+		background: var(--accent);
+		vertical-align: text-bottom;
+		animation: caret-blink 1.06s steps(1) infinite;
+	}
+
+	@keyframes caret-blink {
+		50% {
+			opacity: 0;
+		}
 	}
 
 	.tok-keyword {

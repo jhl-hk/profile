@@ -29,7 +29,7 @@ const formatPeriod = (value: string) => {
 ---
 
 <section class="timeline-section">
-	<h2 data-reveal>{title}</h2>
+	<h2 data-scroll-heading>{title}</h2>
 	<ol class="timeline">
 		{
 			sortedRecords.map((record) => {
@@ -160,6 +160,16 @@ const formatPeriod = (value: string) => {
 	.timeline-entry--current .timeline-body::before {
 		border-color: var(--accent);
 		background: var(--accent);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+		animation: waypoint-pulse 2.4s var(--ease-out) infinite;
+	}
+
+	@keyframes waypoint-pulse {
+		from {
+			box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+		}
+
+		to {
+			box-shadow: 0 0 0 9px color-mix(in srgb, var(--accent) 0%, transparent);
+		}
 	}
 </style>

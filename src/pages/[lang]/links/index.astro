@@ -25,7 +25,7 @@ const siteFields = [
 	{ key: 'name', value: siteLinkCard.name, label: copy.links.siteName },
 	{ key: 'url', value: siteLinkCard.url, label: copy.links.siteUrl },
 	{ key: 'avatar', value: siteLinkCard.avatar, label: copy.links.avatar },
-	{ key: 'description', value: profile.copy[locale].bio, label: copy.links.description },
+	{ key: 'description', value: profile.copy[locale].tagline, label: copy.links.description },
 ];
 const siteYaml: ComponentProps<typeof CodeWindow>['lines'] = siteFields.map(({ key, value, label }, index) => [
 	[null, index === 0 ? '- ' : '  '],
@@ -50,12 +50,13 @@ const [applyBefore, applyAfter = ''] = copy.links.applyIntroduction.split('{emai
 		{
 			linkGroups.map((group) => (
 				<section class="link-group" aria-labelledby={`links-${group.id}`}>
-					<h2 id={`links-${group.id}`} data-reveal>{copy.links.groups[group.id]}</h2>
+					<h2 id={`links-${group.id}`} data-scroll-heading>{copy.links.groups[group.id]}</h2>
 					<ul class="link-grid">
 						{group.links.map((link) => (
 							<li data-reveal>
 								<a
 									class="link-card surface"
+									data-tilt
 									href={link.url}
 									target="_blank"
 									rel="noopener"
@@ -76,7 +77,7 @@ const [applyBefore, applyAfter = ''] = copy.links.applyIntroduction.split('{emai
 		}
 
 		<section class="link-group" aria-labelledby="links-this-site">
-			<h2 id="links-this-site" data-reveal>{copy.links.thisSite}</h2>
+			<h2 id="links-this-site" data-scroll-heading>{copy.links.thisSite}</h2>
 			<div class="site-card surface" data-reveal>
 				<img class="site-avatar" src="/apple-touch-icon.png" width="72" height="72" alt="" loading="lazy" />
 				<div>
@@ -124,6 +125,10 @@ const [applyBefore, applyAfter = ''] = copy.links.applyIntroduction.split('{emai
 		margin: 0;
 		padding: 0;
 		list-style: none;
+	}
+
+	.link-grid li {
+		perspective: 800px;
 	}
 
 	.link-card {

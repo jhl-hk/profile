@@ -26,6 +26,7 @@ export interface UiCopy {
     basedIn: string;
     recentWriting: string;
     profileSnippet: string;
+    stats: { posts: string; projects: string; languages: string; activeRoles: string };
     board: {
       title: string;
       date: string;
@@ -95,10 +96,6 @@ export interface UiCopy {
     languages: string;
     interests: string;
     present: string;
-    network: string;
-    networkIntroduction: string;
-    peeringTemplate: string;
-    peeringContact: string;
   };
   notFound: {
     title: string;
@@ -145,6 +142,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       basedIn: 'Based in',
       recentWriting: 'Recent writing',
       profileSnippet: 'Profile, written as a TypeScript object',
+      stats: { posts: 'Posts', projects: 'Projects', languages: 'Languages', activeRoles: 'Active roles' },
       board: {
         title: 'Departures',
         date: 'Date',
@@ -219,10 +217,6 @@ const uiCopy: Record<Locale, UiCopy> = {
       languages: 'Languages',
       interests: 'Interests',
       present: 'Present',
-      network: 'Network',
-      networkIntroduction: 'JianyueLab operates AS215172 with an IPv6 /40 and is open to peering. A BIRD 2 session template:',
-      peeringTemplate: 'BIRD 2 BGP session template for peering with AS215172',
-      peeringContact: 'Peering requests by email',
     },
     notFound: {
       title: 'Page not found',
@@ -267,6 +261,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       basedIn: '拠点',
       recentWriting: '最近の執筆',
       profileSnippet: 'TypeScript オブジェクトで書いたプロフィール',
+      stats: { posts: '記事', projects: 'プロジェクト', languages: '言語', activeRoles: '現在の役職' },
       board: {
         title: '出発',
         date: '日付',
@@ -341,10 +336,6 @@ const uiCopy: Record<Locale, UiCopy> = {
       languages: '言語',
       interests: '関心',
       present: '現在',
-      network: 'ネットワーク',
-      networkIntroduction: 'JianyueLab は AS215172 と IPv6 /40 を運用しており、ピアリングを歓迎しています。BIRD 2 のセッション例：',
-      peeringTemplate: 'AS215172 とピアリングするための BIRD 2 BGP セッション例',
-      peeringContact: 'ピアリングのご相談はメールで',
     },
     notFound: {
       title: 'ページが見つかりません',
@@ -389,6 +380,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       basedIn: '所在地',
       recentWriting: '近期文章',
       profileSnippet: '用 TypeScript 对象写成的个人简介',
+      stats: { posts: '文章', projects: '项目', languages: '语言', activeRoles: '在任职务' },
       board: {
         title: '出发',
         date: '日期',
@@ -463,10 +455,6 @@ const uiCopy: Record<Locale, UiCopy> = {
       languages: '语言',
       interests: '兴趣',
       present: '至今',
-      network: '网络',
-      networkIntroduction: 'JianyueLab 运营 AS215172 与一段 IPv6 /40，欢迎 Peering。BIRD 2 会话模板：',
-      peeringTemplate: '与 AS215172 建立 Peering 的 BIRD 2 BGP 会话模板',
-      peeringContact: '通过邮件申请 Peering',
     },
     notFound: {
       title: '页面未找到',

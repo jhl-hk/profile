@@ -18,6 +18,11 @@ const route = [{ label: host, href: `/${locale}/` }, ...hops];
 	<ol>
 		{route.map((hop, index) => (
 			<li>
+				{index > 0 && (
+					<svg class="hop-arrow" viewBox="0 0 14 8" aria-hidden="true">
+						<path d="M1 4h11M9 1l3 3-3 3" />
+					</svg>
+				)}
 				<span class="hop" aria-hidden="true">{index + 1}</span>
 				{hop.href ? <a href={hop.href}>{hop.label}</a> : <span aria-current="page">{hop.label}</span>}
 			</li>
@@ -59,14 +64,20 @@ const route = [{ label: host, href: `/${locale}/` }, ...hops];
 
 	li {
 		display: inline-flex;
-		align-items: baseline;
-		gap: 0.35rem;
+		align-items: center;
+		gap: 0.4rem;
 	}
 
-	li + li::before {
-		content: '→';
-		content: '→' / '';
-		color: var(--text-faint);
+	/* Drawn, not a glyph: the bundled mono font is Latin-only and has no arrows. */
+	.hop-arrow {
+		width: 0.95em;
+		height: 0.55em;
+		margin-inline-end: 0.15rem;
+		fill: none;
+		stroke: var(--text-faint);
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-width: 1.4;
 	}
 
 	.hop {

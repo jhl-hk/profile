@@ -131,9 +131,14 @@ const initialResult = copy.resultCount.replace('{count}', String(count));
 		margin: 0.55rem 0 0;
 	}
 
+	/* Drawn arrow: the bundled mono font has no arrow glyphs. */
 	.result-count::before {
-		content: '→ ';
-		content: '→ ' / '';
-		color: var(--text-faint);
+		content: '';
+		display: inline-block;
+		width: 0.95em;
+		height: 0.55em;
+		margin-inline-end: 0.45em;
+		background: var(--text-faint);
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 8' fill='none' stroke='%23000' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 4h11M9 1l3 3-3 3'/%3E%3C/svg%3E") center / contain no-repeat;
 	}
 </style>

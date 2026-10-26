@@ -59,6 +59,10 @@ const rows = posts.map((post, index) => ({
 </div>
 
 <script>
+	import { initBoardLife } from '../lib/live-motion';
+
+	for (const board of document.querySelectorAll<HTMLElement>('.departure-board')) initBoardLife(board);
+
 	const format = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 	const clocks = document.querySelectorAll<HTMLElement>('[data-board-clock]');
 	const tick = () => {
@@ -156,6 +160,13 @@ const rows = posts.map((post, index) => ({
 
 	.col-status.boarding {
 		color: var(--board-amber);
+		animation: boarding-blink 1.6s steps(1) infinite;
+	}
+
+	@keyframes boarding-blink {
+		70% {
+			opacity: 0.25;
+		}
 	}
 
 	.board-rows a:focus-visible {

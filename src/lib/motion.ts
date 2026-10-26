@@ -1,5 +1,5 @@
-import { animate, createTimeline, cubicBezier, scrambleText, splitText, stagger, utils } from 'animejs';
-import type { AnimationParams } from 'animejs';
+import { animate, createTimeline, cubicBezier, scrambleText, splitText, stagger, steps, utils } from 'animejs';
+import type { AnimationParams, Timeline } from 'animejs';
 
 // Same curve as --ease-out in global.css.
 export const easeOut = cubicBezier(0.23, 1, 0.32, 1);
@@ -10,8 +10,8 @@ const revealDuration = 640;
 const revealStagger = 70;
 const revealStaggerTotal = 420;
 const wordStagger = 45;
-const lineDistance = 8;
-const lineStagger = 90;
+const typingPerChar = 18;
+const countDuration = 1400;
 // global.css reveals [data-reveal] on its own at 2000ms; past this point JS leaves the page alone.
 const fallbackDeadline = 1800;
 
@@ -20,11 +20,57 @@ const pendingReveals = new Set<HTMLElement>();
 const revealParts = new Map<HTMLElement, HTMLElement[]>();
 let revealObserver: IntersectionObserver | undefined;
 
+const lineHidden = 'inset(0% 100% 0% 0%)';
+const lineShown = 'inset(0% 0% 0% 0%)';
+
 // utils.cleanInlineStyles would restore the hidden state written by utils.set, so clear by hand.
 function clearRevealStyles(targets: HTMLElement[]): void {
 	for (const target of targets) {
 		target.style.removeProperty('opacity');
 		target.style.removeProperty('transform');
+		target.style.removeProperty('clip-path');
+	}
+}
+
+/** Split-flap tiles cycle through glyphs and land on their own text at slightly different times. */
+export function flipParams(settle = 520): AnimationParams {
+	return {
+		innerHTML: scrambleText({ chars: 'A-Z0-9', settleRate: 18, duration: () => 280 + Math.random() * settle }),
+		delay: stagger(10),
+		// Each flip scrambles on its own, independent of earlier flips on the same tiles.
+		composition: 'none',
+	};
+}
+
+/** Types each `[data-line]` out left to right, one line after another. */
+function addTyping(timeline: Timeline, lines: HTMLElement[], at: number): void {
+	let offset = at;
+	for (const line of lines) {
+		const chars = Math.max(1, (line.textContent ?? '').length);
+		const duration = chars * typingPerChar;
+		timeline.add(line, { clipPath: [lineHidden, lineShown], duration, ease: steps(chars) }, offset);
+		offset += duration + 60;
+	}
+}
+
+/** Counts each `[data-count]` up from zero to its value. */
+function addCounters(timeline: Timeline, element: HTMLElement, at: number): void {
+	for (const counter of element.querySelectorAll<HTMLElement>('[data-count]')) {
+		const target = Number(counter.dataset.count);
+		const width = counter.textContent?.length ?? 2;
+		const value = { n: 0 };
+		timeline.add(
+			value,
+			{
+				n: target,
+				duration: countDuration,
+				ease: easeOut,
+				onUpdate: () => {
+					counter.textContent = String(Math.round(value.n)).padStart(width, '0');
+				},
+			},
+			at,
+		);
 	}
 }
 
@@ -38,29 +84,29 @@ function playReveal(batch: HTMLElement[]): void {
 		const at = index * step;
 		const mode = element.dataset.reveal;
 		const parts = revealParts.get(element);
+		if (mode === 'lines' && parts) {
+			animated.push(...parts);
+			addTyping(timeline, parts, at);
+			return;
+		}
 		if (parts) {
 			animated.push(...parts);
-			const settled: AnimationParams = mode === 'lines' ? { opacity: 1, translateX: 0 } : { opacity: 1, translateY: 0 };
-			timeline.add(parts, { ...settled, delay: stagger(mode === 'lines' ? lineStagger : wordStagger) }, at);
+			timeline.add(parts, { opacity: 1, translateY: 0, delay: stagger(wordStagger) }, at);
 			return;
 		}
 		animated.push(element);
 		timeline.add(element, { opacity: 1, translateY: 0 }, at);
-		if (mode === 'flaps') {
-			// Split-flap tiles cycle through glyphs and land at slightly different times.
-			const flaps = element.querySelectorAll('.flap:not([data-blank])');
-			const flip = scrambleText({ chars: 'A-Z0-9', settleRate: 18, duration: () => 280 + Math.random() * 520 });
-			timeline.add(flaps, { innerHTML: flip, delay: stagger(10) }, at);
-		}
+		addCounters(timeline, element, at);
+		if (mode === 'flaps') timeline.add(element.querySelectorAll('.flap:not([data-blank])'), flipParams(), at);
 	});
 	timeline.then(() => clearRevealStyles(animated));
 }
 
 /**
  * Reveals every `[data-reveal]` element as it scrolls into view.
- * `data-reveal="words"` staggers the element's words; `"lines"` staggers its
- * `[data-line]` children; `"flaps"` also flips its `.flap` tiles.
- * Runs only when the head script marked the page `data-motion="pending"`.
+ * `data-reveal="words"` staggers the element's words; `"lines"` types out its
+ * `[data-line]` children; `"flaps"` also flips its `.flap` tiles. `[data-count]`
+ * descendants count up.
  */
 export function initReveals(): void {
 	const root = document.documentElement;
@@ -81,7 +127,7 @@ export function initReveals(): void {
 		} else if (mode === 'lines') {
 			const lines = [...element.querySelectorAll<HTMLElement>('[data-line]')];
 			revealParts.set(element, lines);
-			utils.set(lines, { opacity: 0, translateX: -lineDistance });
+			utils.set(lines, { clipPath: lineHidden });
 		} else {
 			utils.set(element, { opacity: 0, translateY: revealDistance });
 		}

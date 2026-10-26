@@ -1,8 +1,6 @@
 ---
-import type { ComponentProps } from 'astro/types';
 import { Image } from 'astro:assets';
 import portrait from '../../../assets/profile/portrait.jpg';
-import CodeWindow from '../../../components/CodeWindow.astro';
 import PageIntro from '../../../components/PageIntro.astro';
 import ProfileTimeline from '../../../components/ProfileTimeline.astro';
 import SocialLinks from '../../../components/SocialLinks.astro';
@@ -27,19 +25,6 @@ const technicalSkills = profile.skills.filter((skill) => skill.category === 'tec
 const languages = profile.skills.filter((skill) => skill.category === 'language');
 const interests = profile.interests;
 const pathname = `/${locale}/about/`;
-const asn = `AS${profile.jianyueLabAsn}`;
-const [introBefore, introAfter = ''] = copy.about.networkIntroduction.split(asn);
-const peeringTemplate: ComponentProps<typeof CodeWindow>['lines'] = [
-	[['comment', `# BGP session with ${asn}; ask for the session address by email.`]],
-	[['keyword', 'protocol bgp'], [null, ` ${asn.toLowerCase()} {`]],
-	[['keyword', '  local as'], [null, ' 64512;                  '], ['comment', '# your ASN']],
-	[['keyword', '  neighbor'], [null, ` 2001:db8::1 as ${profile.jianyueLabAsn};  `], ['comment', '# session address on request']],
-	[['keyword', '  ipv6'], [null, ' {']],
-	[['keyword', '    import filter'], [null, ' peer_in;         '], ['comment', '# your import policy']],
-	[['keyword', '    export filter'], [null, ' peer_out;        '], ['comment', '# your export policy']],
-	[[null, '  };']],
-	[[null, '}']],
-];
 ---
 
 <SiteLayout
@@ -50,7 +35,7 @@ const peeringTemplate: ComponentProps<typeof CodeWindow>['lines'] = [
 	languageTargets={staticLanguageTargets('/about/')}
 >
 	<div class="page-shell">
-		<PageIntro locale={locale} hop="about" eyebrow={copy.nav.about} title={copy.about.title} description={profile.copy[locale].bio} />
+		<PageIntro locale={locale} hop="about" eyebrow={copy.nav.about} title={copy.about.title} />
 
 		<section class="profile-overview" aria-labelledby="profile-name">
 			<Image class="portrait surface" src={portrait} width={480} height={480} alt={profile.name} loading="eager" data-reveal />
@@ -58,7 +43,9 @@ const peeringTemplate: ComponentProps<typeof CodeWindow>['lines'] = [
 				<p class="eyebrow">{copy.about.biography}</p>
 				<h2 id="profile-name">{profile.legalName}</h2>
 				<p class="profile-role">{profile.copy[locale].role} · {profile.copy[locale].location}</p>
-				<p class="profile-bio">{profile.copy[locale].bio}</p>
+				<ul class="profile-points">
+					{profile.copy[locale].highlights.map((point) => <li>{point}</li>)}
+				</ul>
 				<SocialLinks locale={locale} />
 			</div>
 		</section>
@@ -67,14 +54,14 @@ const peeringTemplate: ComponentProps<typeof CodeWindow>['lines'] = [
 		<ProfileTimeline locale={locale} title={copy.about.education} records={profile.education} />
 
 		<section class="profile-details" aria-labelledby="interests-title" data-reveal>
-			<h2 id="interests-title">{copy.about.interests}</h2>
+			<h2 id="interests-title" data-scroll-heading>{copy.about.interests}</h2>
 			<ul class="interests">
 				{interests.map((interest) => <li>{interest.copy[locale].label}</li>)}
 			</ul>
 		</section>
 
 		<section class="profile-details" aria-labelledby="skills-title" data-reveal>
-			<h2 id="skills-title">{copy.about.skills}</h2>
+			<h2 id="skills-title" data-scroll-heading>{copy.about.skills}</h2>
 			<div class="detail-grid">
 				<div>
 					<h3>{copy.about.business}</h3>
@@ -94,25 +81,12 @@ const peeringTemplate: ComponentProps<typeof CodeWindow>['lines'] = [
 		</section>
 
 		<section class="profile-details" aria-labelledby="certifications-title" data-reveal>
-			<h2 id="certifications-title">{copy.about.certifications}</h2>
+			<h2 id="certifications-title" data-scroll-heading>{copy.about.certifications}</h2>
 			<ul class="certifications">
 				{profile.certifications.map((certification) => (
 					<li><strong>{certification.copy[locale].name}</strong><span>{certification.issuer}</span></li>
 				))}
 			</ul>
-		</section>
-
-		<section class="profile-details" aria-labelledby="network-title" data-reveal>
-			<h2 id="network-title">{copy.about.network}</h2>
-			<p class="network-introduction">
-				{introBefore}<a class="net-tag" href={`https://bgp.tools/as/${profile.jianyueLabAsn}`}>{asn}</a>{introAfter}
-			</p>
-			<div class="network-template">
-				<CodeWindow filename="bird.conf" label={copy.about.peeringTemplate} lines={peeringTemplate} copyable />
-			</div>
-			<p class="network-contact meta">
-				<a href={profile.email}>{copy.about.peeringContact} →</a>
-			</p>
 		</section>
 	</div>
 </SiteLayout>
@@ -142,10 +116,27 @@ const peeringTemplate: ComponentProps<typeof CodeWindow>['lines'] = [
 		color: var(--text-muted);
 	}
 
-	.profile-bio {
-		max-width: 45rem;
-		font-family: var(--font-reading);
-		font-size: 1.15rem;
+	.profile-points {
+		display: grid;
+		gap: 0.5rem;
+		margin: 0 0 1.75rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.profile-points li {
+		display: flex;
+		align-items: baseline;
+		gap: 0.6rem;
+		font-size: 1.1rem;
+		font-weight: 700;
+	}
+
+	.profile-points li::before {
+		content: '▸';
+		content: '▸' / '';
+		color: var(--accent);
+		font-family: var(--font-mono);
 	}
 
 	.profile-details {
@@ -198,21 +189,6 @@ const peeringTemplate: ComponentProps<typeof CodeWindow>['lines'] = [
 
 	.interests {
 		max-width: 44rem;
-	}
-
-	.network-introduction {
-		max-width: 44rem;
-		color: var(--text-muted);
-		font-family: var(--font-reading);
-		font-size: 1.08rem;
-	}
-
-	.network-template {
-		max-width: 44rem;
-	}
-
-	.network-contact {
-		margin: 1rem 0 0;
 	}
 
 	@media (max-width: 720px) {

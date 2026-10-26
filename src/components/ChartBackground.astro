@@ -1,0 +1,134 @@
+---
+import {
+	chartCell,
+	chartStep,
+	chartTopLatitude,
+	formatCoordinate,
+} from '../lib/chart-coordinates';
+
+// Enough rows for a 1920px-tall viewport; the extra row covers the scroll drift.
+const rows = Array.from({ length: 13 }, (_, index) => index);
+const ticks = Array.from({ length: 72 }, (_, index) => index * 5);
+---
+
+<div class="chart" aria-hidden="true" data-chart style={`--chart-cell: ${chartCell}px`}>
+	<div class="chart-grid" data-chart-grid></div>
+	<div class="chart-latitudes">
+		{rows.map((row) => (
+			<span data-chart-lat style={`transform: translateY(${row * chartCell}px)`}>
+				{formatCoordinate(chartTopLatitude - row * chartStep, 'N', 'S')}
+			</span>
+		))}
+	</div>
+	<svg class="chart-rose" viewBox="-200 -200 400 400" data-chart-rose>
+		<circle r="190" />
+		<circle r="150" class="inner" />
+		{ticks.map((angle) => (
+			<line y1="-190" y2={angle % 30 === 0 ? -170 : -180} transform={`rotate(${angle})`} />
+		))}
+		{ticks.filter((angle) => angle % 30 === 0).map((angle) => (
+			<text y="-152" transform={`rotate(${angle})`}>{angle === 0 ? 'N' : String(angle / 10)}</text>
+		))}
+		<path d="M0 -140 L6 -120 L-6 -120 Z" class="pointer" />
+	</svg>
+</div>
+
+<script>
+	import { initChart } from '../lib/chart';
+
+	const chart = document.querySelector<HTMLElement>('[data-chart]');
+	if (chart) initChart(chart);
+</script>
+
+<style>
+	.chart {
+		position: fixed;
+		z-index: -1;
+		inset: 0;
+		overflow: hidden;
+		pointer-events: none;
+	}
+
+	/* Graticule every --chart-cell, with a dot every fifth of a cell. */
+	.chart-grid {
+		position: absolute;
+		inset: 0;
+		background-image:
+			linear-gradient(var(--chart-line) 1px, transparent 1px),
+			linear-gradient(90deg, var(--chart-line) 1px, transparent 1px),
+			radial-gradient(circle, var(--chart-dot) 1px, transparent 1.4px);
+		background-position: 0 0;
+		background-size:
+			var(--chart-cell) var(--chart-cell),
+			var(--chart-cell) var(--chart-cell),
+			calc(var(--chart-cell) / 5) calc(var(--chart-cell) / 5);
+	}
+
+	/* Latitude labels live in the page margin, so they only show when the margin fits them. */
+	.chart-latitudes {
+		display: none;
+	}
+
+	.chart-latitudes span {
+		position: absolute;
+		color: var(--text-faint);
+		font-family: var(--font-mono);
+		font-size: 0.62rem;
+		letter-spacing: 0.06em;
+		opacity: 0.55;
+		white-space: nowrap;
+	}
+
+	/* Right margin: the post table of contents occupies the left one. */
+	.chart-latitudes span {
+		top: 3px;
+		right: 0.5rem;
+	}
+
+	@media (min-width: 1260px) {
+		.chart-latitudes {
+			display: block;
+		}
+	}
+
+	.chart-rose {
+		position: absolute;
+		right: -9rem;
+		bottom: -9rem;
+		width: 26rem;
+		height: 26rem;
+		fill: none;
+		opacity: 0.6;
+		stroke: var(--chart-dot);
+	}
+
+	.chart-rose .inner {
+		stroke-dasharray: 2 6;
+	}
+
+	.chart-rose text {
+		fill: var(--chart-dot);
+		stroke: none;
+		font-family: var(--font-mono);
+		font-size: 14px;
+		text-anchor: middle;
+	}
+
+	.chart-rose .pointer {
+		fill: var(--chart-dot);
+		stroke: none;
+	}
+
+	@media (max-width: 720px) {
+		.chart-rose {
+			right: -12rem;
+			bottom: -12rem;
+		}
+	}
+
+	@media print {
+		.chart {
+			display: none;
+		}
+	}
+</style>

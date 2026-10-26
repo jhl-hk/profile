@@ -77,6 +77,14 @@ const url = new URL(project.url);
 		border-radius: 50%;
 		background: #6fd08c;
 		box-shadow: 0 0 6px #6fd08c;
+		animation: lamp-pulse 2s ease-in-out infinite alternate;
+	}
+
+	@keyframes lamp-pulse {
+		to {
+			opacity: 0.45;
+			box-shadow: 0 0 1px #6fd08c;
+		}
 	}
 
 	.project-copy .project-host {
