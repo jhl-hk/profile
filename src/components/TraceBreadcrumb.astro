@@ -1,7 +1,7 @@
 ---
 import { SITE_ORIGIN } from '../consts';
 import { getUiCopy } from '../i18n/ui';
-import type { Locale } from '../lib/i18n';
+import { localizedPath, type Locale } from '../lib/i18n';
 
 interface Props {
 	locale: Locale;
@@ -10,7 +10,7 @@ interface Props {
 
 const { locale, hops } = Astro.props;
 const host = new URL(SITE_ORIGIN).host;
-const route = [{ label: host, href: `/${locale}/` }, ...hops];
+const route = [{ label: host, href: localizedPath(locale) }, ...hops];
 ---
 
 <nav class="trace" aria-label={getUiCopy(locale).accessibility.breadcrumb} data-reveal>

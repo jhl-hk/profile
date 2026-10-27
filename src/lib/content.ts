@@ -1,4 +1,4 @@
-import type { Locale } from './i18n';
+import { localizedPath, type Locale } from './i18n';
 
 export interface PostLike {
 	id: string;
@@ -14,6 +14,10 @@ export interface PostLike {
 
 export function postSlug(post: PostLike): string {
 	return post.id;
+}
+
+export function postPath(post: PostLike): string {
+	return localizedPath(post.data.lang, `/blog/${postSlug(post)}/`);
 }
 
 export function articlePaths<T extends PostLike>(posts: T[]) {
@@ -39,7 +43,7 @@ export function translationTargets<T extends PostLike>(posts: T[], current: T): 
 	const related = current.data.translationKey
 		? posts.filter((post) => !post.data.draft && post.data.translationKey === current.data.translationKey)
 		: [current];
-	return Object.fromEntries(related.map((post) => [post.data.lang, `/${post.data.lang}/blog/${postSlug(post)}/`]));
+	return Object.fromEntries(related.map((post) => [post.data.lang, postPath(post)]));
 }
 
 export function adjacentPosts<T extends PostLike>(posts: T[], current: T, locale: Locale) {

@@ -3,9 +3,11 @@ import { isNavigationPathActive } from '../src/lib/navigation';
 
 describe('primary navigation state', () => {
 	test('keeps the localized Home item exact while section items include descendants', () => {
-		expect(isNavigationPathActive('/en/', '/en/', true)).toBe(true);
-		expect(isNavigationPathActive('/en/blog/', '/en/', true)).toBe(false);
-		expect(isNavigationPathActive('/en/blog/', '/en/blog/')).toBe(true);
-		expect(isNavigationPathActive('/en/blog/post/', '/en/blog/')).toBe(true);
+		expect(isNavigationPathActive('/', '/', true)).toBe(true);
+		expect(isNavigationPathActive('/blog/', '/', true)).toBe(false);
+		expect(isNavigationPathActive('/blog/', '/blog/')).toBe(true);
+		expect(isNavigationPathActive('/blog/post/', '/blog/')).toBe(true);
+		expect(isNavigationPathActive('/ja/', '/ja/', true)).toBe(true);
+		expect(isNavigationPathActive('/ja/blog/post/', '/ja/blog/')).toBe(true);
 	});
 });

@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { getUiCopy } from '../i18n/ui';
 import { normalizeFilterValue } from '../lib/blog-filter';
-import { postSlug } from '../lib/content';
+import { postPath } from '../lib/content';
 import { flightNumber } from '../lib/flight';
 import { formatDate, formatReadingTime, type Locale } from '../lib/i18n';
 
@@ -15,7 +15,7 @@ interface Props {
 
 const { post, locale, readingMinutes } = Astro.props;
 const copy = getUiCopy(locale).blog;
-const href = `/${locale}/blog/${postSlug(post)}/`;
+const href = postPath(post);
 const normalize = (value: string) => normalizeFilterValue(value, locale);
 ---
 

@@ -21,7 +21,7 @@ describe('blog content helpers', () => {
 	});
 
 	test('links translations but keeps standalone posts independent', () => {
-		expect(translationTargets(posts, posts[0])).toEqual({ en: '/en/blog/shared/', ja: '/ja/blog/shared-ja/' });
+		expect(translationTargets(posts, posts[0])).toEqual({ en: '/blog/shared/', ja: '/ja/blog/shared-ja/' });
 		expect(translationTargets(posts, posts[2])).toEqual({ zh: '/zh/blog/standalone/' });
 	});
 

@@ -1,8 +1,6 @@
 ---
-import RedirectPage from '../components/RedirectPage.astro';
-import { locales, localizedPath } from '../lib/i18n';
-
-const targets = Object.fromEntries(locales.map((locale) => [locale, localizedPath(locale, '/about/')])) as Record<(typeof locales)[number], string>;
+import { defaultLocale } from '../lib/i18n';
+import AboutPage from '../views/AboutPage.astro';
 ---
 
-<RedirectPage targets={targets} />
+<AboutPage locale={defaultLocale} />

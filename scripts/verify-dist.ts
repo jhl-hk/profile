@@ -4,7 +4,7 @@ import { readBlogManifest } from './blog-manifest';
 import { SITE_ORIGIN } from '../src/consts';
 import { profile } from '../src/data/profile';
 import { getUiCopy } from '../src/i18n/ui';
-import { locales, type Locale } from '../src/lib/i18n';
+import { defaultLocale, getLocaleFromPath, isLocale, locales, localizedPath, type Locale } from '../src/lib/i18n';
 import { sitemapAlternateMap } from '../src/lib/sitemap';
 
 interface PublishedArticle {
@@ -18,80 +18,92 @@ function includesHtmlText(html: string, text: string): boolean {
 	return html.includes(text) || html.includes(text.replaceAll('&', '&amp;'));
 }
 
-export const expectedFiles = [
-	'dist/en/index.html',
-	'dist/ja/index.html',
-	'dist/zh/index.html',
-	'dist/en/blog/index.html',
-	'dist/ja/blog/index.html',
-	'dist/zh/blog/index.html',
-	'dist/en/projects/index.html',
-	'dist/ja/projects/index.html',
-	'dist/zh/projects/index.html',
-	'dist/en/about/index.html',
-	'dist/ja/about/index.html',
-	'dist/zh/about/index.html',
-	'dist/en/links/index.html',
-	'dist/ja/links/index.html',
-	'dist/zh/links/index.html',
-	'dist/en/rss.xml',
-	'dist/ja/rss.xml',
-	'dist/zh/rss.xml',
-	'dist/404.html',
-] as const;
+const staticPages = ['/', '/blog/', '/projects/', '/about/', '/links/'];
 
-async function readPublishedArticles(contentDirectory: string): Promise<PublishedArticle[]> {
-	return readBlogManifest(contentDirectory);
+function outputPath(pathname: string): string {
+	return pathname.endsWith('/') ? `${pathname.slice(1)}index.html` : pathname.slice(1);
 }
 
-export async function assertDistOutput(distDirectory: string, contentDirectory: string): Promise<void> {
+function isCanonicalUrl(url: URL, targetLocales: readonly Locale[]): boolean {
+	const [firstSegment] = url.pathname.split('/').filter(Boolean);
+	return url.origin === SITE_ORIGIN && firstSegment !== defaultLocale && targetLocales.includes(getLocaleFromPath(url.pathname));
+}
+
+export function expectedFiles(targetLocales: readonly Locale[] = locales): string[] {
+	const pages = [...staticPages.map((page) => outputPath(page)), 'rss.xml'];
+	const localized = pages.flatMap((page) => targetLocales.map((locale) => `${localizedPath(locale).slice(1)}${page}`));
+	const legacy = pages.map((page) => `${defaultLocale}/${page}`);
+	return [...localized, ...legacy, '404.html'].map((path) => `dist/${path}`);
+}
+
+async function readPublishedArticles(
+	contentDirectory: string,
+	targetLocales: readonly Locale[],
+): Promise<PublishedArticle[]> {
+	return (await readBlogManifest(contentDirectory)).filter((article) => targetLocales.includes(article.lang));
+}
+
+export async function assertDistOutput(
+	distDirectory: string,
+	contentDirectory: string,
+	targetLocales: readonly Locale[] = locales,
+): Promise<void> {
 	const projectDirectory = join(distDirectory, '..');
-	for (const relativePath of expectedFiles) {
+	for (const relativePath of expectedFiles(targetLocales)) {
 		assert(await Bun.file(join(projectDirectory, relativePath)).exists(), `Missing generated output: ${relativePath}`);
 	}
 
-	for (const locale of locales) {
-		const html = await Bun.file(join(distDirectory, locale, 'index.html')).text();
+	for (const locale of targetLocales) {
+		const html = await Bun.file(join(distDirectory, outputPath(localizedPath(locale)))).text();
 		const profileCopy = profile.copy[locale];
 		assert(html.includes(`<html lang="${locale}"`), `Home language for ${locale}`);
 		assert(
-			html.includes(`<link rel="canonical" href="${SITE_ORIGIN}/${locale}/">`),
+			html.includes(`<link rel="canonical" href="${SITE_ORIGIN}${localizedPath(locale)}">`),
 			`Home canonical for ${locale}`,
 		);
 		assert(html.includes(`<title>${profile.name}</title>`), `Home title for ${locale}`);
-		for (const targetLocale of locales) {
+		for (const targetLocale of targetLocales) {
 			assert(
-				html.includes(`rel="alternate" hreflang="${targetLocale}" href="${SITE_ORIGIN}/${targetLocale}/"`),
+				html.includes(`rel="alternate" hreflang="${targetLocale}" href="${SITE_ORIGIN}${localizedPath(targetLocale)}"`),
 				`Home hreflang ${targetLocale} for ${locale}`,
 			);
 		}
 		assert(
-			html.includes(`rel="alternate" hreflang="x-default" href="${SITE_ORIGIN}/en/"`),
+			html.includes(`rel="alternate" hreflang="x-default" href="${SITE_ORIGIN}${localizedPath(defaultLocale)}"`),
 			`Home x-default hreflang for ${locale}`,
 		);
 		assert(
 			includesHtmlText(html, profileCopy.role) && includesHtmlText(html, profileCopy.location),
 			`Profile copy for ${locale} Home`,
 		);
-		const aboutHtml = await Bun.file(join(distDirectory, locale, 'about', 'index.html')).text();
+		const aboutHtml = await Bun.file(join(distDirectory, outputPath(localizedPath(locale, '/about/')))).text();
 		assert(
 			includesHtmlText(aboutHtml, profileCopy.role) && includesHtmlText(aboutHtml, profileCopy.location),
 			`Profile copy for ${locale} About`,
 		);
 	}
 
-	const articles = await readPublishedArticles(contentDirectory);
+	for (const page of staticPages) {
+		const target = localizedPath(defaultLocale, page);
+		const html = await Bun.file(join(distDirectory, defaultLocale, outputPath(page))).text();
+		assert(
+			html.includes(`content="0;url=${target}"`) && html.includes('name="robots" content="noindex"'),
+			`Legacy redirect /${defaultLocale}${page} to ${target}`,
+		);
+	}
+
+	const articles = await readPublishedArticles(contentDirectory, targetLocales);
 	const sampleArticles = articles.filter((article) => article.lang === 'en' && article.sample);
 	const otherLocaleIndexes = await Promise.all(
-		locales.filter((locale) => locale !== 'en').map(async (locale) => ({
+		targetLocales.filter((locale) => locale !== 'en').map(async (locale) => ({
 			locale,
-			html: await Bun.file(join(distDirectory, locale, 'blog', 'index.html')).text(),
+			html: await Bun.file(join(distDirectory, outputPath(localizedPath(locale, '/blog/')))).text(),
 		})),
 	);
 
 	for (const article of sampleArticles) {
-		const href = `/en/blog/${article.slug}/`;
-		const html = await Bun.file(join(distDirectory, 'en', 'blog', article.slug, 'index.html')).text();
+		const href = localizedPath('en', `/blog/${article.slug}/`);
+		const html = await Bun.file(join(distDirectory, outputPath(href))).text();
 		assert(html.includes('<meta property="og:type" content="article">'), `Article metadata for ${href}`);
 		assert(html.includes(getUiCopy('en').blog.sample), `Sample label for ${href}`);
 		for (const index of otherLocaleIndexes) {
@@ -100,16 +112,18 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 	}
 
 	const feedDocuments: string[] = [];
-	for (const locale of locales) {
-		const xml = await Bun.file(join(distDirectory, locale, 'rss.xml')).text();
+	for (const locale of targetLocales) {
+		const xml = await Bun.file(join(distDirectory, `${localizedPath(locale).slice(1)}rss.xml`)).text();
 		feedDocuments.push(xml);
 		assert(!xml.includes('example.com'), 'Placeholder origin in generated feed or sitemap');
 		assert(
-			xml.match(/<channel>[\s\S]*?<link>([^<]+)<\/link>/)?.[1] === `${SITE_ORIGIN}/${locale}/`,
+			xml.match(/<channel>[\s\S]*?<link>([^<]+)<\/link>/)?.[1] === `${SITE_ORIGIN}${localizedPath(locale)}`,
 			`RSS channel link for ${locale}`,
 		);
 		const expectedLinks = new Set(
-			articles.filter((article) => article.lang === locale).map((article) => `${SITE_ORIGIN}/${locale}/blog/${article.slug}/`),
+			articles
+				.filter((article) => article.lang === locale)
+				.map((article) => `${SITE_ORIGIN}${localizedPath(locale, `/blog/${article.slug}/`)}`),
 		);
 		const itemLinks = (xml.match(/<item>[\s\S]*?<\/item>/g) ?? []).map((item) => item.match(/<link>([^<]+)<\/link>/)?.[1]);
 		for (const link of itemLinks) {
@@ -119,7 +133,10 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 			assert(itemLinks.includes(link), `Missing RSS entry for ${locale}: ${link}`);
 		}
 	}
-	assert(!(await Bun.file(join(distDirectory, 'rss.xml')).exists()), 'Global RSS output must not exist');
+	assert(
+		(await Bun.file(join(distDirectory, defaultLocale, 'rss.xml')).text()) === (await Bun.file(join(distDirectory, 'rss.xml')).text()),
+		`Legacy /${defaultLocale}/rss.xml must match /rss.xml`,
+	);
 
 	const sitemapFiles: string[] = [];
 	for await (const relativePath of new Bun.Glob('sitemap-*.xml').scan({ cwd: distDirectory, onlyFiles: true })) {
@@ -127,20 +144,17 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 	}
 	assert(sitemapFiles.length > 0, 'Missing generated sitemap');
 	const sitemap = (await Promise.all(sitemapFiles.map((path) => Bun.file(join(distDirectory, path)).text()))).join('\n');
-	for (const locale of locales) {
-		assert(sitemap.includes(`<loc>${SITE_ORIGIN}/${locale}/</loc>`), `Sitemap locale root for ${locale}`);
+	for (const locale of targetLocales) {
+		assert(sitemap.includes(`<loc>${SITE_ORIGIN}${localizedPath(locale)}</loc>`), `Sitemap locale root for ${locale}`);
 	}
 	const sitemapEntries = sitemap.match(/<url>[\s\S]*?<\/url>/g) ?? [];
-	const expectedAlternates = sitemapAlternateMap(articles, SITE_ORIGIN);
+	const expectedAlternates = sitemapAlternateMap(articles, SITE_ORIGIN, targetLocales);
 	for (const entry of sitemapEntries) {
 		const location = entry.match(/<loc>([^<]+)<\/loc>/)?.[1];
 		assert(location, 'Sitemap entry is missing a location');
 		const locationUrl = new URL(location);
-		assert(!/^\/(?:en|ja|zh)\/(?:404|500)\/?$/.test(locationUrl.pathname), `Status page in sitemap: ${location}`);
-		assert(
-			locationUrl.origin === SITE_ORIGIN && locales.some((locale) => locationUrl.pathname.startsWith(`/${locale}/`)),
-			`Non-canonical sitemap location: ${location}`,
-		);
+		assert(!/^\/(?:(?:en|ja|zh)\/)?(?:404|500)(?:\.html|\/)?$/.test(locationUrl.pathname), `Status page in sitemap: ${location}`);
+		assert(isCanonicalUrl(locationUrl, targetLocales), `Non-canonical sitemap location: ${location}`);
 
 		const alternateTags = entry.match(/<xhtml:link\b[^>]*>/g) ?? [];
 		const alternateLocales = alternateTags.map((tag) => tag.match(/hreflang="([^"]+)"/)?.[1]);
@@ -151,11 +165,7 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 		for (const tag of alternateTags) {
 			const href = tag.match(/href="([^"]+)"/)?.[1];
 			assert(href, `Sitemap alternate is missing an href for ${location}`);
-			const alternateUrl = new URL(href);
-			assert(
-				alternateUrl.origin === SITE_ORIGIN && locales.some((locale) => alternateUrl.pathname.startsWith(`/${locale}/`)),
-				`Non-canonical sitemap alternate: ${href}`,
-			);
+			assert(isCanonicalUrl(new URL(href), targetLocales), `Non-canonical sitemap alternate: ${href}`);
 		}
 
 		const actualLinks = alternateTags
@@ -177,6 +187,7 @@ export async function assertDistOutput(distDirectory: string, contentDirectory: 
 if (import.meta.main) {
 	const distDirectory = process.argv[2] ?? join(process.cwd(), 'dist');
 	const contentDirectory = process.argv[3] ?? join(process.cwd(), 'src', 'content', 'blog');
-	await assertDistOutput(distDirectory, contentDirectory);
+	const targetLocales = process.argv[4]?.split(',').filter(isLocale) ?? locales;
+	await assertDistOutput(distDirectory, contentDirectory, targetLocales);
 	console.log('Generated site output verified.');
 }

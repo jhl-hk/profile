@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { matchesPostFilter, normalizeFilterValue } from '../src/lib/blog-filter';
 import { articlePaths, type PostLike } from '../src/lib/content';
 import { assertBlogOutput, type DeclaredArticle } from '../scripts/verify-blog-output';
+import { allLocales, localizedPath, type Locale } from '../src/lib/i18n';
 
 describe('blog filtering', () => {
 	const post = {
@@ -87,7 +88,7 @@ describe('generated blog output verification', () => {
 		headings = [],
 		toc = false,
 	}: {
-		locale: string;
+		locale: Locale;
 		slug: string;
 		switcher: string;
 		translations: string;
@@ -95,28 +96,30 @@ describe('generated blog output verification', () => {
 		toc?: boolean;
 	}) => `
 		<html lang="${locale}">
-		<link rel="canonical" href="https://jhl.idv.hk/${locale}/blog/${slug}/">
+		<link rel="canonical" href="https://jhl.idv.hk${localizedPath(locale, `/blog/${slug}/`)}">
 		<nav class="language-switcher">${switcher}</nav>
 		${toc ? `<aside class="table-of-contents" aria-labelledby="toc-title"><h2 id="toc-title">Contents</h2>${headings.map((heading) => `<a href="#${heading}">${heading}</a>`).join('')}</aside>` : ''}
 		<div class="reading-column prose">${headings.map((heading) => `<h2 id="${heading}">${heading}</h2>`).join('')}</div>
 		<section class="translations">${translations}</section>
 	`;
 
+	const redirect = (target: string) => `<meta http-equiv="refresh" content="0;url=${target}">`;
+
 	const validOutput = {
-		'blog/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/">',
-		'blog/shared/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/shared/">',
-		'en/blog/index.html': index('astro'),
+		'en/blog/index.html': redirect('/blog/'),
+		'en/blog/shared/index.html': redirect('/blog/shared/'),
+		'blog/index.html': index('astro'),
 		'ja/blog/index.html': index('astro'),
 		'zh/blog/index.html': index('设计'),
-		'en/blog/shared/index.html': article({
+		'blog/shared/index.html': article({
 			locale: 'en',
 			slug: 'shared',
 			switcher: [
-				switcherLink('en', '/en/blog/shared/'),
+				switcherLink('en', '/blog/shared/'),
 				switcherLink('ja', '/ja/blog/shared-ja/'),
 				switcherLink('zh', '/zh/blog/', true),
 			].join(''),
-			translations: '<a href="/en/blog/shared/" hreflang="en">English</a><a href="/ja/blog/shared-ja/" hreflang="ja">日本語</a>',
+			translations: '<a href="/blog/shared/" hreflang="en">English</a><a href="/ja/blog/shared-ja/" hreflang="ja">日本語</a>',
 			headings: ['start', 'finish'],
 			toc: true,
 		}),
@@ -124,18 +127,18 @@ describe('generated blog output verification', () => {
 			locale: 'ja',
 			slug: 'shared-ja',
 			switcher: [
-				switcherLink('en', '/en/blog/shared/'),
+				switcherLink('en', '/blog/shared/'),
 				switcherLink('ja', '/ja/blog/shared-ja/'),
 				switcherLink('zh', '/zh/blog/', true),
 			].join(''),
-			translations: '<a href="/en/blog/shared/" hreflang="en">English</a><a href="/ja/blog/shared-ja/" hreflang="ja">日本語</a>',
+			translations: '<a href="/blog/shared/" hreflang="en">English</a><a href="/ja/blog/shared-ja/" hreflang="ja">日本語</a>',
 			headings: ['overview'],
 		}),
 		'zh/blog/standalone/index.html': article({
 			locale: 'zh',
 			slug: 'standalone',
 			switcher: [
-				switcherLink('en', '/en/blog/', true),
+				switcherLink('en', '/blog/', true),
 				switcherLink('ja', '/ja/blog/', true),
 				switcherLink('zh', '/zh/blog/standalone/'),
 			].join(''),
@@ -144,7 +147,16 @@ describe('generated blog output verification', () => {
 	};
 
 	test('accepts declared locale routes, translations, fallbacks, and structural TOCs', () => {
-		expect(() => assertBlogOutput(validOutput, declared)).not.toThrow();
+		expect(() => assertBlogOutput(validOutput, declared, allLocales)).not.toThrow();
+	});
+
+	test('rejects a missing or mistargeted legacy default-locale redirect', () => {
+		const { 'en/blog/shared/index.html': _legacy, ...withoutLegacy } = validOutput;
+		expect(() => assertBlogOutput(withoutLegacy, declared, allLocales)).toThrow(/en\/blog\/shared/);
+		expect(() => assertBlogOutput({
+			...validOutput,
+			'en/blog/index.html': redirect('/en/blog/'),
+		}, declared, allLocales)).toThrow(/legacy redirect/i);
 	});
 
 	test('rejects unexpected cross-locale output and route metadata disagreement', () => {
@@ -156,36 +168,36 @@ describe('generated blog output verification', () => {
 				switcher: '',
 				translations: '',
 			}),
-		}, declared)).toThrow(/unexpected|cross-locale/i);
+		}, declared, allLocales)).toThrow(/unexpected|cross-locale/i);
 
 		expect(() => assertBlogOutput({
 			...validOutput,
 			'ja/blog/shared-ja/index.html': validOutput['ja/blog/shared-ja/index.html'].replace('lang="ja"', 'lang="en"'),
-		}, declared)).toThrow(/language/i);
+		}, declared, allLocales)).toThrow(/language/i);
 	});
 
 	test('rejects incorrect translation fallback and malformed TOC semantics', () => {
 		expect(() => assertBlogOutput({
 			...validOutput,
-			'en/blog/shared/index.html': validOutput['en/blog/shared/index.html'].replace('/ja/blog/shared-ja/', '/ja/blog/').replace('hreflang="ja"', 'hreflang="ja" data-fallback'),
-		}, declared)).toThrow(/translation/i);
+			'blog/shared/index.html': validOutput['blog/shared/index.html'].replace('/ja/blog/shared-ja/', '/ja/blog/').replace('hreflang="ja"', 'hreflang="ja" data-fallback'),
+		}, declared, allLocales)).toThrow(/translation/i);
 
 		expect(() => assertBlogOutput({
 			...validOutput,
-			'en/blog/shared/index.html': validOutput['en/blog/shared/index.html'].replace('href="#finish"', 'href="#missing"'),
-		}, declared)).toThrow(/table of contents/i);
+			'blog/shared/index.html': validOutput['blog/shared/index.html'].replace('href="#finish"', 'href="#missing"'),
+		}, declared, allLocales)).toThrow(/table of contents/i);
 	});
 
 	test('rejects missing or invalid topic-button pressed state', () => {
 		expect(() => assertBlogOutput({
 			...validOutput,
-			'en/blog/index.html': validOutput['en/blog/index.html'].replace(' aria-pressed="true"', ''),
-		}, declared)).toThrow(/aria-pressed/i);
+			'blog/index.html': validOutput['blog/index.html'].replace(' aria-pressed="true"', ''),
+		}, declared, allLocales)).toThrow(/aria-pressed/i);
 
 		expect(() => assertBlogOutput({
 			...validOutput,
-			'en/blog/index.html': validOutput['en/blog/index.html'].replace('aria-pressed="false"', 'aria-pressed="mixed"'),
-		}, declared)).toThrow(/aria-pressed/i);
+			'blog/index.html': validOutput['blog/index.html'].replace('aria-pressed="false"', 'aria-pressed="mixed"'),
+		}, declared, allLocales)).toThrow(/aria-pressed/i);
 	});
 
 	test('accepts HTML-escaped ampersands and quotes in topic filter attributes', () => {
@@ -197,23 +209,23 @@ describe('generated blog output verification', () => {
 			'</article><button data-topic-filter="say &quot;hi&quot;" aria-pressed="false">Say &quot;Hi&quot;</button>',
 		);
 		const escapedOutput = {
-			'blog/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/">',
-			'blog/escaped/index.html': '<meta http-equiv="refresh" content="2;url=/en/blog/escaped/">',
-			'en/blog/index.html': escapedIndex,
+			'en/blog/index.html': redirect('/blog/'),
+			'en/blog/escaped/index.html': redirect('/blog/escaped/'),
+			'blog/index.html': escapedIndex,
 			'ja/blog/index.html': index('astro'),
 			'zh/blog/index.html': index('设计'),
-			'en/blog/escaped/index.html': article({
+			'blog/escaped/index.html': article({
 				locale: 'en',
 				slug: 'escaped',
 				switcher: [
-					switcherLink('en', '/en/blog/escaped/'),
+					switcherLink('en', '/blog/escaped/'),
 					switcherLink('ja', '/ja/blog/', true),
 					switcherLink('zh', '/zh/blog/', true),
 				].join(''),
-				translations: '<a href="/en/blog/escaped/" hreflang="en">English</a>',
+				translations: '<a href="/blog/escaped/" hreflang="en">English</a>',
 			}),
 		};
 
-		expect(() => assertBlogOutput(escapedOutput, escapedDeclared)).not.toThrow();
+		expect(() => assertBlogOutput(escapedOutput, escapedDeclared, allLocales)).not.toThrow();
 	});
 });

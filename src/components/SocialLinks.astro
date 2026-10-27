@@ -1,7 +1,7 @@
 ---
 import { profile } from '../data/profile';
 import { getUiCopy } from '../i18n/ui';
-import { defaultLocale, type Locale } from '../lib/i18n';
+import { defaultLocale, localizedPath, type Locale } from '../lib/i18n';
 
 interface Props {
 	locale?: Locale;
@@ -13,7 +13,7 @@ const links = [
 	{ label: 'GitHub', href: profile.socials.github, external: true },
 	{ label: 'LinkedIn', href: profile.socials.linkedin, external: true },
 	{ label: copy.actions.sendEmail, href: profile.email, external: false },
-	{ label: 'RSS', href: `/${locale}/rss.xml`, external: false },
+	{ label: 'RSS', href: `${localizedPath(locale)}rss.xml`, external: false },
 ];
 ---
 

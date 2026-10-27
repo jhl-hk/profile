@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  allLocales,
   defaultLocale,
+  disabledLocales,
   formatDate,
   formatReadingTime,
   getLocaleFromPath,
@@ -11,7 +13,9 @@ import {
 
 describe('locale configuration', () => {
   test('exposes the supported locales and English default', () => {
-    expect(locales).toEqual(['en', 'ja', 'zh']);
+    expect(allLocales).toEqual(['en', 'ja', 'zh']);
+    expect(locales).toEqual(allLocales.filter((locale) => !disabledLocales.includes(locale)));
+    expect(locales).toContain(defaultLocale);
     expect(defaultLocale).toBe('en');
     expect(isLocale('ja')).toBe(true);
     expect(isLocale('fr')).toBe(false);
@@ -20,8 +24,12 @@ describe('locale configuration', () => {
   test('reads and replaces locale path segments', () => {
     expect(getLocaleFromPath('/ja/blog/post/')).toBe('ja');
     expect(getLocaleFromPath('/blog/post/')).toBe('en');
+    expect(getLocaleFromPath('/about/')).toBe('en');
     expect(localizedPath('zh', '/ja/blog/post/')).toBe('/zh/blog/post/');
-    expect(localizedPath('en', '/')).toBe('/en/');
+    expect(localizedPath('ja', '/')).toBe('/ja/');
+    expect(localizedPath('en', '/')).toBe('/');
+    expect(localizedPath('en', '/ja/blog/post/')).toBe('/blog/post/');
+    expect(localizedPath('en', '/en/about/')).toBe('/about/');
   });
 
   test('formats reading time by locale', () => {

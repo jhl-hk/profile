@@ -50,8 +50,8 @@ describe('final accessibility polish', () => {
 		const sources = await Promise.all([
 			readFile('src/components/ProjectRow.astro', 'utf8'),
 			readFile('src/components/ProfileTimeline.astro', 'utf8'),
-			readFile('src/pages/[lang]/index.astro', 'utf8'),
-			readFile('src/pages/[lang]/about/index.astro', 'utf8'),
+			readFile('src/views/HomePage.astro', 'utf8'),
+			readFile('src/views/AboutPage.astro', 'utf8'),
 		]);
 		for (const source of sources) {
 			expect(source).not.toMatch(/const (?:labels|present) = \{/);
@@ -79,7 +79,7 @@ describe('final Blog filter polish', () => {
 		expect(wrapper.hidden).toBe(false);
 
 		const [page, search] = await Promise.all([
-			readFile('src/pages/[lang]/blog/index.astro', 'utf8'),
+			readFile('src/views/BlogIndexPage.astro', 'utf8'),
 			readFile('src/components/PostSearch.astro', 'utf8'),
 		]);
 		expect(page).toContain('data-featured-wrap');

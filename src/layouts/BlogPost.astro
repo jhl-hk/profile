@@ -5,9 +5,9 @@ import type { MarkdownHeading } from 'astro';
 import FlightStrip from '../components/FlightStrip.astro';
 import TraceBreadcrumb from '../components/TraceBreadcrumb.astro';
 import { getUiCopy } from '../i18n/ui';
-import { postSlug } from '../lib/content';
+import { postPath, postSlug } from '../lib/content';
 import { flightNumber } from '../lib/flight';
-import { formatDate, localeLabels, type Locale } from '../lib/i18n';
+import { formatDate, localeLabels, localizedPath, type Locale } from '../lib/i18n';
 import type { LanguageTargets } from '../lib/seo';
 import SiteLayout from './SiteLayout.astro';
 
@@ -23,7 +23,7 @@ interface Props {
 
 const { post, locale, headings, readingMinutes, languageTargets, previous, next } = Astro.props;
 const copy = getUiCopy(locale).blog;
-const pathname = `/${locale}/blog/${postSlug(post)}/`;
+const pathname = postPath(post);
 const translations = Object.entries(languageTargets) as [Locale, string][];
 const showTableOfContents = headings.length >= 2;
 ---
@@ -40,7 +40,7 @@ const showTableOfContents = headings.length >= 2;
 >
 	<article class="page-shell">
 		<header class="article-header reading-column">
-			<TraceBreadcrumb locale={locale} hops={[{ label: 'blog', href: `/${locale}/blog/` }, { label: postSlug(post) }]} />
+			<TraceBreadcrumb locale={locale} hops={[{ label: 'blog', href: localizedPath(locale, '/blog/') }, { label: postSlug(post) }]} />
 			<FlightStrip date={post.data.pubDate} readingMinutes={readingMinutes} locale={locale} />
 			{post.data.sample && <p class="sample-line" data-reveal><span class="sample-badge">{copy.sample}</span></p>}
 			<h1 data-reveal>{post.data.title}</h1>
@@ -109,13 +109,13 @@ const showTableOfContents = headings.length >= 2;
 				(previous || next) && (
 					<nav class="post-navigation" aria-label={`${copy.previous} / ${copy.next}`} data-reveal>
 						{previous ? (
-							<a class="previous" href={`/${locale}/blog/${postSlug(previous)}/`}>
+							<a class="previous" href={postPath(previous)}>
 								<span>← {copy.previous} · {flightNumber(previous.data.pubDate)}</span>
 								<strong>{previous.data.title}</strong>
 							</a>
 						) : <span />}
 						{next && (
-							<a class="next" href={`/${locale}/blog/${postSlug(next)}/`}>
+							<a class="next" href={postPath(next)}>
 								<span>{flightNumber(next.data.pubDate)} · {copy.next} →</span>
 								<strong>{next.data.title}</strong>
 							</a>

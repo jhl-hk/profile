@@ -38,4 +38,16 @@ export const projects = [
       zh: { description: '专注于邮政系统和明信片的 Wiki 项目，自 2023 年起运营。' },
     },
   },
+  {
+    id: 'can',
+    name: 'Cerulean Aviation Network',
+    url: 'https://ceruleanavi.net',
+    tags: ['Aviation', 'Community', 'Simulation'],
+    status: 'active',
+    copy: {
+      en: { description: 'A flight simulation community, co-founded in 2025.' },
+      ja: { description: 'フライトシミュレーションのコミュニティ。2025 年に共同設立。' },
+      zh: { description: '飞行模拟社区，于 2025 年联合创办。' },
+    },
+  },
 ] as const satisfies readonly Project[];

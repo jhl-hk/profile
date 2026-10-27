@@ -2,7 +2,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseFrontmatter } from 'astro/markdown';
 import { blogContentId } from '../src/lib/blog-routes';
-import { locales, type Locale } from '../src/lib/i18n';
+import { allLocales, type Locale } from '../src/lib/i18n';
 
 export interface BlogManifestEntry {
 	id: string;
@@ -29,7 +29,7 @@ export async function readBlogManifest(contentDirectory: string): Promise<BlogMa
 
 			const { frontmatter } = parseFrontmatter(await readFile(entryPath, 'utf8'));
 			if (frontmatter.draft === true) continue;
-			if (!locales.includes(frontmatter.lang)) throw new Error(`Invalid Blog locale in ${entryRelative}`);
+			if (!allLocales.includes(frontmatter.lang)) throw new Error(`Invalid Blog locale in ${entryRelative}`);
 			const id = blogContentId({ entry: entryRelative, data: frontmatter });
 			articles.push({
 				id,

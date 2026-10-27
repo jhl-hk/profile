@@ -1,0 +1,17 @@
+---
+import { getCollection } from 'astro:content';
+import RedirectPage from '../../components/RedirectPage.astro';
+import { postSlug } from '../../lib/content';
+import { defaultLocale, localizedPath } from '../../lib/i18n';
+
+// Legacy /<defaultLocale>/... URLs redirect to their unprefixed equivalents.
+export async function getStaticPaths() {
+	const posts = await getCollection('blog', ({ data }) => !data.draft && data.lang === defaultLocale);
+	const paths = ['', 'about', 'blog', 'projects', 'links', ...posts.map((post) => `blog/${postSlug(post)}`)];
+	return paths.map((path) => ({ params: { lang: defaultLocale, path: path || undefined } }));
+}
+
+const { path = '' } = Astro.params;
+---
+
+<RedirectPage target={localizedPath(defaultLocale, `/${path}/`)} />

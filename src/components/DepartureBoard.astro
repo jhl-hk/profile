@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { getUiCopy } from '../i18n/ui';
-import { postSlug } from '../lib/content';
+import { postPath } from '../lib/content';
 import { fitWords, flightNumber, notamDate } from '../lib/flight';
 import { formatDate, type Locale } from '../lib/i18n';
 import Flaps from './Flaps.astro';
@@ -16,7 +16,7 @@ const copy = getUiCopy(locale).home.board;
 const destinationTiles = 30;
 
 const rows = posts.map((post, index) => ({
-	href: `/${locale}/blog/${postSlug(post)}/`,
+	href: postPath(post),
 	title: post.data.title,
 	readableDate: formatDate(post.data.pubDate, locale),
 	date: notamDate(post.data.pubDate),

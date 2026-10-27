@@ -1,36 +1,17 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
-import BlogPost from '../../../layouts/BlogPost.astro';
-import {
-	adjacentPosts,
-	articlePaths,
-	estimateReadingMinutes,
-	translationTargets,
-} from '../../../lib/content';
+import { type CollectionEntry, getCollection } from 'astro:content';
+import { articlePaths } from '../../../lib/content';
+import { prefixedLocales } from '../../../lib/i18n';
+import ArticlePage from '../../../views/ArticlePage.astro';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog', ({ data }) => !data.draft);
+	const posts = await getCollection('blog', ({ data }) => !data.draft && prefixedLocales.includes(data.lang));
 	return articlePaths(posts);
 }
 
 interface Props {
 	post: CollectionEntry<'blog'>;
 }
-
-const { post } = Astro.props;
-const posts = await getCollection('blog');
-const { Content, headings } = await render(post);
-const { previous, next } = adjacentPosts(posts, post, post.data.lang);
 ---
 
-<BlogPost
-	post={post}
-	locale={post.data.lang}
-	headings={headings}
-	readingMinutes={estimateReadingMinutes(post.body)}
-	languageTargets={translationTargets(posts, post)}
-	previous={previous}
-	next={next}
->
-	<Content />
-</BlogPost>
+<ArticlePage post={Astro.props.post} />

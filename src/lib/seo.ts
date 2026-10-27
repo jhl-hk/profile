@@ -2,12 +2,12 @@ import { defaultLocale, locales, localizedPath, type Locale } from './i18n';
 
 export type LanguageTargets = Partial<Record<Locale, string>>;
 
-export function staticLanguageTargets(pathname: string): LanguageTargets {
-	return Object.fromEntries(locales.map((locale) => [locale, localizedPath(locale, pathname)]));
+export function staticLanguageTargets(pathname: string, targetLocales: readonly Locale[] = locales): LanguageTargets {
+	return Object.fromEntries(targetLocales.map((locale) => [locale, localizedPath(locale, pathname)]));
 }
 
 export function buildSeoLinks(origin: string, locale: Locale, targets: LanguageTargets) {
-	const canonicalPath = targets[locale] ?? `/${locale}/`;
+	const canonicalPath = targets[locale] ?? localizedPath(locale);
 	const alternates = Object.entries(targets).map(([lang, path]) => ({
 		lang,
 		href: new URL(path, origin).href,

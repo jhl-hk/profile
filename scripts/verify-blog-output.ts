@@ -2,7 +2,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { readBlogManifest, type BlogManifestEntry } from './blog-manifest';
 import { normalizeFilterValue } from '../src/lib/blog-filter';
-import { locales, type Locale } from '../src/lib/i18n';
+import { defaultLocale, locales, localizedPath, type Locale } from '../src/lib/i18n';
 
 export type BlogOutput = Record<string, string>;
 
@@ -41,12 +41,23 @@ function hasAttribute(tag: string, name: string): boolean {
 	return new RegExp(`(?:\\s|<)${name}(?:\\s|=|>)`).test(tag);
 }
 
-function articleOutputPath(article: DeclaredArticle): string {
-	return `${article.lang}/blog/${article.slug}/index.html`;
+function outputPath(pathname: string): string {
+	return `${pathname.slice(1)}index.html`;
 }
 
 function articleHref(article: DeclaredArticle): string {
-	return `/${article.lang}/blog/${article.slug}/`;
+	return localizedPath(article.lang, `/blog/${article.slug}/`);
+}
+
+function articleOutputPath(article: DeclaredArticle): string {
+	return outputPath(articleHref(article));
+}
+
+function requireRedirect(output: BlogOutput, path: string, target: string): void {
+	const html = requireOutput(output, path);
+	requireText(html, 'http-equiv="refresh"', `Legacy redirect ${path}`);
+	requireText(html, `url=${target}"`, `Legacy redirect ${path}`);
+	if (/<article\b/i.test(html)) throw new Error(`Legacy redirect contains duplicate article HTML: ${path}`);
 }
 
 function validateDeclarations(declared: DeclaredArticle[]): void {
@@ -103,15 +114,16 @@ function validateLanguageTargets(
 	article: DeclaredArticle,
 	declared: DeclaredArticle[],
 	path: string,
+	targetLocales: readonly Locale[],
 ): void {
 	const switcher = classBlock(html, 'nav', 'language-switcher');
-	if (!switcher) throw new Error(`Language switcher is missing from ${path}`);
-	const switcherLinks = openingTags(switcher, 'a');
+	if (!switcher && targetLocales.length > 1) throw new Error(`Language switcher is missing from ${path}`);
+	const switcherLinks = switcher ? openingTags(switcher, 'a') : [];
 	const related = article.translationKey
 		? declared.filter((candidate) => candidate.translationKey === article.translationKey)
 		: [article];
 
-	for (const targetLocale of locales) {
+	for (const targetLocale of targetLocales.length > 1 ? targetLocales : []) {
 		const link = switcherLinks.find((candidate) => attribute(candidate, 'hreflang') === targetLocale);
 		if (!link) throw new Error(`Language switcher is missing ${targetLocale} in ${path}`);
 		const translation = related.find((candidate) => candidate.lang === targetLocale);
@@ -124,7 +136,7 @@ function validateLanguageTargets(
 			}
 		} else {
 			if (!fallback) throw new Error(`Missing ${targetLocale} translation is not marked as a fallback in ${path}`);
-			if (attribute(link, 'href') !== `/${targetLocale}/blog/`) {
+			if (attribute(link, 'href') !== localizedPath(targetLocale, '/blog/')) {
 				throw new Error(`Fallback ${targetLocale} translation has the wrong target in ${path}`);
 			}
 			if (!attribute(link, 'aria-label') || !attribute(link, 'title')) {
@@ -169,18 +181,18 @@ function validateTableOfContents(html: string, path: string): void {
 	}
 }
 
-export function assertBlogOutput(output: BlogOutput, declared: DeclaredArticle[]): void {
+export function assertBlogOutput(
+	output: BlogOutput,
+	declared: DeclaredArticle[],
+	targetLocales: readonly Locale[] = locales,
+): void {
 	validateDeclarations(declared);
-	for (const locale of locales) requireOutput(output, `${locale}/blog/index.html`);
+	for (const locale of targetLocales) requireOutput(output, outputPath(localizedPath(locale, '/blog/')));
+	requireRedirect(output, `${defaultLocale}/blog/index.html`, localizedPath(defaultLocale, '/blog/'));
 
-	const indexRedirect = requireOutput(output, 'blog/index.html');
-	requireText(indexRedirect, 'http-equiv="refresh"', 'Blog index redirect');
-	requireText(indexRedirect, 'url=/en/blog/', 'Blog index redirect');
-	if (/<article\b/i.test(indexRedirect)) throw new Error('Legacy redirect contains duplicate article HTML');
-
-	for (const locale of locales) {
+	for (const locale of targetLocales) {
 		if (!declared.some((article) => article.lang === locale)) continue;
-		const index = requireOutput(output, `${locale}/blog/index.html`);
+		const index = requireOutput(output, outputPath(localizedPath(locale, '/blog/')));
 		for (const marker of ['data-post-row', 'data-title=', 'data-description=', 'data-topics=', 'aria-live="polite"']) {
 			requireText(index, marker, `${locale} Blog index`);
 		}
@@ -188,7 +200,7 @@ export function assertBlogOutput(output: BlogOutput, declared: DeclaredArticle[]
 	}
 
 	const expectedArticlePaths = new Set(declared.map(articleOutputPath));
-	const generatedArticlePaths = Object.keys(output).filter((path) => /^(en|ja|zh)\/blog\/.+\/index\.html$/.test(path));
+	const generatedArticlePaths = Object.keys(output).filter((path) => /^(?:(?:ja|zh)\/)?blog\/.+\/index\.html$/.test(path));
 	for (const path of expectedArticlePaths) requireOutput(output, path);
 	for (const path of generatedArticlePaths) {
 		if (!expectedArticlePaths.has(path)) throw new Error(`Unexpected or cross-locale Blog article output: ${path}`);
@@ -197,10 +209,10 @@ export function assertBlogOutput(output: BlogOutput, declared: DeclaredArticle[]
 		throw new Error('Generated Blog article routes do not match declared content locales');
 	}
 
-	const expectedLegacyPaths = new Set(
-		declared.filter((article) => article.lang === 'en').map((article) => `blog/${article.slug}/index.html`),
-	);
-	const generatedLegacyPaths = Object.keys(output).filter((path) => /^blog\/.+\/index\.html$/.test(path));
+	const legacyPath = (article: DeclaredArticle) => `${defaultLocale}/blog/${article.slug}/index.html`;
+	const expectedLegacyPaths = new Set(declared.filter((article) => article.lang === defaultLocale).map(legacyPath));
+	const legacyPattern = new RegExp(`^${defaultLocale}/blog/.+/index\\.html$`);
+	const generatedLegacyPaths = Object.keys(output).filter((path) => legacyPattern.test(path));
 	for (const path of generatedLegacyPaths) {
 		if (!expectedLegacyPaths.has(path)) throw new Error(`Unexpected legacy Blog redirect: ${path}`);
 	}
@@ -210,16 +222,10 @@ export function assertBlogOutput(output: BlogOutput, declared: DeclaredArticle[]
 		const html = requireOutput(output, path);
 		requireText(html, `<html lang="${article.lang}"`, `Article language for ${path}`);
 		requireText(html, `href="https://jhl.idv.hk${articleHref(article)}"`, `Canonical locale for ${path}`);
-		validateLanguageTargets(html, article, declared, path);
+		validateLanguageTargets(html, article, declared, path, targetLocales);
 		validateTableOfContents(html, path);
 
-		if (article.lang === 'en') {
-			const legacyPath = `blog/${article.slug}/index.html`;
-			const legacy = requireOutput(output, legacyPath);
-			requireText(legacy, 'http-equiv="refresh"', `Legacy redirect ${legacyPath}`);
-			requireText(legacy, `url=${articleHref(article)}`, `Legacy redirect ${legacyPath}`);
-			if (/<article\b/i.test(legacy)) throw new Error(`Legacy redirect contains duplicate article HTML: ${legacyPath}`);
-		}
+		if (article.lang === defaultLocale) requireRedirect(output, legacyPath(article), articleHref(article));
 	}
 }
 
@@ -239,8 +245,11 @@ export async function readGeneratedBlogOutput(distDirectory: string): Promise<Bl
 	return output;
 }
 
-export async function readDeclaredArticles(contentDirectory: string): Promise<DeclaredArticle[]> {
-	return readBlogManifest(contentDirectory);
+export async function readDeclaredArticles(
+	contentDirectory: string,
+	targetLocales: readonly Locale[] = locales,
+): Promise<DeclaredArticle[]> {
+	return (await readBlogManifest(contentDirectory)).filter((article) => targetLocales.includes(article.lang));
 }
 
 if (import.meta.main) {
