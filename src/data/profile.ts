@@ -67,7 +67,7 @@ export const profile = {
       contact: '欢迎交流软件、基础设施以及新的项目合作。',
     },
   },
-  experience: [
+  work: [
     {
       id: 'hangzhou-silicon-based-agile-technology',
       organisation: 'Hangzhou Silicon-based Agile Technology Limited',
@@ -112,6 +112,8 @@ export const profile = {
         zh: { title: 'Web 开发者', location: '英国伯明翰', description: '负责开发英国华人篮球协会的网站。' },
       },
     },
+  ] satisfies readonly TimelineEntry[],
+  projects: [
     {
       id: 'postal-wiki',
       organisation: 'Postal Wiki',
@@ -136,13 +138,13 @@ export const profile = {
     },
     {
       id: 'cerulean-aviation-network',
-      organisation: 'Airway Simulation Network',
+      organisation: 'Cerulean Aviation Network',
       start: '2025-03',
       end: null,
       copy: {
-        en: { title: 'Co-founder', description: 'Co-founded Airway Simulation Network and contributed to its server infrastructure.' },
-        ja: { title: '共同創設者', description: 'Airway Simulation Network を共同設立し、サーバーインフラに貢献。' },
-        zh: { title: '联合创始人', description: '联合创办 Airway Simulation Network，并为其服务器基础设施作出贡献。' },
+        en: { title: 'Director', description: 'Co-founded Cerulean Aviation Network and contributed to its server infrastructure.' },
+        ja: { title: 'ディレクター', description: 'Cerulean Aviation Network を共同設立し、サーバーインフラに貢献。' },
+        zh: { title: '主管', description: '联合创办 Cerulean Aviation Network，并为其服务器基础设施作出贡献。' },
       },
     },
     {

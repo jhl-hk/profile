@@ -15,8 +15,8 @@ interface Project {
 
 export const projects = [
   {
-    id: 'jianyuelab-ltd',
-    name: 'JianyueLab Ltd',
+    id: 'jianyuelab',
+    name: 'JianyueLab',
     url: 'https://jianyuelab.co',
     tags: ['Startup', 'Web development', 'TypeScript'],
     status: 'active',
@@ -36,18 +36,6 @@ export const projects = [
       en: { description: 'A wiki project about postal systems and postcards, running since 2023.' },
       ja: { description: '郵便システムやポストカードに特化した Wiki プロジェクト。2023 年から運営中。' },
       zh: { description: '专注于邮政系统和明信片的 Wiki 项目，自 2023 年起运营。' },
-    },
-  },
-  {
-    id: 'jianyuelab-org',
-    name: 'JianyueLab Org.',
-    url: 'https://jianyuelab.org',
-    tags: ['Open source', 'Community'],
-    status: 'active',
-    copy: {
-      en: { description: 'An open-source community project of JianyueLab Ltd' },
-      ja: { description: 'JianyueLab Ltd のオープンソース・コミュニティプロジェクト。' },
-      zh: { description: 'JianyueLab Ltd 的开源社区项目。' },
     },
   },
 ] as const satisfies readonly Project[];

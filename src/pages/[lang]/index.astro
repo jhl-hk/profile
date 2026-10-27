@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 import CodeWindow from '../../components/CodeWindow.astro';
 import DepartureBoard from '../../components/DepartureBoard.astro';
 import HeroRoute from '../../components/HeroRoute.astro';
-import ProjectRow from '../../components/ProjectRow.astro';
+import ServerRack from '../../components/ServerRack.astro';
 import SocialLinks from '../../components/SocialLinks.astro';
 import { profile } from '../../data/profile';
 import { projects } from '../../data/projects';
@@ -13,6 +13,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { publishedPosts } from '../../lib/content';
 import { locales, type Locale } from '../../lib/i18n';
 import { staticLanguageTargets } from '../../lib/seo';
+import { isCurrent } from '../../lib/timeline';
 
 export function getStaticPaths() {
 	return locales.map((locale) => ({ params: { lang: locale }, props: { locale } }));
@@ -32,7 +33,7 @@ const stats = [
 	{ label: copy.home.stats.posts, value: publishedInLocale.length },
 	{ label: copy.home.stats.projects, value: projects.length },
 	{ label: copy.home.stats.languages, value: profile.skills.filter((skill) => skill.category === 'language').length },
-	{ label: copy.home.stats.activeRoles, value: profile.experience.filter((record) => record.start && !record.end).length },
+	{ label: copy.home.stats.activeRoles, value: [...profile.work, ...profile.projects].filter((record) => isCurrent(record)).length },
 ];
 const profileSnippet: ComponentProps<typeof CodeWindow>['lines'] = [
 	[['keyword', 'export const'], [null, ' jhl = {']],
@@ -85,7 +86,7 @@ const profileSnippet: ComponentProps<typeof CodeWindow>['lines'] = [
 				<h2 id="featured-projects">{copy.home.featuredProjects}</h2>
 				<a href={`/${locale}/projects/`}>{copy.actions.viewAll}</a>
 			</div>
-			{projects.slice(0, 2).map((project) => <ProjectRow project={project} locale={locale} />)}
+			<ServerRack projects={projects} locale={locale} />
 		</section>
 
 		<section class="home-section" aria-labelledby="recent-writing">

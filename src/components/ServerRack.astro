@@ -1,0 +1,409 @@
+---
+import { linkHost } from '../data/links';
+import type { projects as projectList } from '../data/projects';
+import { getUiCopy } from '../i18n/ui';
+import type { Locale } from '../lib/i18n';
+
+interface Props {
+	projects: readonly (typeof projectList)[number][];
+	locale: Locale;
+}
+
+const { projects, locale } = Astro.props;
+const copy = getUiCopy(locale).projects;
+const deviceUnits = 2;
+// Projects, then a blank vented panel at the bottom.
+const totalUnits = projects.length * deviceUnits + 1;
+// Rack units count up from the bottom; rails list them top to bottom.
+const unitNumbers = Array.from({ length: totalUnits }, (_, index) => String(totalUnits - index).padStart(2, '0'));
+const portsPerDevice = 8;
+// Fixed per port so lamps blink out of step but render the same on every build; a few ports stay dark.
+const portStyle = (device: number, port: number) =>
+	`--blink-delay: ${((device * 7 + port * 13) % 11) * 170}ms; --blink-duration: ${500 + ((device * 5 + port * 3) % 7) * 120}ms`;
+const portLit = (device: number, port: number) => (device * 3 + port * 5) % 7 < 5;
+---
+
+<div class="rack board-surface" data-rack style={`--units: ${totalUnits}`}>
+	<div class="rail" aria-hidden="true">{unitNumbers.map((unit) => <span>{unit}</span>)}</div>
+	<div class="bay">
+		<ol class="devices">
+			{projects.map((project, device) => (
+				<li data-reveal style={`--device: ${device}`}>
+					<a
+						class="device"
+						href={project.url}
+						target="_blank"
+						rel="noreferrer"
+						aria-label={`${copy.externalProject}: ${project.name} · ${copy[project.status]}`}
+					>
+						<span class="lamps" aria-hidden="true">
+							<span class="lamp power"></span><span class="lamp-label">PWR</span>
+							<span class="lamp link"></span><span class="lamp-label">LNK</span>
+						</span>
+						<span class="device-id">
+							<span class="device-name">{project.name}</span>
+							<span class="device-host">{linkHost(project.url)}<span class="device-tags"> · {project.tags.join(' · ')}</span></span>
+						</span>
+						<span class="ports" aria-hidden="true">
+							{Array.from({ length: portsPerDevice }, (_, port) => (
+								<span class:list={['jack', { dark: !portLit(device, port) }]} style={portStyle(device, port)}>
+									<span class="port-lamp"></span>
+								</span>
+							))}
+						</span>
+					</a>
+				</li>
+			))}
+		</ol>
+		<div class="panel vent" aria-hidden="true"><span class="slots"></span></div>
+	</div>
+	<div class="rail" aria-hidden="true">{unitNumbers.map((unit) => <span>{unit}</span>)}</div>
+</div>
+
+<script>
+	// Each device's lamps run while it is revealed and on screen; the margin matches the reveals in src/lib/motion.ts.
+	const observer = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) entry.target.toggleAttribute('data-live', entry.isIntersecting);
+		},
+		{ rootMargin: '0px 0px -8% 0px' },
+	);
+	for (const device of document.querySelectorAll('[data-rack] .devices li')) observer.observe(device);
+</script>
+
+<style>
+	.rack {
+		--u: 2.4rem;
+		--rail: 2.4rem;
+		--link-green: #6fd08c;
+		--face: linear-gradient(#2b2926, #232120);
+		display: grid;
+		grid-template-columns: var(--rail) minmax(0, 1fr) var(--rail);
+		padding: 0.6rem 0;
+	}
+
+	/* Rails: unit numbers beside a column of square mounting holes. */
+	.rail {
+		display: grid;
+		grid-template-rows: repeat(var(--units), var(--u));
+		color: var(--board-muted);
+		font-size: 0.58rem;
+		font-weight: 400;
+		letter-spacing: 0.06em;
+		opacity: 0.7;
+	}
+
+	.rail span {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35rem;
+	}
+
+	.rail span::after {
+		content: '';
+		width: 0.32rem;
+		height: 0.32rem;
+		border-radius: 1px;
+		background: #0a0909;
+		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.07);
+	}
+
+	.rail:last-child span {
+		flex-direction: row-reverse;
+	}
+
+	.bay {
+		display: grid;
+		grid-template-rows: auto var(--u);
+		border-inline: 1px solid rgba(255, 255, 255, 0.06);
+		background: #121110;
+	}
+
+	.panel,
+	.device {
+		position: relative;
+		margin: 2px 0;
+		border-radius: 3px;
+		background: var(--face);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 2px rgba(0, 0, 0, 0.5);
+	}
+
+	/* Rack ears: a screw at each end of every panel. */
+	.panel::before,
+	.panel::after,
+	.device::before,
+	.device::after {
+		content: '';
+		position: absolute;
+		top: calc(50% - 0.22rem);
+		width: 0.44rem;
+		height: 0.44rem;
+		border-radius: 50%;
+		background: radial-gradient(circle at 35% 35%, #6a655e, #2c2a27 70%);
+	}
+
+	.panel::before,
+	.device::before {
+		left: 0.45rem;
+	}
+
+	.panel::after,
+	.device::after {
+		right: 0.45rem;
+	}
+
+	.vent {
+		display: flex;
+		align-items: center;
+		padding-inline: 1.4rem;
+	}
+
+	.slots {
+		flex: 1;
+		height: 0.5rem;
+		background: repeating-linear-gradient(90deg, #0d0c0b 0 0.9rem, transparent 0.9rem 1.25rem);
+		opacity: 0.9;
+	}
+
+	.devices {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.devices li {
+		height: calc(var(--u) * 2);
+	}
+
+	.device {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr) minmax(0, auto);
+		gap: 1.1rem;
+		align-items: center;
+		height: calc(100% - 4px);
+		padding-inline: 1.4rem;
+		color: var(--board-text);
+		text-decoration: none;
+	}
+
+	.device:focus-visible {
+		outline-offset: 0;
+	}
+
+	.lamps {
+		display: grid;
+		grid-template-columns: auto auto;
+		gap: 0.3rem 0.4rem;
+		align-items: center;
+	}
+
+	.lamp-label {
+		color: var(--board-muted);
+		font-size: 0.5rem;
+		font-weight: 400;
+		letter-spacing: 0.1em;
+	}
+
+	.lamp,
+	.port-lamp {
+		--on-delay: calc(var(--device) * 180ms);
+	}
+
+	.lamp {
+		display: block;
+		border-radius: 50%;
+		animation: power-on 420ms var(--on-delay) steps(3, end) both;
+	}
+
+	.lamp {
+		width: 0.42rem;
+		height: 0.42rem;
+	}
+
+	.power {
+		background: var(--board-amber);
+		box-shadow: 0 0 6px var(--board-amber);
+	}
+
+	.link {
+		--on-delay: calc(var(--device) * 180ms + 220ms);
+		background: var(--link-green);
+		box-shadow: 0 0 6px var(--link-green);
+	}
+
+	.device-id {
+		display: grid;
+		min-width: 0;
+	}
+
+	.device-name {
+		overflow: hidden;
+		font-family: var(--font-ui);
+		font-size: 1.05rem;
+		letter-spacing: -0.01em;
+		line-height: 1.25;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		transition: color 160ms var(--ease-out);
+	}
+
+	.device-host {
+		overflow: hidden;
+		color: var(--board-muted);
+		font-size: 0.72rem;
+		font-weight: 400;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.device-tags {
+		color: color-mix(in srgb, var(--board-muted) 70%, transparent);
+	}
+
+	/* Switch block: two rows of four RJ45 jacks in a recessed module. */
+	.ports {
+		--speed: 1;
+		display: grid;
+		grid-template-columns: repeat(4, 1.35rem);
+		gap: 0.3rem 0.25rem;
+		padding: 0.3rem;
+		border-radius: 2px;
+		background: #171614;
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.04);
+	}
+
+	/* Bezel with the opening below it: latch notch at the bottom, contact pins along the top. */
+	.jack {
+		position: relative;
+		height: 1rem;
+		border-radius: 1px;
+		background: #3a3733;
+	}
+
+	.jack::before {
+		content: '';
+		position: absolute;
+		inset: 0.16rem 0.14rem 0.1rem;
+		background:
+			repeating-linear-gradient(90deg, #8a7448 0 1px, transparent 1px 3px) top / 100% 0.14rem no-repeat,
+			#050505;
+		clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 70%, 70% 100%, 30% 100%, 30% 70%, 0 70%);
+	}
+
+	.port-lamp {
+		position: absolute;
+		z-index: 1;
+		top: 0.04rem;
+		left: 0.06rem;
+		width: 0.22rem;
+		height: 0.1rem;
+		background: var(--link-green);
+		box-shadow: 0 0 3px var(--link-green);
+		animation:
+			power-on 420ms calc(var(--on-delay) + 300ms) steps(3, end) both,
+			traffic calc(var(--blink-duration) * var(--speed)) calc(var(--on-delay) + 720ms + var(--blink-delay)) steps(1, end) infinite;
+	}
+
+	.jack.dark .port-lamp {
+		background: #1f2a22;
+		box-shadow: none;
+		animation: none;
+	}
+
+	/* With scripting, a device's lamps wait unlit until it is revealed and hold still off screen. */
+	@media (scripting: enabled) {
+		.devices li:not([data-live]) :is(.lamp, .port-lamp) {
+			animation-play-state: paused;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.lamp,
+		.port-lamp {
+			animation: none;
+		}
+	}
+
+	.device:is(:hover, :focus-visible) .ports {
+		--speed: 0.3;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.device:hover {
+			background: linear-gradient(#312e2a, #282624);
+		}
+
+		.device:hover .device-name {
+			color: var(--board-amber);
+		}
+	}
+
+	@keyframes power-on {
+		from {
+			opacity: 0.12;
+			box-shadow: none;
+		}
+	}
+
+	/* Ends lit, like the lamp's resting state. */
+	@keyframes traffic {
+		35% {
+			opacity: 0.2;
+		}
+		50% {
+			opacity: 1;
+		}
+		65% {
+			opacity: 0.2;
+		}
+		80% {
+			opacity: 1;
+		}
+	}
+
+	@media (max-width: 720px) {
+		.rack {
+			--u: 2.25rem;
+			--rail: 1.6rem;
+		}
+
+		.rail span::after {
+			display: none;
+		}
+
+		.device,
+		.vent {
+			gap: 0.8rem;
+			padding-inline: 1.05rem;
+		}
+
+		.panel::before,
+		.device::before {
+			left: 0.3rem;
+		}
+
+		.panel::after,
+		.device::after {
+			right: 0.3rem;
+		}
+
+		.ports {
+			gap: 0.45rem;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.lamp-label {
+			display: none;
+		}
+
+		.ports {
+			grid-template-columns: repeat(4, 1.05rem);
+		}
+
+		.jack {
+			height: 0.8rem;
+		}
+	}
+</style>

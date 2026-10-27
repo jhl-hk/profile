@@ -30,11 +30,6 @@ export const linkGroups = [
         url: 'https://ianl.au',
         description: 'Full-Stack Developer!!!',
       },
-      {
-        id: 'r9',
-        name: 'ミルクねこのブログ',
-        url: 'https://r9.do',
-      },
     ],
   },
   {

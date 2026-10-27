@@ -86,7 +86,8 @@ export interface UiCopy {
   };
   about: {
     title: string;
-    experience: string;
+    work: string;
+    projects: string;
     education: string;
     skills: string;
     certifications: string;
@@ -207,7 +208,8 @@ const uiCopy: Record<Locale, UiCopy> = {
     },
     about: {
       title: 'Founder, developer, and student in Tokyo.',
-      experience: 'Experience',
+      work: 'Work experience',
+      projects: 'Projects',
       education: 'Education',
       skills: 'Skills',
       certifications: 'Certifications',
@@ -326,7 +328,8 @@ const uiCopy: Record<Locale, UiCopy> = {
     },
     about: {
       title: '東京で学び、つくり、事業を育てています。',
-      experience: '経験',
+      work: '職歴',
+      projects: 'プロジェクト',
       education: '学歴',
       skills: 'スキル',
       certifications: '資格',
@@ -445,7 +448,8 @@ const uiCopy: Record<Locale, UiCopy> = {
     },
     about: {
       title: '在东京学习、创造并经营事业。',
-      experience: '经历',
+      work: '工作经历',
+      projects: '项目经历',
       education: '教育',
       skills: '技能',
       certifications: '认证',

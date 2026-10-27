@@ -16,6 +16,11 @@ describe('fitWords', () => {
 		expect(fitWords('Memoir of VATJPN and Other Friends', 25)).toEqual(['Memoir', 'of', 'VATJPN', 'and']);
 	});
 
+	test('drops punctuation left dangling by the cut, keeps it on whole titles', () => {
+		expect(fitWords('Cerulean Aviation Network: Building a Community', 30)).toEqual(['Cerulean', 'Aviation', 'Network']);
+		expect(fitWords('How to deploy MCSManager Panel?', 40)).toEqual(['How', 'to', 'deploy', 'MCSManager', 'Panel?']);
+	});
+
 	test('cuts a single overlong word by characters, not code units', () => {
 		expect(fitWords('逐渐成为IDC', 4)).toEqual(['逐渐成为']);
 	});

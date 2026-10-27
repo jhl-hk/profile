@@ -3,8 +3,8 @@
 	--surface-raised: rgba(255, 255, 255, 0.58);
 	--surface-muted: rgba(57, 48, 41, 0.05);
 	--text: #292724;
-	--text-muted: #706a63;
-	--text-faint: #7d766e;
+	--text-muted: #655f58;
+	--text-faint: #736c64;
 	--border: rgba(48, 43, 38, 0.12);
 	--accent: #b0700f;
 	--accent-strong: #8a5300;
@@ -332,6 +332,7 @@ table {
 
 .prose:lang(en) {
 	hyphens: auto;
+	hyphenate-limit-chars: 8 4 4;
 }
 
 .prose:lang(zh),

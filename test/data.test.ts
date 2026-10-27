@@ -55,15 +55,15 @@ describe('localized site data', () => {
       'nextjs',
     ]));
 
-    const airwaySimulationNetwork = profile.experience.find((record) => record.id === 'cerulean-aviation-network');
-    const mcsManager = profile.experience.find((record) => record.id === 'mcsmanager');
+    const ceruleanAviationNetwork = profile.projects.find((record) => record.id === 'cerulean-aviation-network');
+    const mcsManager = profile.projects.find((record) => record.id === 'mcsmanager');
 
-    expect(airwaySimulationNetwork?.start).toBe('2025-03');
-    expect(airwaySimulationNetwork?.end).toBeNull();
+    expect(ceruleanAviationNetwork?.start).toBe('2025-03');
+    expect(ceruleanAviationNetwork?.end).toBeNull();
     expect(mcsManager?.start).toBe('2023-05');
     expect(mcsManager?.end).toBeNull();
 
-    for (const record of [airwaySimulationNetwork, mcsManager]) {
+    for (const record of [ceruleanAviationNetwork, mcsManager]) {
       expect(record).toBeDefined();
       for (const locale of locales) {
         expect(record?.copy[locale].title.length).toBeGreaterThan(0);
@@ -87,9 +87,9 @@ describe('localized site data', () => {
   });
 
   test('provides current LinkedIn roles, skills, and language levels', () => {
-    const jianyueLab = profile.experience.find((record) => record.id === 'jianyuelab-ltd');
-    const hangzhouSiliconBasedAgile = profile.experience.find((record) => record.id === 'hangzhou-silicon-based-agile-technology');
-    const kyouyuuShanghai = profile.experience.find((record) => record.id === 'kyouyuu-shanghai-commercial');
+    const jianyueLab = profile.work.find((record) => record.id === 'jianyuelab-ltd');
+    const hangzhouSiliconBasedAgile = profile.work.find((record) => record.id === 'hangzhou-silicon-based-agile-technology');
+    const kyouyuuShanghai = profile.work.find((record) => record.id === 'kyouyuu-shanghai-commercial');
 
     expect(jianyueLab).toMatchObject({ start: '2025-12', end: null });
     expect(jianyueLab?.copy).toMatchObject({

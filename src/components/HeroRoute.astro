@@ -168,13 +168,14 @@ const [, origin] = heroMapAirports;
 		stroke-width: 1;
 	}
 
+	/* Narrow screens: the map leads the hero in flow instead of sitting behind the copy and snippet. */
 	@media (max-width: 720px) {
 		.hero-route {
-			top: auto;
-			right: -1rem;
-			bottom: 8rem;
-			width: 92vw;
-			opacity: 0.35;
+			position: relative;
+			inset: auto;
+			width: auto;
+			margin: -2.5rem -1rem -3rem;
+			opacity: 0.7;
 		}
 	}
 </style>

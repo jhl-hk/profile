@@ -120,7 +120,7 @@ const [applyBefore, applyAfter = ''] = copy.links.applyIntroduction.split('{emai
 
 	.link-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 		gap: 1rem;
 		margin: 0;
 		padding: 0;
@@ -250,12 +250,9 @@ const [applyBefore, applyAfter = ''] = copy.links.applyIntroduction.split('{emai
 
 	@media (max-width: 720px) {
 		.link-grid,
-		.link-notes {
-			grid-template-columns: 1fr;
-		}
-
+		.link-notes,
 		.site-card {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 </style>
