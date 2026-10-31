@@ -95,6 +95,7 @@ export interface UiCopy {
     business: string;
     technical: string;
     languages: string;
+    skillGroups: Record<'programming' | 'web' | 'infrastructure', string>;
     interests: string;
     present: string;
   };
@@ -217,6 +218,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       business: 'Business',
       technical: 'Technical',
       languages: 'Languages',
+      skillGroups: { programming: 'Programming', web: 'Web', infrastructure: 'Infrastructure' },
       interests: 'Interests',
       present: 'Present',
     },
@@ -337,6 +339,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       business: 'ビジネス',
       technical: '技術',
       languages: '言語',
+      skillGroups: { programming: 'プログラミング', web: 'Web', infrastructure: 'インフラ' },
       interests: '関心',
       present: '現在',
     },
@@ -457,6 +460,7 @@ const uiCopy: Record<Locale, UiCopy> = {
       business: '商业',
       technical: '技术',
       languages: '语言',
+      skillGroups: { programming: '编程', web: 'Web', infrastructure: '基础设施' },
       interests: '兴趣',
       present: '至今',
     },

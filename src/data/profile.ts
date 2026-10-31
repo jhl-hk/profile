@@ -24,6 +24,10 @@ interface Interest {
 interface Skill {
   id: string;
   category: 'business' | 'technical' | 'language';
+  /** Subgroup within `technical`. */
+  group?: 'programming' | 'web' | 'infrastructure';
+  /** Language proficiency, 1 (elementary) to 5 (native). */
+  level?: 1 | 2 | 3 | 4 | 5;
   copy: Localized<{ label: string; proficiency?: string }>;
 }
 
@@ -191,23 +195,23 @@ export const profile = {
     { id: 'startup-operations', category: 'business', copy: { en: { label: 'Startup operations' }, ja: { label: 'スタートアップ経営' }, zh: { label: '创业运营' } } },
     { id: 'business-development', category: 'business', copy: { en: { label: 'Business development' }, ja: { label: '事業開発' }, zh: { label: '业务开发' } } },
     { id: 'project-management', category: 'business', copy: { en: { label: 'Project management' }, ja: { label: 'プロジェクト管理' }, zh: { label: '项目管理' } } },
-    { id: 'typescript', category: 'technical', copy: { en: { label: 'TypeScript' }, ja: { label: 'TypeScript' }, zh: { label: 'TypeScript' } } },
-    { id: 'web-development', category: 'technical', copy: { en: { label: 'Web development' }, ja: { label: 'Web 開発' }, zh: { label: 'Web 开发' } } },
-    { id: 'server-management', category: 'technical', copy: { en: { label: 'Server management' }, ja: { label: 'サーバー管理' }, zh: { label: '服务器管理' } } },
-    { id: 'domain-management', category: 'technical', copy: { en: { label: 'Domain management' }, ja: { label: 'ドメイン管理' }, zh: { label: '域名管理' } } },
-    { id: 'javascript', category: 'technical', copy: { en: { label: 'JavaScript' }, ja: { label: 'JavaScript' }, zh: { label: 'JavaScript' } } },
-    { id: 'python', category: 'technical', copy: { en: { label: 'Python' }, ja: { label: 'Python' }, zh: { label: 'Python' } } },
-    { id: 'go', category: 'technical', copy: { en: { label: 'Go' }, ja: { label: 'Go' }, zh: { label: 'Go' } } },
-    { id: 'java', category: 'technical', copy: { en: { label: 'Java' }, ja: { label: 'Java' }, zh: { label: 'Java' } } },
-    { id: 'svelte', category: 'technical', copy: { en: { label: 'Svelte' }, ja: { label: 'Svelte' }, zh: { label: 'Svelte' } } },
-    { id: 'vue', category: 'technical', copy: { en: { label: 'Vue' }, ja: { label: 'Vue' }, zh: { label: 'Vue' } } },
-    { id: 'nextjs', category: 'technical', copy: { en: { label: 'Next.js' }, ja: { label: 'Next.js' }, zh: { label: 'Next.js' } } },
-    { id: 'mikrotik', category: 'technical', copy: { en: { label: 'MikroTik' }, ja: { label: 'MikroTik' }, zh: { label: 'MikroTik' } } },
-    { id: 'mediawiki', category: 'technical', copy: { en: { label: 'MediaWiki' }, ja: { label: 'MediaWiki' }, zh: { label: 'MediaWiki' } } },
-    { id: 'system-administration', category: 'technical', copy: { en: { label: 'System administration' }, ja: { label: 'システム管理' }, zh: { label: '系统管理' } } },
-    { id: 'chinese', category: 'language', copy: { en: { label: 'Chinese', proficiency: 'Native or bilingual' }, ja: { label: '中国語', proficiency: 'ネイティブまたはバイリンガル' }, zh: { label: '中文', proficiency: '母语或双语' } } },
-    { id: 'english', category: 'language', copy: { en: { label: 'English', proficiency: 'Professional working' }, ja: { label: '英語', proficiency: '業務上の使用が可能' }, zh: { label: '英语', proficiency: '专业工作能力' } } },
-    { id: 'japanese', category: 'language', copy: { en: { label: 'Japanese', proficiency: 'Limited working' }, ja: { label: '日本語', proficiency: '限定的な業務使用' }, zh: { label: '日语', proficiency: '有限工作能力' } } },
+    { id: 'typescript', category: 'technical', group: 'programming', copy: { en: { label: 'TypeScript' }, ja: { label: 'TypeScript' }, zh: { label: 'TypeScript' } } },
+    { id: 'javascript', category: 'technical', group: 'programming', copy: { en: { label: 'JavaScript' }, ja: { label: 'JavaScript' }, zh: { label: 'JavaScript' } } },
+    { id: 'python', category: 'technical', group: 'programming', copy: { en: { label: 'Python' }, ja: { label: 'Python' }, zh: { label: 'Python' } } },
+    { id: 'go', category: 'technical', group: 'programming', copy: { en: { label: 'Go' }, ja: { label: 'Go' }, zh: { label: 'Go' } } },
+    { id: 'java', category: 'technical', group: 'programming', copy: { en: { label: 'Java' }, ja: { label: 'Java' }, zh: { label: 'Java' } } },
+    { id: 'web-development', category: 'technical', group: 'web', copy: { en: { label: 'Web development' }, ja: { label: 'Web 開発' }, zh: { label: 'Web 开发' } } },
+    { id: 'nextjs', category: 'technical', group: 'web', copy: { en: { label: 'Next.js' }, ja: { label: 'Next.js' }, zh: { label: 'Next.js' } } },
+    { id: 'svelte', category: 'technical', group: 'web', copy: { en: { label: 'Svelte' }, ja: { label: 'Svelte' }, zh: { label: 'Svelte' } } },
+    { id: 'vue', category: 'technical', group: 'web', copy: { en: { label: 'Vue' }, ja: { label: 'Vue' }, zh: { label: 'Vue' } } },
+    { id: 'mediawiki', category: 'technical', group: 'web', copy: { en: { label: 'MediaWiki' }, ja: { label: 'MediaWiki' }, zh: { label: 'MediaWiki' } } },
+    { id: 'server-management', category: 'technical', group: 'infrastructure', copy: { en: { label: 'Server management' }, ja: { label: 'サーバー管理' }, zh: { label: '服务器管理' } } },
+    { id: 'system-administration', category: 'technical', group: 'infrastructure', copy: { en: { label: 'System administration' }, ja: { label: 'システム管理' }, zh: { label: '系统管理' } } },
+    { id: 'domain-management', category: 'technical', group: 'infrastructure', copy: { en: { label: 'Domain management' }, ja: { label: 'ドメイン管理' }, zh: { label: '域名管理' } } },
+    { id: 'mikrotik', category: 'technical', group: 'infrastructure', copy: { en: { label: 'MikroTik' }, ja: { label: 'MikroTik' }, zh: { label: 'MikroTik' } } },
+    { id: 'chinese', category: 'language', level: 5, copy: { en: { label: 'Chinese', proficiency: 'Native or bilingual' }, ja: { label: '中国語', proficiency: 'ネイティブまたはバイリンガル' }, zh: { label: '中文', proficiency: '母语或双语' } } },
+    { id: 'english', category: 'language', level: 3, copy: { en: { label: 'English', proficiency: 'Professional working' }, ja: { label: '英語', proficiency: '業務上の使用が可能' }, zh: { label: '英语', proficiency: '专业工作能力' } } },
+    { id: 'japanese', category: 'language', level: 2, copy: { en: { label: 'Japanese', proficiency: 'Limited working' }, ja: { label: '日本語', proficiency: '限定的な業務使用' }, zh: { label: '日语', proficiency: '有限工作能力' } } },
   ] satisfies readonly Skill[],
   certifications: [
     {

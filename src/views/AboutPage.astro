@@ -17,7 +17,11 @@ interface Props {
 const { locale } = Astro.props;
 const copy = getUiCopy(locale);
 const businessSkills = profile.skills.filter((skill) => skill.category === 'business');
-const technicalSkills = profile.skills.filter((skill) => skill.category === 'technical');
+const technicalGroups = (['programming', 'web', 'infrastructure'] as const).map((group) => ({
+	group,
+	skills: profile.skills.filter((skill) => skill.category === 'technical' && 'group' in skill && skill.group === group),
+}));
+const levelSteps = [1, 2, 3, 4, 5] as const;
 const languages = profile.skills.filter((skill) => skill.category === 'language');
 const interests = profile.interests;
 const pathname = localizedPath(locale, '/about/');
@@ -59,19 +63,41 @@ const pathname = localizedPath(locale, '/about/');
 
 		<section class="profile-details" aria-labelledby="skills-title" data-reveal>
 			<h2 id="skills-title" data-scroll-heading>{copy.about.skills}</h2>
-			<div class="detail-grid">
-				<div>
-					<h3>{copy.about.business}</h3>
-					<ul>{businessSkills.map((skill) => <li>{skill.copy[locale].label}</li>)}</ul>
+			<div class="skill-grid">
+				<div class="skill-technical">
+					<h3>{copy.about.technical}</h3>
+					<dl class="skill-groups">
+						{technicalGroups.map(({ group, skills }) => (
+							<div>
+								<dt>{copy.about.skillGroups[group]}</dt>
+								<dd>
+									<ul class="skill-chips">
+										{skills.map((skill) => <li>{skill.copy[locale].label}</li>)}
+									</ul>
+								</dd>
+							</div>
+						))}
+					</dl>
 				</div>
 				<div>
-					<h3>{copy.about.technical}</h3>
-					<ul>{technicalSkills.map((skill) => <li>{skill.copy[locale].label}</li>)}</ul>
+					<h3>{copy.about.business}</h3>
+					<ul class="skill-list">{businessSkills.map((skill) => <li>{skill.copy[locale].label}</li>)}</ul>
 				</div>
 				<div>
 					<h3>{copy.about.languages}</h3>
-					<ul>
-						{languages.map((skill) => <li>{skill.copy[locale].label}<span>{skill.copy[locale].proficiency}</span></li>)}
+					<ul class="skill-list">
+						{languages.map((skill) => {
+							const level = 'level' in skill ? skill.level : 0;
+							return (
+								<li class="language">
+									<span class="language-name">{skill.copy[locale].label}</span>
+									<span class="language-meter" aria-hidden="true">
+										{levelSteps.map((step) => <i class:list={{ filled: step <= level }} />)}
+									</span>
+									<span class="language-proficiency">{skill.copy[locale].proficiency}</span>
+								</li>
+							);
+						})}
 					</ul>
 				</div>
 			</div>
@@ -146,17 +172,79 @@ const pathname = localizedPath(locale, '/about/');
 		font-size: clamp(1.6rem, 3vw, 2.4rem);
 	}
 
-	.detail-grid {
+	.skill-grid {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: clamp(1.5rem, 5vw, 4rem);
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: clamp(2rem, 5vw, 4rem);
 	}
 
-	.detail-grid h3 {
+	.skill-grid h3 {
 		font-size: 1rem;
 	}
 
-	.detail-grid ul,
+	.skill-technical {
+		grid-column: 1 / -1;
+	}
+
+	.skill-groups {
+		display: grid;
+		margin: 0;
+	}
+
+	.skill-groups > div {
+		display: grid;
+		grid-template-columns: minmax(7rem, 0.22fr) minmax(0, 1fr);
+		gap: 1rem;
+		align-items: baseline;
+		padding-block: 0.85rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.skill-groups dt {
+		color: var(--text-faint);
+		font-family: var(--font-mono);
+		font-size: 0.78rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.skill-groups dt::before {
+		content: '// ';
+		content: '// ' / '';
+		color: var(--accent);
+	}
+
+	.skill-groups dd {
+		margin: 0;
+	}
+
+	.skill-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.skill-chips li {
+		padding: 0.2rem 0.65rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-pill);
+		background: var(--surface-raised);
+		font-family: var(--font-mono);
+		font-size: 0.85rem;
+		transition: border-color 160ms var(--ease-out), color 160ms var(--ease-out);
+	}
+
+	@media (hover: hover) {
+		.skill-chips li:hover {
+			border-color: var(--accent);
+			color: var(--accent-strong);
+		}
+	}
+
+	.skill-list,
 	.interests,
 	.certifications {
 		margin: 0;
@@ -164,7 +252,7 @@ const pathname = localizedPath(locale, '/about/');
 		list-style: none;
 	}
 
-	.detail-grid li,
+	.skill-list li,
 	.interests li,
 	.certifications li {
 		display: flex;
@@ -174,10 +262,38 @@ const pathname = localizedPath(locale, '/about/');
 		border-top: 1px solid var(--border);
 	}
 
-	.detail-grid li span,
 	.certifications li span {
 		color: var(--text-muted);
 		font-size: 0.88rem;
+	}
+
+	.skill-list .language {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 0.15rem 1rem;
+	}
+
+	.language-meter {
+		display: inline-flex;
+		gap: 3px;
+	}
+
+	.language-meter i {
+		width: 1.1rem;
+		height: 0.35rem;
+		border-radius: 1px;
+		background: var(--border);
+	}
+
+	.language-meter i.filled {
+		background: var(--accent);
+	}
+
+	.language-proficiency {
+		grid-column: 1 / -1;
+		color: var(--text-muted);
+		font-size: 0.85rem;
 	}
 
 	.certifications {
@@ -190,8 +306,13 @@ const pathname = localizedPath(locale, '/about/');
 
 	@media (max-width: 720px) {
 		.profile-overview,
-		.detail-grid {
+		.skill-grid,
+		.skill-groups > div {
 			grid-template-columns: 1fr;
+		}
+
+		.skill-groups > div {
+			gap: 0.5rem;
 		}
 
 		.portrait {
