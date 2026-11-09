@@ -435,6 +435,89 @@ table {
 	white-space: nowrap;
 }
 
+/* Link card: a bare URL on its own line in a post (src/lib/link-card.ts). */
+.embed-card {
+	margin-block: 0 1.5em;
+}
+
+.prose a.embed-card-link {
+	display: grid;
+	gap: 0.3rem;
+	padding: 0.95rem 1.1rem;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-medium);
+	background: var(--surface-raised);
+	color: var(--text);
+	font-family: var(--font-ui);
+	font-size: 1rem;
+	font-variant-numeric: lining-nums;
+	hyphens: manual;
+	white-space: normal;
+	line-height: 1.45;
+	text-decoration: none;
+	transition: border-color 160ms ease, transform 120ms var(--ease-out);
+}
+
+.prose a.embed-card-link:active {
+	transform: scale(0.99);
+}
+
+.prose a.embed-card-link:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.prose a.embed-card-link:hover {
+		border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+	}
+}
+
+.embed-card-host,
+.embed-card-facts {
+	color: var(--text-muted);
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+}
+
+.embed-card-host {
+	letter-spacing: 0.04em;
+}
+
+.embed-card-title {
+	color: var(--accent-strong);
+	font-size: 1rem;
+	font-weight: 700;
+	overflow-wrap: anywhere;
+}
+
+.embed-card-description {
+	display: -webkit-box;
+	overflow: hidden;
+	color: var(--text-muted);
+	font-size: 0.9rem;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
+
+.embed-card-facts {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem 1rem;
+	margin-top: 0.15rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.prose a.embed-card-link {
+		transition: none;
+	}
+
+	.prose a.embed-card-link:active {
+		transform: none;
+	}
+}
+
 th,
 td {
 	padding: 0.75rem;

@@ -1,10 +1,12 @@
 // @ts-check
 
+import { satteri } from '@astrojs/markdown-satteri';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 import { readBlogManifest } from './scripts/blog-manifest.ts';
 import { codeFrameTransformer } from './src/lib/code-frame.ts';
+import { linkCard } from './src/lib/link-card.ts';
 import { includeInSitemap, sitemapAlternateMap } from './src/lib/sitemap.ts';
 
 const site = 'https://jhl.idv.hk';
@@ -22,6 +24,7 @@ export default defineConfig({
 		}),
 	],
 	markdown: {
+		processor: satteri({ mdastPlugins: [linkCard()] }),
 		shikiConfig: {
 			themes: { light: 'vitesse-light', dark: 'vitesse-dark' },
 			defaultColor: false,
